@@ -23,5 +23,5 @@ setup(
         'License :: OSI Approved :: CEA CNRS Inria Logiciel Libre License, version 2.1 (CeCILL-2.1)',
         'Topic :: Scientific/Engineering :: Bio-Informatics',
     ],
-    python_requires='>=3.7'
+    python_requires='>=3.7', install_requires=['Biopython']
 )
