@@ -17,10 +17,24 @@ def ambiguous2string(code, protein=False):
     if protein is True:
         if code.upper() in 'ACDEFGHIKLMNPQRSTVWWY':
             return code.upper()
-        else:
+        elif code.upper() in 'BZX':
             return {'B': 'DN', 'Z': 'EQ', 'X': '.'}[code.upper()]
-    else:
+        else:
+            raise ValueError('Invalid amino-acid %s' % code)
+    elif code.upper() in IUPACData.ambiguous_dna_values:
         return ''.join(sorted(IUPACData.ambiguous_dna_values[code.upper()]))
+    else:
+        raise ValueError('Invalid nucleotide %s' % code)
+
+
+def isambiguous(code, protein=False):
+    """
+    Checks code is an ambiguous residue specification or not.
+    :param code: the input code that must be checked for ambiguity
+    :param protein: True if code is amino-acid code
+    :return: Boolean True if code is ambiguous, False otherwise
+    """
+    return (protein is False and code in 'RYSWKMBDHVN') or (protein is True and code in 'BZX')
 
 
 def pattern2regex(pattern, protein=False):
@@ -37,9 +51,24 @@ def pattern2regex(pattern, protein=False):
     :param protein: True if pattern applies to a protein sequence, False otherwise.
     :return: the regular expression pattern as a string
     """
-    pattern = re.sub(r'{(\w+)}',r'[^\1]', pattern)
-    pattern = re.sub(r'^<',r'^', pattern)
-    pattern = re.sub(r'>$',r'$', pattern)
-    pattern = re.sub(r'\((\d+(,\d+)*)\)',r'{\1}', pattern)
+    pattern = re.sub(r'{(\w+)}', r'[^\1]', pattern)           # none of the specified residues
+    pattern = re.sub(r'^<', r'^', pattern)                    # start of sequence
+    pattern = re.sub(r'>$', r'$', pattern)                    # end of sequence
+    pattern = re.sub(r'\((\d+(,\d+)*)\)', r'{\1}', pattern)   # repeat residue or subsequence
 
-    return pattern
+    # replace ambiguous code by the corresponding list of residues, adding [] if ot already within [], to produce
+    # the regular expression
+    regex = ''
+    flag = False
+    for c in pattern:
+        if isambiguous(c, protein=protein) is True:
+            c = ambiguous2string(c, protein=protein)
+            if flag is False and c != '.':
+                c = '[' + c + ']'
+        elif c == '[':
+            flag = True
+        elif c == ']':
+            flag = False
+        regex += c
+
+    return regex
