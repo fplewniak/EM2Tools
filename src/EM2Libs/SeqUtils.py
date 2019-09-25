@@ -17,14 +17,12 @@ def ambiguous2string(code, protein=False):
     if protein is True:
         if code.upper() in 'ACDEFGHIKLMNPQRSTVWWY':
             return code.upper()
-        elif code.upper() in 'BZX':
+        if code.upper() in 'BZX':
             return {'B': 'DN', 'Z': 'EQ', 'X': '.'}[code.upper()]
-        else:
-            raise ValueError('Invalid amino-acid %s' % code)
-    elif code.upper() in IUPACData.ambiguous_dna_values:
+        raise ValueError('Invalid amino-acid %s' % code)
+    if code.upper() in IUPACData.ambiguous_dna_values:
         return ''.join(sorted(IUPACData.ambiguous_dna_values[code.upper()]))
-    else:
-        raise ValueError('Invalid nucleotide %s' % code)
+    raise ValueError('Invalid nucleotide %s' % code)
 
 
 def isambiguous(code, protein=False):
@@ -51,10 +49,10 @@ def pattern2regex(pattern, protein=False):
     :param protein: True if pattern applies to a protein sequence, False otherwise.
     :return: the regular expression pattern as a string
     """
-    pattern = re.sub(r'{(\w+)}', r'[^\1]', pattern)           # none of the specified residues
-    pattern = re.sub(r'^<', r'^', pattern)                    # start of sequence
-    pattern = re.sub(r'>$', r'$', pattern)                    # end of sequence
-    pattern = re.sub(r'\((\d+(,\d*)*)\)', r'{\1}', pattern)   # repeat residue or subsequence
+    pattern = re.sub(r'{(\w+)}', r'[^\1]', pattern)  # none of the specified residues
+    pattern = re.sub(r'^<', r'^', pattern)  # start of sequence
+    pattern = re.sub(r'>$', r'$', pattern)  # end of sequence
+    pattern = re.sub(r'\((\d+(,\d*)*)\)', r'{\1}', pattern)  # repeat residue or subsequence
 
     # replace ambiguous code by the corresponding list of residues, adding [] if ot already within [], to produce
     # the regular expression
@@ -72,3 +70,31 @@ def pattern2regex(pattern, protein=False):
         regex += c
 
     return regex
+
+
+def seqfilter(records, minlength=None, maxlength=None, pattern=None, name=None, keep=True):
+    """
+    Filters a list of SeqRecords instances, keeping only records satisfying the specified criteria of length, match
+    of a pattern, name specification. It is possible to invert the filtering process by setting the keep boolean to
+    False and thus only keep records which do not satisfy the criteria.
+    :param records: list of SeqRecord instances to seqfilter
+    :param minlength: minimum length of sequence
+    :param maxlength: maximum length of sequence
+    :param pattern: sequence pattern
+    :param name: sequence name
+    :param keep: boolean, if True, keep the records respecting the criteria, otherwise, discard them and keep the others
+    """
+    filtered = []
+    for r in records:
+        if keep is True:
+            if r.seq.length_in_range(minlength, maxlength):
+                if (pattern is None) or (r.seq.search(pattern) != []):
+                    if (name is None) or (re.match(name, r.name) is not None):
+                        filtered.append(r)
+        else:
+            if (minlength is None) and (maxlength is None) or r.seq.length_in_range(minlength, maxlength) is False:
+                if (pattern is None) or (r.seq.search(pattern) == []):
+                    if (name is None) or (re.match(name, r.name) is None):
+                        filtered.append(r)
+
+    return filtered
