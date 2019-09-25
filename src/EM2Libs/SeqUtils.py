@@ -54,7 +54,7 @@ def pattern2regex(pattern, protein=False):
     pattern = re.sub(r'{(\w+)}', r'[^\1]', pattern)           # none of the specified residues
     pattern = re.sub(r'^<', r'^', pattern)                    # start of sequence
     pattern = re.sub(r'>$', r'$', pattern)                    # end of sequence
-    pattern = re.sub(r'\((\d+(,\d+)*)\)', r'{\1}', pattern)   # repeat residue or subsequence
+    pattern = re.sub(r'\((\d+(,\d*)*)\)', r'{\1}', pattern)   # repeat residue or subsequence
 
     # replace ambiguous code by the corresponding list of residues, adding [] if ot already within [], to produce
     # the regular expression
