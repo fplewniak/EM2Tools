@@ -43,6 +43,21 @@ class SeqEM2(Seq):
         """
         return self.alphabet == IUPAC.ExtendedIUPACProtein
 
+    def length_in_range(self, minlength=None, maxlength=None):
+        """
+        Checks whether the sequence length is with the specified range.
+        :param minlength: lower length bound
+        :param maxlength: upper length bound
+        :return: True if sequence length is within specified range, False otherwise
+        """
+        if minlength is None and maxlength is None:
+            return True
+        if minlength is None:
+            return self.__len__() <= maxlength
+        if maxlength is None:
+            return minlength <= self.__len__()
+        return minlength <= self.__len__() <= maxlength
+
     def re_search(self, regex):
         """
         Searches a sequence using a regular expression
