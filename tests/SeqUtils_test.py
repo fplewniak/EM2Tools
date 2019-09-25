@@ -62,8 +62,8 @@ class Pattern2Regex(unittest.TestCase):
 
     @staticmethod
     def test_pattern2regex_repeat():
-        assert SeqUtils.pattern2regex('FREDR(2)G(2,5)(KAI)(3)[ILMV](4)',
-                                      protein=True) == 'FREDR{2}G{2,5}(KAI){3}[ILMV]{4}'
+        assert SeqUtils.pattern2regex('FREDR(2)G(2,5)(KAI)(3,)[ILMV](4)',
+                                      protein=True) == 'FREDR{2}G{2,5}(KAI){3,}[ILMV]{4}'
 
     @staticmethod
     def test_pattern2regex_start():
