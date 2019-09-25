@@ -4,6 +4,8 @@ Tests for the extension module to the Biopython Bio.SeqUtils module.
 import unittest
 import pytest
 from EM2Libs import SeqUtils
+from EM2Libs.Seq import SeqEM2
+from Bio.SeqRecord import SeqRecord
 
 
 class Pattern2Regex(unittest.TestCase):
@@ -72,3 +74,51 @@ class Pattern2Regex(unittest.TestCase):
     @staticmethod
     def test_pattern2regex_end():
         assert SeqUtils.pattern2regex('FRED>', protein=True) == 'FRED$'
+
+
+class SeqFilter(unittest.TestCase):
+    records = [
+        SeqRecord(SeqEM2.dna('ACAGTACCATGTAA'), id='DNA1', name='DNA1'),
+        SeqRecord(SeqEM2.dna('ACAG'), id='DNA2', name='DNA2'),
+        SeqRecord(SeqEM2.dna('ACAGTA'), id='DNA3', name='DNA3'),
+        SeqRecord(SeqEM2.dna('ACAGTACCAT'), id='DNA4', name='DNA4'),
+        SeqRecord(SeqEM2.dna('ACAGTACCATGT'), id='DNA5', name='DNA5')
+    ]
+
+    @staticmethod
+    def test_filter_by_length():
+        assert [r.id for r in SeqUtils.seqfilter(SeqFilter.records, minlength=7)] == ['DNA1', 'DNA4', 'DNA5']
+        assert [r.id for r in SeqUtils.seqfilter(SeqFilter.records, minlength=6, maxlength=10)] == ['DNA3', 'DNA4']
+        assert SeqUtils.seqfilter(SeqFilter.records, minlength=100) == []
+
+    @staticmethod
+    def test_filter_by_pattern():
+        assert [r.id for r in SeqUtils.seqfilter(SeqFilter.records, pattern='CATGW')] == ['DNA1', 'DNA5']
+        assert SeqUtils.seqfilter(SeqFilter.records, pattern='GGGGGGG') == []
+
+    @staticmethod
+    def test_filter_by_name():
+        assert [r.id for r in SeqUtils.seqfilter(SeqFilter.records, name=r'.*[35]$')] == ['DNA3', 'DNA5']
+        assert SeqUtils.seqfilter(SeqFilter.records, name=r'.*[6]$') == []
+
+    @staticmethod
+    def test_filter_multi():
+        assert [r.id for r in SeqUtils.seqfilter(SeqFilter.records, pattern='ACA', name=r'.*[1]$', minlength=7)] == [
+            'DNA1']
+        assert SeqUtils.seqfilter(SeqFilter.records, pattern='ACA', name=r'.*[2]$', minlength=7) == []
+
+    @staticmethod
+    def test_by_length_keep_false():
+        assert [r.id for r in SeqUtils.seqfilter(SeqFilter.records, minlength=7, keep=False)] == ['DNA2', 'DNA3']
+
+    @staticmethod
+    def test_no_filter():
+        assert SeqUtils.seqfilter(SeqFilter.records, keep=False) == SeqUtils.seqfilter(SeqFilter.records)
+
+    @staticmethod
+    def test_by_pattern_keep_false():
+        assert [r.id for r in SeqUtils.seqfilter(SeqFilter.records, pattern='CAGTW', keep=False)] == ['DNA2']
+
+    @staticmethod
+    def test_by_name_keep_false():
+        assert [r.id for r in SeqUtils.seqfilter(SeqFilter.records, name=r'.*[345]$', keep=False)] == ['DNA1', 'DNA2']
