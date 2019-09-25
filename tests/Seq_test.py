@@ -39,3 +39,4 @@ class SeqSearch(unittest.TestCase):
             'REFRED': 5}
         assert {m.group(): m.start() for m in SeqEM2.protein('HITHEREFREDANDGREG').search('{GC}(2,)')} == {
             'HITHEREFREDAND': 0, 'RE': 15}
+        assert SeqEM2.protein('HITHEREFREDANDGREG').search('RRRRRRR') == []
