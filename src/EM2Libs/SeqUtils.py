@@ -72,29 +72,105 @@ def pattern2regex(pattern, protein=False):
     return regex
 
 
-def seqfilter(records, minlength=None, maxlength=None, pattern=None, name=None, keep=True):
+class SeqFilter:
     """
-    Filters a list of SeqRecords instances, keeping only records satisfying the specified criteria of length, match
-    of a pattern, name specification. It is possible to invert the filtering process by setting the keep boolean to
-    False and thus only keep records which do not satisfy the criteria.
-    :param records: list of SeqRecord instances to seqfilter
-    :param minlength: minimum length of sequence
-    :param maxlength: maximum length of sequence
-    :param pattern: sequence pattern
-    :param name: sequence name
-    :param keep: boolean, if True, keep the records respecting the criteria, otherwise, discard them and keep the others
+    Class for the creation of a sequence filter to specify filtering criteria and applying the filter to a list of
+    sequence records.
+    minlength: minimum length of sequence
+    maxlength: maximum length of sequence
+    pattern: sequence pattern
+    name: sequence name
+    keep: boolean, if True, keep the records respecting the criteria, otherwise, discard them and keep the others
     """
-    filtered = []
-    for r in records:
-        if keep is True:
-            if r.seq.length_in_range(minlength, maxlength):
-                if (pattern is None) or (r.seq.search(pattern) != []):
-                    if (name is None) or (re.match(name, r.name) is not None):
-                        filtered.append(r)
-        else:
-            if (minlength is None) and (maxlength is None) or r.seq.length_in_range(minlength, maxlength) is False:
-                if (pattern is None) or (r.seq.search(pattern) == []):
-                    if (name is None) or (re.match(name, r.name) is None):
-                        filtered.append(r)
 
-    return filtered
+    def __init__(self):
+        self._minlength = None
+        self._maxlength = None
+        self._pattern = None
+        self._name = None
+        self._keep = True
+
+    def length(self, minlength=None, maxlength=None):
+        """
+        Minimal and maximal length specification
+        :param minlength: minimal accepted length
+        :param maxlength: maximal accepted length
+        :return: SeqFilter instance
+        """
+        self._minlength = minlength
+        self._maxlength = maxlength
+        return self
+
+    def pattern(self, pattern=None):
+        """
+        pattern specification
+        :param pattern: pattern that must be in the sequence
+        :return: SeqFilter instance
+        """
+        self._pattern = pattern
+        return self
+
+    def name(self, name=None):
+        """
+        sequence record name specification
+        :param name: name regular expression
+        :return: SeqFilter instance
+        """
+        self._name = name
+        return self
+
+    def keep(self, keep=True):
+        """
+        Boolean defining whether the matching sequences must be kept (True) or removed (False)
+        :param keep: True to keep positive sequences, False to remove them
+        :return: SeqFilter instance
+        """
+        self._keep = keep
+        return self
+
+    def length_applies(self, r):
+        """
+        test whether length criterion applies to the sequence record
+        :param r: the sequence record to test
+        :return: boolean True if criterion applies or False otherwise
+        """
+        if self._keep is True:
+            return r.seq.length_in_range(self._minlength, self._maxlength)
+        return (self._minlength, self._maxlength) == (None, None) or r.seq.length_in_range(self._minlength,
+                                                                                           self._maxlength) is False
+
+    def pattern_applies(self, r):
+        """
+        test whether parameter criterion applies to the sequence record
+        :param r: the sequence record to test
+        :return: boolean True if criterion applies or False otherwise
+        """
+        if self._keep is True:
+            return (self._pattern is None) or (r.seq.search(self._pattern) != [])
+        return (self._pattern is None) or (r.seq.search(self._pattern) == [])
+
+    def name_applies(self, r):
+        """
+        test whether name criterion applies to the sequence record
+        :param r: the sequence record to test
+        :return: boolean True if criterion applies or False otherwise
+        """
+        if self._keep is True:
+            return (self._name is None) or (re.match(self._name, r.name) is not None)
+        return (self._name is None) or (re.match(self._name, r.name) is None)
+
+    def apply(self, records):
+        """
+        Filters a list of SeqRecords instances, keeping only records satisfying the specified criteria of length, match
+        of a pattern, name specification. It is possible to invert the filtering process by setting the keep boolean to
+        False and thus only keep records which do not satisfy the criteria.
+        :param records: list of SeqRecord instances to apply
+        """
+        filtered = []
+        for r in records:
+            if all([self.length_applies(r),
+                    self.pattern_applies(r),
+                    self.name_applies(r)
+                    ]):
+                filtered.append(r)
+        return filtered
