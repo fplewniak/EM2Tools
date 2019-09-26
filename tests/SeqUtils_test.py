@@ -4,6 +4,7 @@ Tests for the extension module to the Biopython Bio.SeqUtils module.
 import unittest
 import pytest
 from EM2Libs import SeqUtils
+from EM2Libs.SeqUtils import SeqFilter as SF
 from EM2Libs.Seq import SeqEM2
 from Bio.SeqRecord import SeqRecord
 
@@ -76,7 +77,7 @@ class Pattern2Regex(unittest.TestCase):
         assert SeqUtils.pattern2regex('FRED>', protein=True) == 'FRED$'
 
 
-class SeqFilter(unittest.TestCase):
+class SeqFilterTest(unittest.TestCase):
     records = [
         SeqRecord(SeqEM2.dna('ACAGTACCATGTAA'), id='DNA1', name='DNA1'),
         SeqRecord(SeqEM2.dna('ACAG'), id='DNA2', name='DNA2'),
@@ -85,40 +86,41 @@ class SeqFilter(unittest.TestCase):
         SeqRecord(SeqEM2.dna('ACAGTACCATGT'), id='DNA5', name='DNA5')
     ]
 
-    @staticmethod
-    def test_filter_by_length():
-        assert [r.id for r in SeqUtils.seqfilter(SeqFilter.records, minlength=7)] == ['DNA1', 'DNA4', 'DNA5']
-        assert [r.id for r in SeqUtils.seqfilter(SeqFilter.records, minlength=6, maxlength=10)] == ['DNA3', 'DNA4']
-        assert SeqUtils.seqfilter(SeqFilter.records, minlength=100) == []
+    @classmethod
+    def test_filter_by_length(cls):
+        assert [r.id for r in SF().length(minlength=7).apply(cls.records)] == ['DNA1', 'DNA4', 'DNA5']
+        assert [r.id for r in SF().length(7).apply(cls.records)] == ['DNA1', 'DNA4', 'DNA5']
+        assert [r.id for r in SF().length(6, 10).apply(cls.records)] == ['DNA3', 'DNA4']
+        assert SF().length(100).apply(cls.records) == []
 
-    @staticmethod
-    def test_filter_by_pattern():
-        assert [r.id for r in SeqUtils.seqfilter(SeqFilter.records, pattern='CATGW')] == ['DNA1', 'DNA5']
-        assert SeqUtils.seqfilter(SeqFilter.records, pattern='GGGGGGG') == []
+    @classmethod
+    def test_filter_by_pattern(cls):
+        assert [r.id for r in SF().pattern('CATGW').apply(cls.records)] == ['DNA1', 'DNA5']
+        assert SF().pattern('GGGGGGG').apply(cls.records) == []
 
-    @staticmethod
-    def test_filter_by_name():
-        assert [r.id for r in SeqUtils.seqfilter(SeqFilter.records, name=r'.*[35]$')] == ['DNA3', 'DNA5']
-        assert SeqUtils.seqfilter(SeqFilter.records, name=r'.*[6]$') == []
+    @classmethod
+    def test_filter_by_name(cls):
+        assert [r.id for r in SF().name(r'.*[35]$').apply(cls.records)] == ['DNA3', 'DNA5']
+        assert SF().name(r'.*[6]$').apply(cls.records) == []
 
-    @staticmethod
-    def test_filter_multi():
-        assert [r.id for r in SeqUtils.seqfilter(SeqFilter.records, pattern='ACA', name=r'.*[1]$', minlength=7)] == [
-            'DNA1']
-        assert SeqUtils.seqfilter(SeqFilter.records, pattern='ACA', name=r'.*[2]$', minlength=7) == []
+    @classmethod
+    def test_filter_multi(cls):
+        assert [r.id for r in SF().pattern('ACA').name(r'.*[1]$').length(7).apply(cls.records)] == ['DNA1']
+        assert SF().pattern('ACA').name(r'.*[2]$').length(7).apply(cls.records) == []
 
-    @staticmethod
-    def test_by_length_keep_false():
-        assert [r.id for r in SeqUtils.seqfilter(SeqFilter.records, minlength=7, keep=False)] == ['DNA2', 'DNA3']
+    @classmethod
+    def test_by_length_keep_false(cls):
+        assert [r.id for r in SF().length(7).keep(False).apply(cls.records)] == ['DNA2', 'DNA3']
+        assert [r.id for r in SF().length(maxlength=6).apply(cls.records)] == ['DNA2', 'DNA3']
 
-    @staticmethod
-    def test_no_filter():
-        assert SeqUtils.seqfilter(SeqFilter.records, keep=False) == SeqUtils.seqfilter(SeqFilter.records)
+    @classmethod
+    def test_no_filter(cls):
+        assert SF().keep(False).apply(cls.records) == SF().apply(cls.records)
 
-    @staticmethod
-    def test_by_pattern_keep_false():
-        assert [r.id for r in SeqUtils.seqfilter(SeqFilter.records, pattern='CAGTW', keep=False)] == ['DNA2']
+    @classmethod
+    def test_by_pattern_keep_false(cls):
+        assert [r.id for r in SF().pattern('CAGW').keep(False).apply(cls.records)] == ['DNA2']
 
-    @staticmethod
-    def test_by_name_keep_false():
-        assert [r.id for r in SeqUtils.seqfilter(SeqFilter.records, name=r'.*[345]$', keep=False)] == ['DNA1', 'DNA2']
+    @classmethod
+    def test_by_name_keep_false(cls):
+        assert [r.id for r in SF().name(r'.*[345]$').keep(False).apply(cls.records)] == ['DNA1', 'DNA2']
