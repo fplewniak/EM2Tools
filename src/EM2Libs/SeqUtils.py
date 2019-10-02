@@ -4,6 +4,8 @@ Extension module to the Biopython Bio.SeqUtils module
 import re
 
 from Bio.Data import IUPACData
+from gffpandas.gffpandas import Gff3DataFrame
+from pandas import DataFrame
 
 
 def ambiguous2string(code, protein=False):
@@ -174,3 +176,44 @@ class SeqFilter:
                     ]):
                 filtered.append(r)
         return filtered
+
+
+class GFF(Gff3DataFrame):
+    """
+    Manipulation of features based upon gffpandas package
+    """
+    def __init__(self, feature_list=None):
+        super().__init__(input_df=self.df_from_feature_list(feature_list))
+
+    @classmethod
+    def df_from_feature_list(cls, feature_list):
+        """
+        Create a pandas DataFrame from a list of features 'SeqFeatureEM2 or SeqFeature)
+        :param feature_list: the list of features
+        :return: the dataframe object
+        """
+        df = DataFrame(columns=['seq_id', 'source', 'type', 'start', 'end', 'score', 'strand', 'phase', 'attributes'])
+        if feature_list is not None:
+            for ft in feature_list:
+                df = df.append(cls.df_from_feature(ft), ignore_index=True)
+        return df
+
+    @staticmethod
+    def df_from_feature(ft):
+        """
+        Create a pandas DataFrame from a feature (SeqFeatureEM2 or SeqFeature)
+        :param ft: the feature to convert into a dataframe
+        :return: the resulting dataframe
+        """
+        source = ft.qualifiers['source'] if 'source' in ft.qualifiers else ''
+        score = ft.qualifiers['score'] if 'score' in ft.qualifiers else '0'
+        if 'phase' in ft.qualifiers:
+            phase = ft.qualifiers['phase']
+        elif 'frame' in ft.qualifiers:
+            phase = ft.qualifiers['frame']
+        else:
+            phase = '0'
+        strand = ['-', '?', '+'][ft.location.strand + 1]
+        return DataFrame([[ft.location.ref, source, ft.type, str(int(ft.location.start)), str(int(ft.location.end)),
+                           score, strand, phase, ';'.join([k + '=' + v for k, v in ft.qualifiers.items()])]],
+                         columns=['seq_id', 'source', 'type', 'start', 'end', 'score', 'strand', 'phase', 'attributes'])
