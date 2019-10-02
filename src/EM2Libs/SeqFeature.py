@@ -14,9 +14,10 @@ class SeqFeatureEM2(SeqFeature):
     SeqFeatureEM2 class providing extension to Bio.SeqFeature.SeqFeature class of BioPython package.
     """
 
-    def __init__(self, parent=None, **kwargs):
+    def __init__(self, parent=None, ref=None, **kwargs):
         super().__init__(**kwargs)
         self.parent = parent
+        self.ref = parent.id if (parent is not None) and (ref is None) else ref
 
     def contains(self, position):
         """
