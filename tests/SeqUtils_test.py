@@ -3,10 +3,16 @@ Tests for the extension module to the Biopython Bio.SeqUtils module.
 """
 import unittest
 import pytest
+from Bio.SeqFeature import FeatureLocation
+
 from EM2Libs import SeqUtils
+from EM2Libs.SeqFeature import SeqFeatureEM2
 from EM2Libs.SeqUtils import SeqFilter as SF
+from EM2Libs.SeqUtils import GFF
 from EM2Libs.Seq import SeqEM2
 from Bio.SeqRecord import SeqRecord
+from pandas import DataFrame
+from pandas.util.testing import assert_frame_equal
 
 
 class Pattern2Regex(unittest.TestCase):
@@ -124,3 +130,41 @@ class SeqFilterTest(unittest.TestCase):
     @classmethod
     def test_by_name_keep_false(cls):
         assert [r.id for r in SF().name(r'.*[345]$').keep(False).apply(cls.records)] == ['DNA1', 'DNA2']
+
+
+class GFFtests(unittest.TestCase):
+    sprot: SeqRecord = SeqRecord(SeqEM2.dna('ATGAGTCGGTAACGATGCATGCATGCAGCTGACGC'), id='X',
+                                 name='DummyDNA')
+    sprot.features = [
+        SeqFeatureEM2(parent=sprot, location=FeatureLocation(0, 2), type='start', id='s', strand=1,
+                      qualifiers={'codon': 'start'}),
+        SeqFeatureEM2(parent=sprot, location=FeatureLocation(8, 18), type='domain', id='d1', strand=0),
+        SeqFeatureEM2(parent=sprot, location=FeatureLocation(16, 30), type='domain', id='d2', strand=-1),
+    ]
+
+    df0 = DataFrame(
+        {'seq_id': ['X'], 'source': [''], 'type': ['start'], 'start': ['0'], 'end': ['2'], 'score': ['0'],
+         'strand': ['+'], 'phase': ['0'], 'attributes': ['codon=start']})
+
+    df1 = DataFrame(
+        {'seq_id': ['X', 'X', 'X'], 'source': ['', '', ''], 'type': ['start', 'domain', 'domain'],
+         'start': ['0', '8', '16'], 'end': ['2', '18', '30'], 'score': ['0', '0', '0'],
+         'strand': ['+', '?', '-1'], 'phase': ['0', '0', '0'], 'attributes': ['codon=start', '', '']})
+
+    @classmethod
+    def test_df_from_feature(cls):
+        assert_frame_equal(GFF.df_from_feature(cls.sprot.features[0]).reset_index(drop=True),
+                           cls.df0.reset_index(drop=True))
+
+    @classmethod
+    def test_from_feature_list(cls):
+        assert_frame_equal(GFF([cls.sprot.features[0]]).df.reset_index(drop=True), cls.df0.reset_index(drop=True))
+
+    @classmethod
+    def test_addlist(cls):
+        assert_frame_equal(GFF([cls.sprot.features[0]]).addlist(cls.sprot.features[1:2]).df.reset_index(drop=True),
+                           cls.df1.reset_index(drop=True))
+
+    @classmethod
+    def test_to_feature_list(cls):
+        assert GFF(input_df=cls.df1) == cls.sprot.features
