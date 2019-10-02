@@ -73,9 +73,9 @@ class SeqFeatureTests(unittest.TestCase):
 
     @classmethod
     def test_intersect(cls):
-        assert cls.sprot.features[4].intersect(cls.sprot.features[7]).location == FeatureLocation(34, 37)
+        assert cls.sprot.features[4].intersect(cls.sprot.features[7]).location == FeatureLocation(34, 37, ref='X')
         assert cls.sprot.features[2].intersect(cls.sprot.features[3]).location == cls.sprot.features[6].location
-        assert cls.sprot.features[1].intersect(cls.sprot.features[3]).location == FeatureLocation(8, 18)
+        assert cls.sprot.features[1].intersect(cls.sprot.features[3]).location == FeatureLocation(8, 18, ref='X')
 
     @classmethod
     def test_intersect_errors(cls):
