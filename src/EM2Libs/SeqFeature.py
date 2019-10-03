@@ -22,7 +22,7 @@ class SeqFeatureEM2(SeqFeature):
         """
         Determines whether feature contains a given position
         :param position: the position either int orExactPosition
-        :return: the probability that feature contains the specified position
+        :return: True if feature contains the specified position
         """
         if not all([isinstance(x, ExactPosition) for x in [position, self.location.start, self.location.end]]):
             warnings.warn('Warning: fuzzy positions are not handled as such but are converted into integer values.', )
@@ -44,9 +44,9 @@ class SeqFeatureEM2(SeqFeature):
         Determines whether feature covers the whole range specified by start and end
         :param start: start of range either int or ExactPosition
         :param end: end of range either int or ExactPosition
-        :return: the probability that feature covers the specified range
+        :return: True if feature covers the specified range
         """
-        return self.contains(start) * self.contains(end)
+        return self.contains(start) and self.contains(end)
 
     def overlaps(self, start, end):
         """
