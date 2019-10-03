@@ -11,10 +11,15 @@ class SeqRecord_FeatureTests(unittest.TestCase):
     def test_overlap(self):
         assert True is False
 
-    def test_nearest_feature(self):
+    def test_features_after(self):
         assert True is False
 
-    
+    def test_features_before(self):
+        assert True is False
+
+    def test_surrounding(self):
+        assert True is False
+
 class SeqRecord_StitchingTests(unittest.TestCase):
     def test_stitch(self):
         assert True is False
