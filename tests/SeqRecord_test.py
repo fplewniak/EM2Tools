@@ -28,6 +28,7 @@ class SeqRecord_FeatureTests(unittest.TestCase):
     def test_overlap(cls):
         assert [f.id for f in cls.rec.overlap(16, 25)] == ['C', 'D', 'G']
         assert [f.id for f in cls.rec.overlap(16)] == ['C']
+        assert [f.id for f in cls.rec.overlap(16, 25, strand=-1)] == ['G']
 
     def test_features_after(self):
         assert True is False
