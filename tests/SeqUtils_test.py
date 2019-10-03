@@ -136,35 +136,58 @@ class GFFtests(unittest.TestCase):
     sprot: SeqRecord = SeqRecord(SeqEM2.dna('ATGAGTCGGTAACGATGCATGCATGCAGCTGACGC'), id='X',
                                  name='DummyDNA')
     sprot.features = [
-        SeqFeatureEM2(parent=sprot, location=FeatureLocation(0, 2), type='start', id='s', strand=1,
-                      qualifiers={'codon': 'start'}),
-        SeqFeatureEM2(parent=sprot, location=FeatureLocation(8, 18), type='domain', id='d1', strand=0),
-        SeqFeatureEM2(parent=sprot, location=FeatureLocation(16, 30), type='domain', id='d2', strand=-1),
+        SeqFeatureEM2(parent=sprot, location=FeatureLocation(0, 2), type='start', strand=1,
+                      qualifiers={'codon': 'start', 'source': '', 'phase': '0', 'score': '0'}),
+        SeqFeatureEM2(parent=sprot, location=FeatureLocation(8, 18), type='domain', id='d1', strand=0,
+                      qualifiers={'source': '', 'phase': '0', 'score': '0'}),
+        SeqFeatureEM2(parent=sprot, location=FeatureLocation(16, 30), type='domain', id='d2', strand=-1,
+                      qualifiers={'source': '', 'phase': '0', 'score': '0'})
     ]
 
     df0 = DataFrame(
         {'seq_id': ['X'], 'source': [''], 'type': ['start'], 'start': ['0'], 'end': ['2'], 'score': ['0'],
-         'strand': ['+'], 'phase': ['0'], 'attributes': ['codon=start']})
+         'strand': ['+'], 'phase': ['0'], 'attributes': ['codon=start;id=<unknown id>']})
 
     df1 = DataFrame(
         {'seq_id': ['X', 'X', 'X'], 'source': ['', '', ''], 'type': ['start', 'domain', 'domain'],
          'start': ['0', '8', '16'], 'end': ['2', '18', '30'], 'score': ['0', '0', '0'],
-         'strand': ['+', '?', '-1'], 'phase': ['0', '0', '0'], 'attributes': ['codon=start', '', '']})
+         'strand': ['+', '?', '-'], 'phase': ['0', '0', '0'],
+         'attributes': ['codon=start;id=<unknown id>', 'id=d1', 'id=d2']})
 
     @classmethod
     def test_df_from_feature(cls):
         assert_frame_equal(GFF.df_from_feature(cls.sprot.features[0]).reset_index(drop=True),
                            cls.df0.reset_index(drop=True))
+        assert_frame_equal(GFF.df_from_feature(None).reset_index(drop=True),
+                           DataFrame(columns=['seq_id', 'source', 'type', 'start', 'end', 'score', 'strand', 'phase',
+                                              'attributes']).reset_index(drop=True))
 
     @classmethod
     def test_from_feature_list(cls):
-        assert_frame_equal(GFF([cls.sprot.features[0]]).df.reset_index(drop=True), cls.df0.reset_index(drop=True))
+        assert_frame_equal(GFF(cls.sprot.features[0:3]).df.reset_index(drop=True), cls.df1.reset_index(drop=True))
+        assert_frame_equal(GFF([]).df.reset_index(drop=True),
+                           DataFrame(columns=['seq_id', 'source', 'type', 'start', 'end', 'score', 'strand', 'phase',
+                                              'attributes']).reset_index(drop=True))
+        assert_frame_equal(GFF(None).df.reset_index(drop=True),
+                           DataFrame(columns=['seq_id', 'source', 'type', 'start', 'end', 'score', 'strand', 'phase',
+                                              'attributes']).reset_index(drop=True))
+        assert_frame_equal(GFF().df.reset_index(drop=True),
+                           DataFrame(columns=['seq_id', 'source', 'type', 'start', 'end', 'score', 'strand', 'phase',
+                                              'attributes']).reset_index(drop=True))
 
     @classmethod
     def test_addlist(cls):
-        assert_frame_equal(GFF([cls.sprot.features[0]]).addlist(cls.sprot.features[1:2]).df.reset_index(drop=True),
-                           cls.df1.reset_index(drop=True))
+        assert_frame_equal(
+            GFF([cls.sprot.features[0]]).add_feature_list(cls.sprot.features[1:3]).df.reset_index(drop=True),
+            cls.df1.reset_index(drop=True))
 
     @classmethod
     def test_to_feature_list(cls):
-        assert GFF(input_df=cls.df1) == cls.sprot.features
+        for i in range(0, len(cls.sprot.features)):
+            assert GFF(input_df=cls.df1).to_feature_list(parents=cls.sprot)[i].__str__() == cls.sprot.features[
+                i].__str__()
+        for i in range(0, len(cls.sprot.features)):
+            assert GFF(input_df=cls.df1).to_feature_list(parents=[cls.sprot, cls.sprot, cls.sprot])[i].__str__() == \
+                   cls.sprot.features[i].__str__()
+        with pytest.raises(ValueError, match=r'The number of parents should match the number of features .*'):
+            GFF(input_df=cls.df1).to_feature_list(parents=[cls.sprot])
