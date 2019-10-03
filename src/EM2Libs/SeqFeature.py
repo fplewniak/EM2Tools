@@ -19,16 +19,6 @@ class SeqFeatureEM2(SeqFeature):
         self.parent = parent
         self.ref = parent.id if (parent is not None) and (ref is None) else ref
 
-    def contains(self, position):
-        """
-        Determines whether feature contains a given position
-        :param position: the position either int orExactPosition
-        :return: True if feature contains the specified position
-        """
-        if not all([isinstance(x, ExactPosition) for x in [position, self.location.start, self.location.end]]):
-            warnings.warn('Warning: fuzzy positions are not handled as such but are converted into integer values.', )
-        return self.location.start <= position <= self.location.end
-
     def lies_within(self, start, end):
         """
         Determines whether feature lies entirely with the specified range. Fuzzy positions are turned into integers.
@@ -44,23 +34,25 @@ class SeqFeatureEM2(SeqFeature):
         """
         Determines whether feature covers the whole range specified by start and end
         :param start: start of range either int or ExactPosition
-        :param end: end of range either int or ExactPosition
+        :param end: end of range either int or ExactPosition, if None then end=start
         :return: True if feature covers the specified range
         """
-        return self.contains(start) and self.contains(end)
+        return self.overlaps(start) and self.overlaps(end)
 
-    def overlaps(self, start, end):
+    def overlaps(self, start, end=None):
         """
         Determines whether feayur overlaps a position range.
         :param start: start of range either int or ExactPosition
         :param end: end of range either int or ExactPosition
         :return: True if feature overlaps range
         """
+        if end is None:
+            end = start
         if not all([isinstance(x, ExactPosition) for x in [start, end, self.location.start, self.location.end]]):
             warnings.warn('Warning: fuzzy positions are not handled as such but are converted into integer values.', )
         left = max(self.location.start, start)
         right = min(self.location.end, end)
-        return left < right
+        return left <= right
 
     def intersect(self, other, **kwargs):
         """
