@@ -4,8 +4,10 @@ Extension module to the Biopython Bio.SeqUtils module
 import re
 
 from Bio.Data import IUPACData
-from gffpandas.gffpandas import Gff3DataFrame
+from Bio.SeqFeature import FeatureLocation
 from pandas import DataFrame
+from gffpandas.gffpandas import Gff3DataFrame
+from EM2Libs.SeqFeature import SeqFeatureEM2
 
 
 def ambiguous2string(code, protein=False):
@@ -182,21 +184,24 @@ class GFF(Gff3DataFrame):
     """
     Manipulation of features based upon gffpandas package
     """
-    def __init__(self, feature_list=None):
-        super().__init__(input_df=self.df_from_feature_list(feature_list))
 
-    @classmethod
-    def df_from_feature_list(cls, feature_list):
-        """
-        Create a pandas DataFrame from a list of features 'SeqFeatureEM2 or SeqFeature)
-        :param feature_list: the list of features
-        :return: the dataframe object
-        """
+    def __init__(self, feature_list=None, input_df=None):
         df = DataFrame(columns=['seq_id', 'source', 'type', 'start', 'end', 'score', 'strand', 'phase', 'attributes'])
+        super().__init__(input_df=df)
+        self.add_feature_list(feature_list)
+        if input_df is not None:
+            self.df = self.df.append(input_df)
+
+    def add_feature_list(self, feature_list=None):
+        """
+        Adds a list of feature to the list of an existing GFF object
+        :param feature_list: list of features to add to DataFrame
+        :return: the GFF object with feature list appended
+        """
         if feature_list is not None:
             for ft in feature_list:
-                df = df.append(cls.df_from_feature(ft), ignore_index=True)
-        return df
+                self.df = self.df.append(self.df_from_feature(ft), ignore_index=True)
+        return self
 
     @staticmethod
     def df_from_feature(ft):
@@ -205,15 +210,42 @@ class GFF(Gff3DataFrame):
         :param ft: the feature to convert into a dataframe
         :return: the resulting dataframe
         """
-        source = ft.qualifiers['source'] if 'source' in ft.qualifiers else ''
-        score = ft.qualifiers['score'] if 'score' in ft.qualifiers else '0'
-        if 'phase' in ft.qualifiers:
-            phase = ft.qualifiers['phase']
-        elif 'frame' in ft.qualifiers:
-            phase = ft.qualifiers['frame']
-        else:
-            phase = '0'
+        if ft is None:
+            return DataFrame(
+                columns=['seq_id', 'source', 'type', 'start', 'end', 'score', 'strand', 'phase', 'attributes'])
+
+        source = ft.qualifiers.get('source', 'unknown')
+        score = ft.qualifiers.get('score', '0')
+        phase = ft.qualifiers.get('phase', ft.qualifiers.get('frame', '0'))
         strand = ['-', '?', '+'][ft.location.strand + 1]
+        qual_off = ['phase', 'source', 'score']
+        qualifiers = ';'.join([k + '=' + v for k, v in ft.qualifiers.items() if k not in qual_off] + ['id=' + ft.id])
         return DataFrame([[ft.location.ref, source, ft.type, str(int(ft.location.start)), str(int(ft.location.end)),
-                           score, strand, phase, ';'.join([k + '=' + v for k, v in ft.qualifiers.items()])]],
+                           score, strand, phase, qualifiers]],
                          columns=['seq_id', 'source', 'type', 'start', 'end', 'score', 'strand', 'phase', 'attributes'])
+
+    def to_feature_list(self, parents=None):
+        """
+        Converts features in a GFF object into a list of SeqFeatureEM2 objects
+        :param parents: list of references to parent SeqRecord objects or a single parent reference if all features are
+        defined in the same parent. If it is a list, it should be of the same length as the dataframe, repeating
+        references as needed to get the right number.
+        :return: a list of SeqFeatureEM2 objects
+        """
+        if isinstance(parents, list) is False:
+            parents = [parents] * len(self.df)
+        if len(parents) != len(self.df):
+            raise ValueError('The number of parents should match the number of features unless all features have the'
+                             'same parent, in which case only one reference can be specified.')
+        feature_list = []
+        strands = {'-': -1, '?': 0, '+': 1}
+        for index, row in self.df.iterrows():
+            qualifiers = {q.split('=')[0]: q.split('=')[1] for q in row['attributes'].split(';')}
+            for c in ['source', 'phase', 'score']:
+                qualifiers[c] = row[c]
+            feature_list.append(
+                SeqFeatureEM2(parent=parents[index], location=FeatureLocation(int(row['start']), int(row['end'])),
+                              type=row['type'], id=qualifiers.pop('id', '<unknown id>'),
+                              strand=int(strands[row['strand']]), ref=row['seq_id'], qualifiers=qualifiers))
+        print([f.parent for f in feature_list])
+        return feature_list
