@@ -42,23 +42,19 @@ class SeqFeatureTests(unittest.TestCase):
             cls.sprot.features[4].lies_within(30, 42)
             cls.sprot.features[5].lies_within(0, 10)
 
-
-    @classmethod
-    def test_contains(cls):
-        assert cls.sprot.features[2].contains(20)
-        assert not cls.sprot.features[2].contains(35)
-
     @classmethod
     def test_overlaps(cls):
         assert cls.sprot.features[2].overlaps(20, 25)
         assert cls.sprot.features[2].overlaps(20, 40)
+        assert cls.sprot.features[2].overlaps(20)
+        assert not cls.sprot.features[2].overlaps(35)
         assert not cls.sprot.features[2].overlaps(2, 5)
 
     @classmethod
-    def test_contains_fuzzy(cls):
+    def test_overlaps_fuzzy(cls):
         with pytest.warns(UserWarning):
-            cls.sprot.features[4].contains(35)
-            cls.sprot.features[5].contains(3)
+            cls.sprot.features[4].overlaps(35)
+            cls.sprot.features[5].overlaps(3)
 
     @classmethod
     def test_covers(cls):
