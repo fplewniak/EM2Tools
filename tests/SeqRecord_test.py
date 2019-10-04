@@ -21,14 +21,15 @@ class SeqRecord_FeatureTests(unittest.TestCase):
         SeqFeatureEM2(parent=rec, location=FeatureLocation(15, 20), strand=1, id='C'),
         SeqFeatureEM2(parent=rec, location=FeatureLocation(20, 30), strand=1, id='D'),
         SeqFeatureEM2(parent=rec, location=FeatureLocation(6, 10), strand=-1, id='F'),
-        SeqFeatureEM2(parent=rec, location=FeatureLocation(18, 25), strand=-1, id='G')
+        SeqFeatureEM2(parent=rec, location=FeatureLocation(18, 25), strand=-1, id='G'),
+        SeqFeatureEM2(parent=rec, location=FeatureLocation(16, 19), strand=0, id='H')
     ]
 
     @classmethod
     def test_overlap(cls):
-        assert [f.id for f in cls.rec.overlap(16, 25)] == ['C', 'D', 'G']
-        assert [f.id for f in cls.rec.overlap(16)] == ['C']
-        assert [f.id for f in cls.rec.overlap(16, 25, strand=-1)] == ['G']
+        assert [f.id for f in cls.rec.overlap(16, 25)] == ['C', 'D', 'G', 'H']
+        assert [f.id for f in cls.rec.overlap(16)] == ['C', 'H']
+        assert [f.id for f in cls.rec.overlap(16, 25, strand=-1)] == ['G', 'H']
 
     def test_features_after(self):
         assert True is False

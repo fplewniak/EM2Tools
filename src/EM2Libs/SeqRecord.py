@@ -20,15 +20,13 @@ class SeqRecordEM2(SeqRecord):
         """
         Retrieves features that overlap a given position range.
         :param strand: strand specification of features to be returned. If strand is 0, then features on
-        both strands are returned
+        both strands are returned. If feature.strand is 0, then all strands will match.
         :param start: start of range
         :param end: end of range, if None, then end=start
         """
         if end is None:
             end = start
-        if strand == 0:
-            return [f for f in self.features if f.overlaps(start, end)]
-        return [f for f in self.features if f.overlaps(start, end) and f.strand == strand]
+        return [f for f in self.features if f.overlaps(start, end) and f.strand * strand >= 0]
 
     def feature_after(self, position, strand=1, nearest=False):
         """
