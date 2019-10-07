@@ -66,14 +66,16 @@ class SeqRecordEM2(SeqRecord):
             return rev_list
         if nearest is True:
             if len(after_fwd) == len(after_rev) == 0:
-                return []
-            if len(after_fwd) == 0:
-                return rev_list
-            if len(after_rev) == 0:
+                nearest_list = []
+            elif len(after_fwd) == 0:
+                nearest_list = rev_list
+            elif len(after_rev) == 0:
+                nearest_list = fwd_list
+            elif fwd_list[0].location.start - position < position - rev_list[0].location.end:
                 return fwd_list
-            if fwd_list[0].location.start - position < position - rev_list[0].location.end:
-                return fwd_list
-            return rev_list
+            else:
+                nearest_list = rev_list
+            return nearest_list
         return list(set(fwd_list + rev_list))
 
     def feature_before(self, position, strand=0, nearest=False):
@@ -95,14 +97,16 @@ class SeqRecordEM2(SeqRecord):
             return rev_list
         if nearest is True:
             if len(before_fwd) == len(before_rev) == 0:
-                return []
-            if len(before_fwd) == 0:
-                return rev_list
-            if len(before_rev) == 0:
-                return fwd_list
-            if position - fwd_list[0].location.end < rev_list[0].location.start - position:
-                return fwd_list
-            return rev_list
+                nearest_list = []
+            elif len(before_fwd) == 0:
+                nearest_list = rev_list
+            elif len(before_rev) == 0:
+                nearest_list = fwd_list
+            elif position - fwd_list[0].location.end < rev_list[0].location.start - position:
+                nearest_list = fwd_list
+            else:
+                nearest_list = rev_list
+            return nearest_list
         return list(set(fwd_list + rev_list))
 
     def surrounding_features(self, position, strand=0, nearest=False):
@@ -116,7 +120,9 @@ class SeqRecordEM2(SeqRecord):
         """
         if nearest is False:
             return list(set(self.feature_after(position, strand) + self.feature_before(position, strand)))
-
+        feat_list = {f: min(abs(position - f.location.start), abs(position - f.location.end)) for f in list(
+            set(self.feature_after(position, strand, True) + self.feature_before(position, strand, True)))}
+        return [f for f, v in feat_list.items() if v == min(feat_list.values())]
 
     def stitch(self, other=None, offset=0):
         """
