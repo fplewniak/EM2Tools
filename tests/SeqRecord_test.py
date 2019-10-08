@@ -60,6 +60,8 @@ class SeqRecordFeatureTests(unittest.TestCase):
 
     @classmethod
     def test_surrounding(cls):
+        assert sorted([f.id for f in cls.rec.surrounding_features(19)]) == ['B', 'D', 'F']
+        assert sorted([f.id for f in cls.rec.surrounding_features(19, nearest=True)]) == ['D']
         assert sorted([f.id for f in cls.rec.surrounding_features(16)]) == ['B', 'D', 'F', 'G']
         assert sorted([f.id for f in cls.rec.surrounding_features(16, strand=1)]) == ['B', 'D']
         assert sorted([f.id for f in cls.rec.surrounding_features(16, strand=-1)]) == ['F', 'G']
@@ -74,9 +76,51 @@ class SeqRecordFeatureTests(unittest.TestCase):
         assert sorted([f.id for f in cls.rec.surrounding_features(11, nearest=True, strand=1)]) == ['B']
         assert sorted([f.id for f in cls.rec.surrounding_features(11, nearest=True, strand=-1)]) == ['F']
 
+
 class SeqRecordStitchingTests(unittest.TestCase):
-    def test_stitch(self):
-        assert True is False
+    rec1 = SeqRecordEM2(SeqEM2.dna('ATGAGTCGGTAACGATGCATGCATGCAGCTGACGC'), id='Rec1', name='DummyDNA')
+    rec2 = SeqRecordEM2(SeqEM2.dna('CAGCTGACGCATGAGTCGGTAACGATGCATGCATG'), id='Rec2', name='DummyDNA')
+    rec3 = SeqRecordEM2(SeqEM2.dna('CACCTGACGCATGAGTCGGTAACGATGCATGCATG'), id='Rec3', name='DummyDNA')
+
+    rec1.features = [
+        SeqFeatureEM2(parent=rec1, location=FeatureLocation(0, 5), strand=1, id='A1'),
+        SeqFeatureEM2(parent=rec1, location=FeatureLocation(28, 33), strand=1, id='B1')
+    ]
+    rec2.features = [
+        SeqFeatureEM2(parent=rec1, location=FeatureLocation(0, 5), strand=1, id='A2'),
+        SeqFeatureEM2(parent=rec1, location=FeatureLocation(28, 33), strand=1, id='B2')
+    ]
+
+    @classmethod
+    def test_stitch_sequences(cls):
+        assert str(cls.rec1.stitch(cls.rec1, offset=3).seq) == str(cls.rec1.seq) + 'NNN' + str(cls.rec1.seq)
+        assert str(cls.rec1.stitch(cls.rec2,
+                                   offset=-10).seq) == 'ATGAGTCGGTAACGATGCATGCATGCAGCTGACGCATGAGTCGGTAACGATGCATGCATG'
+
+    @classmethod
+    def test_stitch_differences(cls):
+        with pytest.raises(ValueError, match=r'.*Overlapping subsequences are different.*'):
+            assert cls.rec1.stitch(cls.rec3, offset=-10).seq
+        with pytest.raises(ValueError, match=r'Sequences are not of the same type.*'):
+            assert cls.rec1.stitch(SeqRecordEM2(SeqEM2.protein('HITHERE')))
+
+    @classmethod
+    def test_stitch_features(cls):
+        newrecord = cls.rec1.stitch(cls.rec1, offset=3)
+        assert [(f.id, int(f.location.start), int(f.location.end), f.strand, f.ref) for f in newrecord.features] == [
+            ('A1', 0, 5, 1, '<unknown id>'),
+            ('B1', 28, 33, 1, '<unknown id>'),
+            ('A1', 38, 43, 1, '<unknown id>'),
+            ('B1', 66, 71, 1, '<unknown id>'),
+        ]
+
+        newrecord = cls.rec1.stitch(cls.rec2, offset=-10)
+        assert [(f.id, int(f.location.start), int(f.location.end), f.strand, f.ref) for f in newrecord.features] == [
+            ('A1', 0, 5, 1, '<unknown id>'),
+            ('B1', 28, 33, 1, '<unknown id>'),
+            ('A2', 25, 30, 1, '<unknown id>'),
+            ('B2', 53, 58, 1, '<unknown id>'),
+        ]
 
 
 class SeqRecordComparisonTests(unittest.TestCase):

@@ -5,7 +5,10 @@ Extension module to the Biopython Bio.SeqRecord module
 #  CeCILL FREE SOFTWARE LICENSE AGREEMENT Version 2.1 dated 2013-06-21
 #  Frédéric PLEWNIAK, CNRS/Université de Strasbourg UMR7156 - GMGM
 #
+from Bio.SeqFeature import FeatureLocation
 from Bio.SeqRecord import SeqRecord
+from EM2Libs.Seq import SeqEM2
+from EM2Libs.SeqFeature import SeqFeatureEM2
 
 
 class SeqRecordEM2(SeqRecord):
@@ -21,6 +24,9 @@ class SeqRecordEM2(SeqRecord):
 
     def __le__(self, other):
         return self.id.__le__(other.id)
+
+    def __le___(self, other):
+        return self.__le__(other)
 
     def __eq__(self, other):
         return self.id.__eq__(other.id)
@@ -130,4 +136,31 @@ class SeqRecordEM2(SeqRecord):
         :param other: the other SeqRecordEM2 object
         :param offset: the offset of the two sequences. If the value is negative, then the two sequences overlap.
         """
-        raise NotImplementedError
+
+        if offset >= 0:
+            if self.seq.is_protein():
+                newseq = str(self.seq) + 'X' * offset + str(other.seq)
+            else:
+                newseq = str(self.seq) + 'N' * offset + str(other.seq)
+        else:
+            if str(self.seq)[offset:] != str(other.seq)[0:-offset]:
+                raise ValueError('Warning!!! Overlapping subsequences are different.')
+            newseq = str(self.seq) + str(other.seq)[-offset:]
+
+        if self.seq.is_protein() and other.seq.is_protein():
+            newrecord = SeqRecordEM2(SeqEM2.protein(newseq))
+        elif not (self.seq.is_protein() or other.seq.is_protein()):
+            newrecord = SeqRecordEM2(SeqEM2.dna(newseq))
+        else:
+            raise ValueError('Sequences are not of the same type. It is impossible to stitch them.')
+
+        for f in self.features:
+            newrecord.features.append(SeqFeatureEM2(parent=newrecord, location=f.location, strand=f.strand, id=f.id))
+
+        for f in other.features:
+            newrecord.features.append(SeqFeatureEM2(parent=newrecord,
+                                                    location=FeatureLocation(f.location.start + len(self.seq) + offset,
+                                                                             f.location.end + len(self.seq) + offset),
+                                                    strand=f.strand, id=f.id))
+
+        return newrecord
