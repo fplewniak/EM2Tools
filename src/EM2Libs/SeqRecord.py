@@ -5,6 +5,8 @@ Extension module to the Biopython Bio.SeqRecord module
 #  CeCILL FREE SOFTWARE LICENSE AGREEMENT Version 2.1 dated 2013-06-21
 #  Frédéric PLEWNIAK, CNRS/Université de Strasbourg UMR7156 - GMGM
 #
+import warnings
+
 from Bio.SeqFeature import FeatureLocation
 from Bio.SeqRecord import SeqRecord
 from EM2Libs.Seq import SeqEM2
@@ -130,7 +132,7 @@ class SeqRecordEM2(SeqRecord):
             set(self.feature_after(position, strand, True) + self.feature_before(position, strand, True)))}
         return [f for f, v in feat_list.items() if v == min(feat_list.values())]
 
-    def join(self, other=None, offset=0):
+    def join(self, other=None, offset=0, keepself=True):
         """
         Joins two SeqRecordEM2 objects into a new one representing the resulting merged sequence
         :param other: the other SeqRecordEM2 object
@@ -144,8 +146,11 @@ class SeqRecordEM2(SeqRecord):
                 newseq = str(self.seq) + 'N' * offset + str(other.seq)
         else:
             if str(self.seq)[offset:] != str(other.seq)[0:-offset]:
-                raise ValueError('Warning!!! Overlapping subsequences are different.')
-            newseq = str(self.seq) + str(other.seq)[-offset:]
+                warnings.warn('Warning!!! Overlapping subsequences are different.')
+            if keepself is True:
+                newseq = str(self.seq) + str(other.seq)[-offset:]
+            else:
+                newseq = str(self.seq)[0:offset] + str(other.seq)
 
         if self.seq.is_protein() and other.seq.is_protein():
             newrecord = SeqRecordEM2(SeqEM2.protein(newseq))

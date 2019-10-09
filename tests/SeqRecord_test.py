@@ -94,13 +94,17 @@ class SeqRecordStitchingTests(unittest.TestCase):
     @classmethod
     def test_join_sequences(cls):
         assert str(cls.rec1.join(cls.rec1, offset=3).seq) == str(cls.rec1.seq) + 'NNN' + str(cls.rec1.seq)
-        assert str(cls.rec1.join(cls.rec2,
-                                 offset=-10).seq) == 'ATGAGTCGGTAACGATGCATGCATGCAGCTGACGCATGAGTCGGTAACGATGCATGCATG'
+        assert str(
+            cls.rec1.join(cls.rec2, offset=-10).seq) == 'ATGAGTCGGTAACGATGCATGCATGCAGCTGACGCATGAGTCGGTAACGATGCATGCATG'
+        assert str(
+            cls.rec1.join(cls.rec3, offset=-10).seq) == 'ATGAGTCGGTAACGATGCATGCATGCAGCTGACGCATGAGTCGGTAACGATGCATGCATG'
+        assert str(cls.rec1.join(cls.rec3, offset=-10,
+                                 keepself=False).seq) == 'ATGAGTCGGTAACGATGCATGCATGCACCTGACGCATGAGTCGGTAACGATGCATGCATG'
 
     @classmethod
     def test_join_differences(cls):
-        with pytest.raises(ValueError, match=r'.*Overlapping subsequences are different.*'):
-            assert cls.rec1.join(cls.rec3, offset=-10).seq
+        with pytest.warns(UserWarning, match=r'.*Overlapping subsequences are different.*'):
+            assert cls.rec1.join(cls.rec3, offset=-10)
         with pytest.raises(ValueError, match=r'Sequences are not of the same type.*'):
             assert cls.rec1.join(SeqRecordEM2(SeqEM2.protein('HITHERE')))
 

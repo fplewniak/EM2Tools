@@ -188,7 +188,7 @@ class GFFtests(unittest.TestCase):
                 i].__str__()
             assert GFF(input_df=cls.df1).to_feature_list(parents=cls.sprot)[i].parent.id == cls.sprot.features[
                 i].parent.id
-            assert GFF(input_df=cls.df1).to_feature_list()[i].parent == None
+            assert GFF(input_df=cls.df1).to_feature_list()[i].parent is None
         for i in range(0, len(cls.sprot.features)):
             assert GFF(input_df=cls.df1).to_feature_list(parents=[cls.sprot, cls.sprot, cls.sprot])[i].__str__() == \
                    cls.sprot.features[i].__str__()
