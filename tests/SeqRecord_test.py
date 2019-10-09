@@ -93,13 +93,20 @@ class SeqRecordStitchingTests(unittest.TestCase):
 
     @classmethod
     def test_join_sequences(cls):
-        assert str(cls.rec1.join(cls.rec1, offset=3).seq) == str(cls.rec1.seq) + 'NNN' + str(cls.rec1.seq)
+        assert str(cls.rec1.join(cls.rec2, offset=3).seq) == str(cls.rec1.seq) + 'NNN' + str(cls.rec2.seq)
+        assert str(cls.rec2.join(cls.rec1, offset=-73).seq) == str(cls.rec1.seq) + 'NNN' + str(cls.rec2.seq)
         assert str(
             cls.rec1.join(cls.rec2, offset=-10).seq) == 'ATGAGTCGGTAACGATGCATGCATGCAGCTGACGCATGAGTCGGTAACGATGCATGCATG'
+        assert str(
+            cls.rec2.join(cls.rec1, offset=-60).seq) == 'ATGAGTCGGTAACGATGCATGCATGCAGCTGACGCATGAGTCGGTAACGATGCATGCATG'
         assert str(
             cls.rec1.join(cls.rec3, offset=-10).seq) == 'ATGAGTCGGTAACGATGCATGCATGCAGCTGACGCATGAGTCGGTAACGATGCATGCATG'
         assert str(cls.rec1.join(cls.rec3, offset=-10,
                                  keepself=False).seq) == 'ATGAGTCGGTAACGATGCATGCATGCACCTGACGCATGAGTCGGTAACGATGCATGCATG'
+        assert str(
+            cls.rec3.join(cls.rec1, offset=-60).seq) == 'ATGAGTCGGTAACGATGCATGCATGCACCTGACGCATGAGTCGGTAACGATGCATGCATG'
+        assert str(cls.rec3.join(cls.rec1, offset=-60,
+                                 keepself=False).seq) == 'ATGAGTCGGTAACGATGCATGCATGCAGCTGACGCATGAGTCGGTAACGATGCATGCATG'
 
     @classmethod
     def test_join_differences(cls):
@@ -118,6 +125,14 @@ class SeqRecordStitchingTests(unittest.TestCase):
             ('B1', 66, 71, 1, '<unknown id>'),
         ]
 
+        newrecord = cls.rec1.join(cls.rec1, offset=-73)
+        assert [(f.id, int(f.location.start), int(f.location.end), f.strand, f.ref) for f in newrecord.features] == [
+            ('A1', 0, 5, 1, '<unknown id>'),
+            ('B1', 28, 33, 1, '<unknown id>'),
+            ('A1', 38, 43, 1, '<unknown id>'),
+            ('B1', 66, 71, 1, '<unknown id>'),
+        ]
+
         newrecord = cls.rec1.join(cls.rec2, offset=-10)
         assert [(f.id, int(f.location.start), int(f.location.end), f.strand, f.ref) for f in newrecord.features] == [
             ('A1', 0, 5, 1, '<unknown id>'),
@@ -126,6 +141,13 @@ class SeqRecordStitchingTests(unittest.TestCase):
             ('B2', 53, 58, 1, '<unknown id>'),
         ]
 
+        newrecord = cls.rec2.join(cls.rec1, offset=-60)
+        assert [(f.id, int(f.location.start), int(f.location.end), f.strand, f.ref) for f in newrecord.features] == [
+            ('A1', 0, 5, 1, '<unknown id>'),
+            ('B1', 28, 33, 1, '<unknown id>'),
+            ('A2', 25, 30, 1, '<unknown id>'),
+            ('B2', 53, 58, 1, '<unknown id>'),
+        ]
 
 class SeqRecordComparisonTests(unittest.TestCase):
     rec1 = SeqRecordEM2(SeqEM2.dna('ATGAGTCGGTAACGATGCATGCATGCAGCTGACGC'), id='Rec1', name='DummyDNA')
