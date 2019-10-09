@@ -92,21 +92,21 @@ class SeqRecordStitchingTests(unittest.TestCase):
     ]
 
     @classmethod
-    def test_stitch_sequences(cls):
-        assert str(cls.rec1.stitch(cls.rec1, offset=3).seq) == str(cls.rec1.seq) + 'NNN' + str(cls.rec1.seq)
-        assert str(cls.rec1.stitch(cls.rec2,
-                                   offset=-10).seq) == 'ATGAGTCGGTAACGATGCATGCATGCAGCTGACGCATGAGTCGGTAACGATGCATGCATG'
+    def test_join_sequences(cls):
+        assert str(cls.rec1.join(cls.rec1, offset=3).seq) == str(cls.rec1.seq) + 'NNN' + str(cls.rec1.seq)
+        assert str(cls.rec1.join(cls.rec2,
+                                 offset=-10).seq) == 'ATGAGTCGGTAACGATGCATGCATGCAGCTGACGCATGAGTCGGTAACGATGCATGCATG'
 
     @classmethod
-    def test_stitch_differences(cls):
+    def test_join_differences(cls):
         with pytest.raises(ValueError, match=r'.*Overlapping subsequences are different.*'):
-            assert cls.rec1.stitch(cls.rec3, offset=-10).seq
+            assert cls.rec1.join(cls.rec3, offset=-10).seq
         with pytest.raises(ValueError, match=r'Sequences are not of the same type.*'):
-            assert cls.rec1.stitch(SeqRecordEM2(SeqEM2.protein('HITHERE')))
+            assert cls.rec1.join(SeqRecordEM2(SeqEM2.protein('HITHERE')))
 
     @classmethod
-    def test_stitch_features(cls):
-        newrecord = cls.rec1.stitch(cls.rec1, offset=3)
+    def test_join_features(cls):
+        newrecord = cls.rec1.join(cls.rec1, offset=3)
         assert [(f.id, int(f.location.start), int(f.location.end), f.strand, f.ref) for f in newrecord.features] == [
             ('A1', 0, 5, 1, '<unknown id>'),
             ('B1', 28, 33, 1, '<unknown id>'),
@@ -114,7 +114,7 @@ class SeqRecordStitchingTests(unittest.TestCase):
             ('B1', 66, 71, 1, '<unknown id>'),
         ]
 
-        newrecord = cls.rec1.stitch(cls.rec2, offset=-10)
+        newrecord = cls.rec1.join(cls.rec2, offset=-10)
         assert [(f.id, int(f.location.start), int(f.location.end), f.strand, f.ref) for f in newrecord.features] == [
             ('A1', 0, 5, 1, '<unknown id>'),
             ('B1', 28, 33, 1, '<unknown id>'),
