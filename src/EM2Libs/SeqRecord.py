@@ -130,7 +130,7 @@ class SeqRecordEM2(SeqRecord):
             set(self.feature_after(position, strand, True) + self.feature_before(position, strand, True)))}
         return [f for f, v in feat_list.items() if v == min(feat_list.values())]
 
-    def stitch(self, other=None, offset=0):
+    def join(self, other=None, offset=0):
         """
         Joins two SeqRecordEM2 objects into a new one representing the resulting merged sequence
         :param other: the other SeqRecordEM2 object
@@ -152,7 +152,7 @@ class SeqRecordEM2(SeqRecord):
         elif not (self.seq.is_protein() or other.seq.is_protein()):
             newrecord = SeqRecordEM2(SeqEM2.dna(newseq))
         else:
-            raise ValueError('Sequences are not of the same type. It is impossible to stitch them.')
+            raise ValueError('Sequences are not of the same type. It is impossible to join them.')
 
         for f in self.features:
             newrecord.features.append(SeqFeatureEM2(parent=newrecord, location=f.location, strand=f.strand, id=f.id))
