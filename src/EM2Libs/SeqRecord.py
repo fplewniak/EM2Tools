@@ -135,9 +135,13 @@ class SeqRecordEM2(SeqRecord):
     def join(self, other=None, offset=0, keepself=True):
         """
         Joins two SeqRecordEM2 objects into a new one representing the resulting merged sequence
+        :param keepself: if True and overlapping subsequences are different, then keep sequence from slef record,
+        otherwise keep the sequence of other record.
         :param other: the other SeqRecordEM2 object
         :param offset: the offset of the two sequences. If the value is negative, then the two sequences overlap.
         """
+        if len(self.seq) + offset < 0:
+            return other.join(self, offset=-len(self.seq) - len(other.seq) - offset, keepself=not keepself)
 
         if offset >= 0:
             if self.seq.is_protein():
