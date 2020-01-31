@@ -22,8 +22,10 @@ class SeqFeatureEM2(SeqFeature):
     def lies_within(self, start, end):
         """
         Determines whether feature lies entirely with the specified range. Fuzzy positions are turned into integers.
+
         :param start: start of range either int or ExactPosition
         :param end: end of range either int or ExactPosition
+
         :return: True if feature boundaries lie with the specified range.
         """
         if not all([isinstance(x, ExactPosition) for x in [start, end, self.location.start, self.location.end]]):
@@ -33,8 +35,10 @@ class SeqFeatureEM2(SeqFeature):
     def covers(self, start, end):
         """
         Determines whether feature covers the whole range specified by start and end
+
         :param start: start of range either int or ExactPosition
         :param end: end of range either int or ExactPosition, if None then end=start
+
         :return: True if feature covers the specified range
         """
         return self.overlaps(start) and self.overlaps(end)
@@ -42,8 +46,10 @@ class SeqFeatureEM2(SeqFeature):
     def overlaps(self, start, end=None):
         """
         Determines whether feayur overlaps a position range.
+
         :param start: start of range either int or ExactPosition
         :param end: end of range either int or ExactPosition
+
         :return: True if feature overlaps range
         """
         if end is None:
@@ -57,6 +63,7 @@ class SeqFeatureEM2(SeqFeature):
     def intersect(self, other, **kwargs):
         """
         Creates a new feature which is the intersection of feature and another one
+
         :param other: the other feature
         """
         if id(self.parent) != id(other.parent):

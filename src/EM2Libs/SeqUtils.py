@@ -14,8 +14,10 @@ def ambiguous2string(code, protein=False):
     """
     Converts an ambiguous residue into a string with all compatible unambiguous residues. If the input code is not
     ambiguous, it is returned without any conversion.
+
     :param code: the input code to be converted into a list of residues.
     :param protein: True if residue is amino-acid
+
     :return: a string corresponding to the unambiguous residues compatible with the input code
     """
     if protein is True:
@@ -32,8 +34,10 @@ def ambiguous2string(code, protein=False):
 def isambiguous(code, protein=False):
     """
     Checks code is an ambiguous residue specification or not.
+
     :param code: the input code that must be checked for ambiguity
     :param protein: True if code is amino-acid code
+
     :return: Boolean True if code is ambiguous, False otherwise
     """
     return (protein is False and code in 'RYSWKMBDHVN') or (protein is True and code in 'BZX')
@@ -51,6 +55,7 @@ def pattern2regex(pattern, protein=False):
 
     :param pattern: the pattern definition (string)
     :param protein: True if pattern applies to a protein sequence, False otherwise.
+
     :return: the regular expression pattern as a string
     """
     pattern = re.sub(r'{(\w+)}', r'[^\1]', pattern)  # none of the specified residues
@@ -97,8 +102,10 @@ class SeqFilter:
     def length(self, minlength=None, maxlength=None):
         """
         Minimal and maximal length specification
+
         :param minlength: minimal accepted length
         :param maxlength: maximal accepted length
+
         :return: SeqFilter instance
         """
         self._minlength = minlength
@@ -117,7 +124,9 @@ class SeqFilter:
     def name(self, name=None):
         """
         sequence record name specification
+
         :param name: name regular expression
+
         :return: SeqFilter instance
         """
         self._name = name
@@ -135,7 +144,9 @@ class SeqFilter:
     def length_applies(self, r):
         """
         test whether length criterion applies to the sequence record
+
         :param r: the sequence record to test
+
         :return: boolean True if criterion applies or False otherwise
         """
         if self._keep is True:
@@ -146,7 +157,9 @@ class SeqFilter:
     def pattern_applies(self, r):
         """
         test whether parameter criterion applies to the sequence record
+
         :param r: the sequence record to test
+
         :return: boolean True if criterion applies or False otherwise
         """
         if self._keep is True:
@@ -156,7 +169,9 @@ class SeqFilter:
     def name_applies(self, r):
         """
         test whether name criterion applies to the sequence record
+
         :param r: the sequence record to test
+
         :return: boolean True if criterion applies or False otherwise
         """
         if self._keep is True:
@@ -168,6 +183,7 @@ class SeqFilter:
         Filters a list of SeqRecords instances, keeping only records satisfying the specified criteria of length, match
         of a pattern, name specification. It is possible to invert the filtering process by setting the keep boolean to
         False and thus only keep records which do not satisfy the criteria.
+
         :param records: list of SeqRecord instances to apply
         """
         filtered = []
@@ -195,7 +211,9 @@ class GFF(Gff3DataFrame):
     def add_feature_list(self, feature_list=None):
         """
         Adds a list of feature to the list of an existing GFF object
+
         :param feature_list: list of features to add to DataFrame
+
         :return: the GFF object with feature list appended
         """
         if feature_list is not None:
@@ -207,7 +225,9 @@ class GFF(Gff3DataFrame):
     def df_from_feature(ft):
         """
         Create a pandas DataFrame from a feature (SeqFeatureEM2 or SeqFeature)
+
         :param ft: the feature to convert into a dataframe
+
         :return: the resulting dataframe
         """
         if ft is None:
@@ -227,9 +247,11 @@ class GFF(Gff3DataFrame):
     def to_feature_list(self, parents=None):
         """
         Converts features in a GFF object into a list of SeqFeatureEM2 objects
+
         :param parents: list of references to parent SeqRecord objects or a single parent reference if all features are
         defined in the same parent. If it is a list, it should be of the same length as the dataframe, repeating
         references as needed to get the right number.
+
         :return: a list of SeqFeatureEM2 objects
         """
         if isinstance(parents, list) is False:

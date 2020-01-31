@@ -24,7 +24,9 @@ checking for redundancy. If you need a non redundant set instead of a list, then
     def arg2list(values):
         """
 This method converts the argument values containing elements and/or files containing elements into a list of elements.
+
         :param values: argument values, this is supposed to be a list of arguments or None (returns an empty list)
+
         :return: the list of elements or an empty list if the argument was None
         """
         arglist = []
@@ -56,7 +58,9 @@ one copy of each element. If you do not want to remove redundancy, then use GetL
     def arg2set(values):
         """
 This method converts the argument values containing elements and/or files containing elements into a set of elements.
+
         :param values: argument values, this is supposed to be a list of arguments or None (returns an empty set)
+
         :return: the set of elements or an empty set if the argument was None
         """
         return set(GetList.arg2list(values))

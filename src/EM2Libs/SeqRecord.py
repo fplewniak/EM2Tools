@@ -45,11 +45,13 @@ class SeqRecordEM2(SeqRecord):
     def overlap(self, start, end=None, strand=0):
         """
         Retrieves features that overlap a given position range.
-        :return: a list of overlaping features
+
         :param strand: strand specification of features to be returned. If strand is 0, then features on
         both strands are returned. If feature.strand is 0, then all strands will match.
         :param start: start of range
         :param end: end of range, if None, then end=start
+
+        :return: a list of overlaping features
         """
         if end is None:
             end = start
@@ -59,10 +61,13 @@ class SeqRecordEM2(SeqRecord):
         """
         Retrieves the features immediately after (but not overlaping) the specified position, on one strand or both.
         If nearest is True, then only the nearest ones are returned.
+
         :param nearest: if True, only the nearest features are returned. This only makes sense when strand is O
         :param strand: strand specification of features to be returned. If strand is 0, then features on
          both strands are returned
         :param position: the position
+
+        :return: a list of features after the specified position
         """
         after_fwd = {f: f.location.start for f in self.features if f.location.start > position and f.strand in [0, 1]}
         after_rev = {f: f.location.end for f in self.features if f.location.end < position and f.strand in [0, -1]}
@@ -90,10 +95,13 @@ class SeqRecordEM2(SeqRecord):
         """
         Retrieves the features immediately before (but not overlaping) the specified position, on one strand or both.
         If nearest is True, then only the nearest ones are returned.
+
         :param nearest: if True, only the nearest features are returned. This only makes sense when strand is O
         :param strand: strand specification of features to be returned. If strand is 0, then features on
          both strands are returned
         :param position: the position
+
+        :return: a list of features before the specified position
         """
         before_fwd = {f: f.location.end for f in self.features if f.location.end < position and f.strand in [0, 1]}
         before_rev = {f: f.location.start for f in self.features if f.location.start > position and f.strand in [0, -1]}
@@ -121,10 +129,13 @@ class SeqRecordEM2(SeqRecord):
         """
         Retrieves all the features around a given position but not overlaping it. If nearest is True, then only the
         nearest features are returned.
+
         :param position: the position
         :param nearest: if True, only the nearest features are returned.
         :param strand: strand specification of features to be returned. If strand is 0, then features on
          both strands are returned
+
+        :return: a list of features around the specified position
         """
         if nearest is False:
             return list(set(self.feature_after(position, strand) + self.feature_before(position, strand)))
@@ -135,10 +146,13 @@ class SeqRecordEM2(SeqRecord):
     def join(self, other=None, offset=0, keepself=True):
         """
         Joins two SeqRecordEM2 objects into a new one representing the resulting merged sequence
-        :param keepself: if True and overlapping subsequences are different, then keep sequence from slef record,
-        otherwise keep the sequence of other record.
+
+        :param keepself: if True and overlapping subsequences are different, then keep sequence from self record,
+         otherwise keep the sequence of other record.
         :param other: the other SeqRecordEM2 object
         :param offset: the offset of the two sequences. If the value is negative, then the two sequences overlap.
+
+        :return: the result of merging records as a new SeqRecordEM2 object
         """
         if len(self.seq) + offset < 0:
             return other.join(self, offset=-len(self.seq) - len(other.seq) - offset, keepself=not keepself)
