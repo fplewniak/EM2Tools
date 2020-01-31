@@ -12,7 +12,7 @@ from EM2Libs.SeqUtils import GFF
 from EM2Libs.Seq import SeqEM2
 from Bio.SeqRecord import SeqRecord
 from pandas import DataFrame
-from pandas.util.testing import assert_frame_equal
+from pandas.testing import assert_frame_equal
 
 
 class Pattern2Regex(unittest.TestCase):
