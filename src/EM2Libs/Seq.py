@@ -5,7 +5,6 @@ import re
 from typing import List, Union, Match
 
 from Bio.Seq import Seq
-from Bio.Alphabet import IUPAC
 
 import EM2Libs.SeqUtils
 
@@ -15,8 +14,9 @@ class SeqEM2(Seq):
     SeqEM2 class providing extension to Bio.Seq.Seq class of BioPython package.
     """
 
-    def __init__(self, data, alphabet):
-        super().__init__(data, alphabet)
+    def __init__(self, data, seqtype):
+        super().__init__(data)
+        self.seqtype = seqtype
 
     @classmethod
     def dna(cls, data):
@@ -25,7 +25,7 @@ class SeqEM2(Seq):
         :param data: The sequence string
         :return: a SeqEM2 DNA instance
         """
-        return cls(data, IUPAC.ExtendedIUPACDNA)
+        return cls(data, 'dna')
 
     @classmethod
     def protein(cls, data):
@@ -34,14 +34,14 @@ class SeqEM2(Seq):
         :param data: The sequence string
         :return: a SeqEM2 protein instance
         """
-        return cls(data, IUPAC.ExtendedIUPACProtein)
+        return cls(data, 'prot')
 
     def is_protein(self):
         """
         Tests whether sequence was created as a protein
         :return:
         """
-        return self.alphabet == IUPAC.ExtendedIUPACProtein
+        return self.seqtype == 'prot'
 
     def length_in_range(self, minlength=None, maxlength=None):
         """
