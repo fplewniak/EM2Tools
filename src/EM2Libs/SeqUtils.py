@@ -85,11 +85,11 @@ class SeqFilter:
     """
     Class for the creation of a sequence filter to specify filtering criteria and applying the filter to a list of
     sequence records.
-    minlength: minimum length of sequence
+    (minlength: minimum length of sequence
     maxlength: maximum length of sequence
     pattern: sequence pattern
     name: sequence name
-    keep: boolean, if True, keep the records respecting the criteria, otherwise, discard them and keep the others
+    keep: boolean, if True, keep the records respecting the criteria, otherwise, discard them and keep the others)
     """
 
     def __init__(self):
@@ -115,6 +115,7 @@ class SeqFilter:
     def pattern(self, pattern=None):
         """
         pattern specification
+
         :param pattern: pattern that must be in the sequence
         :return: SeqFilter instance
         """
@@ -126,7 +127,6 @@ class SeqFilter:
         sequence record name specification
 
         :param name: name regular expression
-
         :return: SeqFilter instance
         """
         self._name = name
@@ -135,6 +135,7 @@ class SeqFilter:
     def keep(self, keep=True):
         """
         Boolean defining whether the matching sequences must be kept (True) or removed (False)
+
         :param keep: True to keep positive sequences, False to remove them
         :return: SeqFilter instance
         """
@@ -146,7 +147,6 @@ class SeqFilter:
         test whether length criterion applies to the sequence record
 
         :param r: the sequence record to test
-
         :return: boolean True if criterion applies or False otherwise
         """
         if self._keep is True:
@@ -159,7 +159,6 @@ class SeqFilter:
         test whether parameter criterion applies to the sequence record
 
         :param r: the sequence record to test
-
         :return: boolean True if criterion applies or False otherwise
         """
         if self._keep is True:
@@ -171,7 +170,6 @@ class SeqFilter:
         test whether name criterion applies to the sequence record
 
         :param r: the sequence record to test
-
         :return: boolean True if criterion applies or False otherwise
         """
         if self._keep is True:
@@ -213,7 +211,6 @@ class GFF(Gff3DataFrame):
         Adds a list of feature to the list of an existing GFF object
 
         :param feature_list: list of features to add to DataFrame
-
         :return: the GFF object with feature list appended
         """
         if feature_list is not None:
@@ -227,7 +224,6 @@ class GFF(Gff3DataFrame):
         Create a pandas DataFrame from a feature (SeqFeatureEM2 or SeqFeature)
 
         :param ft: the feature to convert into a dataframe
-
         :return: the resulting dataframe
         """
         if ft is None:
@@ -249,9 +245,8 @@ class GFF(Gff3DataFrame):
         Converts features in a GFF object into a list of SeqFeatureEM2 objects
 
         :param parents: list of references to parent SeqRecord objects or a single parent reference if all features are
-        defined in the same parent. If it is a list, it should be of the same length as the dataframe, repeating
-        references as needed to get the right number.
-
+            defined in the same parent. If it is a list, it should be of the same length as the dataframe, repeating
+            references as needed to get the right number.
         :return: a list of SeqFeatureEM2 objects
         """
         if isinstance(parents, list) is False:

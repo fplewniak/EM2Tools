@@ -23,7 +23,7 @@ checking for redundancy. If you need a non redundant set instead of a list, then
     @staticmethod
     def arg2list(values):
         """
-This method converts the argument values containing elements and/or files containing elements into a list of elements.
+        This method converts the argument values containing elements and/or files containing elements into a list of elements.
 
         :param values: argument values, this is supposed to be a list of arguments or None (returns an empty list)
 
@@ -57,7 +57,7 @@ one copy of each element. If you do not want to remove redundancy, then use GetL
     @staticmethod
     def arg2set(values):
         """
-This method converts the argument values containing elements and/or files containing elements into a set of elements.
+        This method converts the argument values containing elements and/or files containing elements into a set of elements.
 
         :param values: argument values, this is supposed to be a list of arguments or None (returns an empty set)
 

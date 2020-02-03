@@ -22,6 +22,7 @@ class SeqEM2(Seq):
     def dna(cls, data):
         """
         Creates a DNA sequence
+
         :param data: The sequence string
         :return: a SeqEM2 DNA instance
         """
@@ -31,6 +32,7 @@ class SeqEM2(Seq):
     def protein(cls, data):
         """
         Creates a protein sequence
+
         :param data: The sequence string
         :return: a SeqEM2 protein instance
         """
@@ -39,6 +41,7 @@ class SeqEM2(Seq):
     def is_protein(self):
         """
         Tests whether sequence was created as a protein
+
         :return:
         """
         return self.seqtype == 'prot'
@@ -46,6 +49,7 @@ class SeqEM2(Seq):
     def length_in_range(self, minlength=None, maxlength=None):
         """
         Checks whether the sequence length is with the specified range.
+
         :param minlength: lower length bound
         :param maxlength: upper length bound
         :return: True if sequence length is within specified range, False otherwise
@@ -61,6 +65,7 @@ class SeqEM2(Seq):
     def re_search(self, regex):
         """
         Searches a sequence using a regular expression
+
         :param regex: the regular expression
         :return: a list of re.Match instances
         """
@@ -72,6 +77,7 @@ class SeqEM2(Seq):
     def search(self, pattern):
         """
         Searches sequence for a pattern specified with a fuzznuc or fuzzpro like syntax
+
         :param pattern: the pattern to be searched for that is converted into a rgular expression
         :return: a list of re.Match objects
         """

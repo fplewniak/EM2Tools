@@ -12,7 +12,6 @@ Welcome to EM2Tools's documentation!
 
    api/index.rst
 
-
 Indices and tables
 ==================
 
