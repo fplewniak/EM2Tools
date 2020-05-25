@@ -7,23 +7,13 @@ import pytest
 
 
 @pytest.fixture(scope="session")
-def protein_sequence():
-    return SeqEM2.protein('HITHEREFREDANDGREG')
-
-
-@pytest.fixture(scope="session")
-def dna_sequence():
-    return SeqEM2.dna('CATAGCGCGCGGCTAAA')
-
-
-@pytest.fixture(scope="session")
-def protein_record():
+def protein_rec():
     return SeqRecordEM2(SeqEM2.protein('HITHEREFREDANDGREG'))
 
 
 @pytest.fixture(scope="session")
 def dna_rec():
-    return SeqRecordEM2(SeqEM2.dna('ATGAGTCGGTAACGATGCATGCATGCAGCTGACGC'), id='Rec', name='DummyDNA',
+    return SeqRecordEM2(SeqEM2.dna('ATGAGTCGGTAAAGATGCATGCGCGCCGCTGACGC'), id='Rec', name='DummyDNA',
                         features=[SeqFeatureEM2(location=FeatureLocation(0, 2), strand=1, id='A'),
                                   SeqFeatureEM2(location=FeatureLocation(6, 10), strand=1, id='B'),
                                   SeqFeatureEM2(location=FeatureLocation(15, 20), strand=1, id='C'),
@@ -50,3 +40,14 @@ def dna_rec2():
 @pytest.fixture(scope="session")
 def dna_rec3():
     return SeqRecordEM2(SeqEM2.dna('CACCTGACGCATGAGTCGGTAACGATGCATGCATG'), id='Rec3', name='DummyDNA')
+
+
+@pytest.fixture(scope="session")
+def dna_records():
+    return [
+        SeqRecordEM2(SeqEM2.dna('ACAGTACCATGTAA'), id='DNA1', name='DNA1'),
+        SeqRecordEM2(SeqEM2.dna('ACAG'), id='DNA2', name='DNA2'),
+        SeqRecordEM2(SeqEM2.dna('ACAGTA'), id='DNA3', name='DNA3'),
+        SeqRecordEM2(SeqEM2.dna('ACAGTACCAT'), id='DNA4', name='DNA4'),
+        SeqRecordEM2(SeqEM2.dna('ACAGTACCATGT'), id='DNA5', name='DNA5')
+    ]

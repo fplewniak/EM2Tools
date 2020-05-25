@@ -72,11 +72,11 @@ def test_join_sequences(dna_rec1, dna_rec2, dna_rec3):
                              keepself=False).seq) == 'ATGAGTCGGTAACGATGCATGCATGCAGCTGACGCATGAGTCGGTAACGATGCATGCATG'
 
 
-def test_join_differences(dna_rec1, dna_rec2, dna_rec3, protein_record):
+def test_join_differences(dna_rec1, dna_rec2, dna_rec3, protein_rec):
     with pytest.warns(UserWarning, match=r'.*Overlapping subsequences are different.*'):
         assert dna_rec1.join(dna_rec3, offset=-10)
     with pytest.raises(ValueError, match=r'Sequences are not of the same type.*'):
-        assert dna_rec1.join(protein_record)
+        assert dna_rec1.join(protein_rec)
 
 
 def test_join_features(dna_rec1, dna_rec2, dna_rec3):

@@ -83,53 +83,43 @@ class Pattern2Regex(unittest.TestCase):
         assert SeqUtils.pattern2regex('FRED>', protein=True) == 'FRED$'
 
 
-class SeqFilterTest(unittest.TestCase):
-    records = [
-        SeqRecord(SeqEM2.dna('ACAGTACCATGTAA'), id='DNA1', name='DNA1'),
-        SeqRecord(SeqEM2.dna('ACAG'), id='DNA2', name='DNA2'),
-        SeqRecord(SeqEM2.dna('ACAGTA'), id='DNA3', name='DNA3'),
-        SeqRecord(SeqEM2.dna('ACAGTACCAT'), id='DNA4', name='DNA4'),
-        SeqRecord(SeqEM2.dna('ACAGTACCATGT'), id='DNA5', name='DNA5')
-    ]
+def test_filter_by_length(dna_records):
+    assert [r.id for r in SF().length(minlength=7).apply(dna_records)] == ['DNA1', 'DNA4', 'DNA5']
+    assert [r.id for r in SF().length(7).apply(dna_records)] == ['DNA1', 'DNA4', 'DNA5']
+    assert [r.id for r in SF().length(6, 10).apply(dna_records)] == ['DNA3', 'DNA4']
+    assert SF().length(100).apply(dna_records) == []
 
-    @classmethod
-    def test_filter_by_length(cls):
-        assert [r.id for r in SF().length(minlength=7).apply(cls.records)] == ['DNA1', 'DNA4', 'DNA5']
-        assert [r.id for r in SF().length(7).apply(cls.records)] == ['DNA1', 'DNA4', 'DNA5']
-        assert [r.id for r in SF().length(6, 10).apply(cls.records)] == ['DNA3', 'DNA4']
-        assert SF().length(100).apply(cls.records) == []
 
-    @classmethod
-    def test_filter_by_pattern(cls):
-        assert [r.id for r in SF().pattern('CATGW').apply(cls.records)] == ['DNA1', 'DNA5']
-        assert SF().pattern('GGGGGGG').apply(cls.records) == []
+def test_filter_by_pattern(dna_records):
+    assert [r.id for r in SF().pattern('CATGW').apply(dna_records)] == ['DNA1', 'DNA5']
+    assert SF().pattern('GGGGGGG').apply(dna_records) == []
 
-    @classmethod
-    def test_filter_by_name(cls):
-        assert [r.id for r in SF().name(r'.*[35]$').apply(cls.records)] == ['DNA3', 'DNA5']
-        assert SF().name(r'.*[6]$').apply(cls.records) == []
 
-    @classmethod
-    def test_filter_multi(cls):
-        assert [r.id for r in SF().pattern('ACA').name(r'.*[1]$').length(7).apply(cls.records)] == ['DNA1']
-        assert SF().pattern('ACA').name(r'.*[2]$').length(7).apply(cls.records) == []
+def test_filter_by_name(dna_records):
+    assert [r.id for r in SF().name(r'.*[35]$').apply(dna_records)] == ['DNA3', 'DNA5']
+    assert SF().name(r'.*[6]$').apply(dna_records) == []
 
-    @classmethod
-    def test_by_length_keep_false(cls):
-        assert [r.id for r in SF().length(7).keep(False).apply(cls.records)] == ['DNA2', 'DNA3']
-        assert [r.id for r in SF().length(maxlength=6).apply(cls.records)] == ['DNA2', 'DNA3']
 
-    @classmethod
-    def test_no_filter(cls):
-        assert SF().keep(False).apply(cls.records) == SF().apply(cls.records)
+def test_filter_multi(dna_records):
+    assert [r.id for r in SF().pattern('ACA').name(r'.*[1]$').length(7).apply(dna_records)] == ['DNA1']
+    assert SF().pattern('ACA').name(r'.*[2]$').length(7).apply(dna_records) == []
 
-    @classmethod
-    def test_by_pattern_keep_false(cls):
-        assert [r.id for r in SF().pattern('CAGW').keep(False).apply(cls.records)] == ['DNA2']
 
-    @classmethod
-    def test_by_name_keep_false(cls):
-        assert [r.id for r in SF().name(r'.*[345]$').keep(False).apply(cls.records)] == ['DNA1', 'DNA2']
+def test_by_length_keep_false(dna_records):
+    assert [r.id for r in SF().length(7).keep(False).apply(dna_records)] == ['DNA2', 'DNA3']
+    assert [r.id for r in SF().length(maxlength=6).apply(dna_records)] == ['DNA2', 'DNA3']
+
+
+def test_no_filter(dna_records):
+    assert SF().keep(False).apply(dna_records) == SF().apply(dna_records)
+
+
+def test_by_pattern_keep_false(dna_records):
+    assert [r.id for r in SF().pattern('CAGW').keep(False).apply(dna_records)] == ['DNA2']
+
+
+def test_by_name_keep_false(dna_records):
+    assert [r.id for r in SF().name(r'.*[345]$').keep(False).apply(dna_records)] == ['DNA1', 'DNA2']
 
 
 class GFFtests(unittest.TestCase):
