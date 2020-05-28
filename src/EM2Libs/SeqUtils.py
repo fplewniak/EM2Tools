@@ -12,8 +12,8 @@ from EM2Libs.SeqFeature import SeqFeatureEM2
 
 def ambiguous2string(code, protein=False):
     """
-    Converts an ambiguous residue into a string with all compatible unambiguous residues. If the input code is not
-    ambiguous, it is returned without any conversion.
+    Converts an ambiguous residue into a string with all compatible unambiguous residues.
+    If the input code is not ambiguous, it is returned without any conversion.
 
     :param code: the input code to be converted into a list of residues.
     :param protein: True if residue is amino-acid
@@ -45,7 +45,8 @@ def isambiguous(code, protein=False):
 
 def pattern2regex(pattern, protein=False):
     """
-    Converts a fuzznuc or fuzzpro-like pattern into a regular expression that can be used to search a sequence string.
+    Converts a fuzznuc or fuzzpro-like pattern into a regular expression that can be used to search
+     a sequence string.
     [ABC] => any of ABC residues
     {ABC} => any residue except ABC
     <ABC... => start of sequence
@@ -63,33 +64,34 @@ def pattern2regex(pattern, protein=False):
     pattern = re.sub(r'>$', r'$', pattern)  # end of sequence
     pattern = re.sub(r'\((\d+(,\d*)*)\)', r'{\1}', pattern)  # repeat residue or subsequence
 
-    # replace ambiguous code by the corresponding list of residues, adding [] if ot already within [], to produce
-    # the regular expression
+    # replace ambiguous code by the corresponding list of residues, adding [] if ot already
+    # within [], to produce the regular expression
     regex = ''
     flag = False
-    for c in pattern:
-        if isambiguous(c, protein=protein) is True:
-            c = ambiguous2string(c, protein=protein)
-            if flag is False and c != '.':
-                c = '[' + c + ']'
-        elif c == '[':
+    for code in pattern:
+        if isambiguous(code, protein=protein) is True:
+            code = ambiguous2string(code, protein=protein)
+            if flag is False and code != '.':
+                code = '[' + code + ']'
+        elif code == '[':
             flag = True
-        elif c == ']':
+        elif code == ']':
             flag = False
-        regex += c
+        regex += code
 
     return regex
 
 
 class SeqFilter:
     """
-    Class for the creation of a sequence filter to specify filtering criteria and applying the filter to a list of
-    sequence records.
+    Class for the creation of a sequence filter to specify filtering criteria and applying the
+     filter to a list of sequence records.
     (minlength: minimum length of sequence
     maxlength: maximum length of sequence
     pattern: sequence pattern
     name: sequence name
-    keep: boolean, if True, keep the records respecting the criteria, otherwise, discard them and keep the others)
+    keep: boolean, if True, keep the records respecting the criteria, otherwise, discard them
+    and keep the others)
     """
 
     def __init__(self):
@@ -142,7 +144,7 @@ class SeqFilter:
         self._keep = keep
         return self
 
-    def length_applies(self, r):
+    def length_applies(self, rec):
         """
         test whether length criterion applies to the sequence record
 
@@ -150,11 +152,12 @@ class SeqFilter:
         :return: boolean True if criterion applies or False otherwise
         """
         if self._keep is True:
-            return r.seq.length_in_range(self._minlength, self._maxlength)
-        return (self._minlength, self._maxlength) == (None, None) or r.seq.length_in_range(self._minlength,
-                                                                                           self._maxlength) is False
+            return rec.seq.length_in_range(self._minlength, self._maxlength)
+        return (self._minlength, self._maxlength) == (None, None) or rec.seq.length_in_range(
+            self._minlength,
+            self._maxlength) is False
 
-    def pattern_applies(self, r):
+    def pattern_applies(self, rec):
         """
         test whether parameter criterion applies to the sequence record
 
@@ -162,10 +165,10 @@ class SeqFilter:
         :return: boolean True if criterion applies or False otherwise
         """
         if self._keep is True:
-            return (self._pattern is None) or (r.seq.search(self._pattern) != [])
-        return (self._pattern is None) or (r.seq.search(self._pattern) == [])
+            return (self._pattern is None) or (rec.seq.search(self._pattern) != [])
+        return (self._pattern is None) or (rec.seq.search(self._pattern) == [])
 
-    def name_applies(self, r):
+    def name_applies(self, rec):
         """
         test whether name criterion applies to the sequence record
 
@@ -173,24 +176,25 @@ class SeqFilter:
         :return: boolean True if criterion applies or False otherwise
         """
         if self._keep is True:
-            return (self._name is None) or (re.match(self._name, r.name) is not None)
-        return (self._name is None) or (re.match(self._name, r.name) is None)
+            return (self._name is None) or (re.match(self._name, rec.name) is not None)
+        return (self._name is None) or (re.match(self._name, rec.name) is None)
 
     def apply(self, records):
         """
-        Filters a list of SeqRecords instances, keeping only records satisfying the specified criteria of length, match
-        of a pattern, name specification. It is possible to invert the filtering process by setting the keep boolean to
-        False and thus only keep records which do not satisfy the criteria.
+        Filters a list of SeqRecords instances, keeping only records satisfying the specified
+        criteria of length, match of a pattern, name specification. It is possible to invert
+        the filtering process by setting the keep boolean to False and thus only keep records
+         which do not satisfy the criteria.
 
         :param records: list of SeqRecord instances to apply
         """
         filtered = []
-        for r in records:
-            if all([self.length_applies(r),
-                    self.pattern_applies(r),
-                    self.name_applies(r)
+        for rec in records:
+            if all([self.length_applies(rec),
+                    self.pattern_applies(rec),
+                    self.name_applies(rec)
                     ]):
-                filtered.append(r)
+                filtered.append(rec)
         return filtered
 
 
@@ -200,8 +204,10 @@ class GFF(Gff3DataFrame):
     """
 
     def __init__(self, feature_list=None, input_df=None):
-        df = DataFrame(columns=['seq_id', 'source', 'type', 'start', 'end', 'score', 'strand', 'phase', 'attributes'])
-        super().__init__(input_df=df)
+        init_df = DataFrame(
+            columns=['seq_id', 'source', 'type', 'start', 'end', 'score', 'strand', 'phase',
+                     'attributes'])
+        super().__init__(input_df=init_df)
         self.add_feature_list(feature_list)
         if input_df is not None:
             self.df = self.df.append(input_df)
@@ -214,55 +220,63 @@ class GFF(Gff3DataFrame):
         :return: the GFF object with feature list appended
         """
         if feature_list is not None:
-            for ft in feature_list:
-                self.df = self.df.append(self.df_from_feature(ft), ignore_index=True)
+            for feature in feature_list:
+                self.df = self.df.append(self.df_from_feature(feature), ignore_index=True)
         return self
 
     @staticmethod
-    def df_from_feature(ft):
+    def df_from_feature(feature):
         """
         Create a pandas DataFrame from a feature (SeqFeatureEM2 or SeqFeature)
 
-        :param ft: the feature to convert into a dataframe
+        :param feature: the feature to convert into a dataframe
         :return: the resulting dataframe
         """
-        if ft is None:
+        if feature is None:
             return DataFrame(
-                columns=['seq_id', 'source', 'type', 'start', 'end', 'score', 'strand', 'phase', 'attributes'])
+                columns=['seq_id', 'source', 'type', 'start', 'end', 'score', 'strand', 'phase',
+                         'attributes'])
 
-        source = ft.qualifiers.get('source', 'unknown')
-        score = ft.qualifiers.get('score', '0')
-        phase = ft.qualifiers.get('phase', ft.qualifiers.get('frame', '0'))
-        strand = ['-', '?', '+'][ft.location.strand + 1]
+        source = feature.qualifiers.get('source', 'unknown')
+        score = feature.qualifiers.get('score', '0')
+        phase = feature.qualifiers.get('phase', feature.qualifiers.get('frame', '0'))
+        strand = ['-', '?', '+'][feature.location.strand + 1]
         qual_off = ['phase', 'source', 'score']
-        qualifiers = ';'.join([k + '=' + v for k, v in ft.qualifiers.items() if k not in qual_off] + ['id=' + ft.id])
-        return DataFrame([[ft.location.ref, source, ft.type, str(int(ft.location.start)), str(int(ft.location.end)),
-                           score, strand, phase, qualifiers]],
-                         columns=['seq_id', 'source', 'type', 'start', 'end', 'score', 'strand', 'phase', 'attributes'])
+        qualifiers = ';'.join(
+            [k + '=' + v for k, v in feature.qualifiers.items() if k not in qual_off] + [
+                'id=' + feature.id])
+        return DataFrame(
+            [[feature.location.ref, source, feature.type, str(int(feature.location.start)),
+              str(int(feature.location.end)),
+              score, strand, phase, qualifiers]],
+            columns=['seq_id', 'source', 'type', 'start', 'end', 'score', 'strand',
+                     'phase', 'attributes'])
 
     def to_feature_list(self, parents=None):
         """
         Converts features in a GFF object into a list of SeqFeatureEM2 objects
 
-        :param parents: list of references to parent SeqRecord objects or a single parent reference if all features are
-            defined in the same parent. If it is a list, it should be of the same length as the dataframe, repeating
-            references as needed to get the right number.
+        :param parents: list of references to parent SeqRecord objects or a single parent reference
+         if all features are defined in the same parent. If it is a list, it should be of the same
+         length as the dataframe, repeating references as needed to get the right number.
         :return: a list of SeqFeatureEM2 objects
         """
         if isinstance(parents, list) is False:
             parents = [parents] * len(self.df)
         if len(parents) != len(self.df):
-            raise ValueError('The number of parents should match the number of features unless all features have the'
-                             'same parent, in which case only one reference can be specified.')
+            raise ValueError(
+                'The number of parents should match the number of features unless all features'
+                ' have the same parent, in which case only one reference can be specified.')
         feature_list = []
         strands = {'-': -1, '?': 0, '+': 1}
         for index, row in self.df.iterrows():
             qualifiers = {q.split('=')[0]: q.split('=')[1] for q in row['attributes'].split(';')}
-            for c in ['source', 'phase', 'score']:
-                qualifiers[c] = row[c]
+            for column in ['source', 'phase', 'score']:
+                qualifiers[column] = row[column]
             feature_list.append(
-                SeqFeatureEM2(parent=parents[index], location=FeatureLocation(int(row['start']), int(row['end'])),
+                SeqFeatureEM2(parent=parents[index],
+                              location=FeatureLocation(int(row['start']), int(row['end'])),
                               type=row['type'], id=qualifiers.pop('id', '<unknown id>'),
-                              strand=int(strands[row['strand']]), ref=row['seq_id'], qualifiers=qualifiers))
-        print([f.parent for f in feature_list])
+                              strand=int(strands[row['strand']]), ref=row['seq_id'],
+                              qualifiers=qualifiers))
         return feature_list

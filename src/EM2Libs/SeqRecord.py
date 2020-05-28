@@ -46,8 +46,8 @@ class SeqRecordEM2(SeqRecord):
         """
         Retrieves features that overlap a given position range.
 
-        :param strand: strand specification of features to be returned. If strand is 0, then features on
-            both strands are returned. If feature.strand is 0, then all strands will match.
+        :param strand: strand specification of features to be returned. If strand is 0, then
+        features on both strands are returned. If feature.strand is 0, then all strands will match.
         :param start: start of range
         :param end: end of range, if None, then end=start
 
@@ -59,18 +59,22 @@ class SeqRecordEM2(SeqRecord):
 
     def feature_after(self, position, strand=0, nearest=False):
         """
-        Retrieves the features immediately after (but not overlaping) the specified position, on one strand or both.
+        Retrieves the features immediately after (but not overlaping) the specified position, on one
+        strand or both.
         If nearest is True, then only the nearest ones are returned.
 
-        :param nearest: if True, only the nearest features are returned. This only makes sense when strand is O
-        :param strand: strand specification of features to be returned. If strand is 0, then features on
-            both strands are returned
+        :param nearest: if True, only the nearest features are returned. This only makes sense when
+        strand is O
+        :param strand: strand specification of features to be returned. If strand is 0, then
+        features on both strands are returned
         :param position: the position
 
         :return: a list of features after the specified position
         """
-        after_fwd = {f: f.location.start for f in self.features if f.location.start > position and f.strand in [0, 1]}
-        after_rev = {f: f.location.end for f in self.features if f.location.end < position and f.strand in [0, -1]}
+        after_fwd = {f: f.location.start for f in self.features if
+                     f.location.start > position and f.strand in [0, 1]}
+        after_rev = {f: f.location.end for f in self.features if
+                     f.location.end < position and f.strand in [0, -1]}
         fwd_list = [k for k, v in after_fwd.items() if v == min(after_fwd.values())]
         rev_list = [k for k, v in after_rev.items() if v == max(after_rev.values())]
         if strand == 1:
@@ -93,18 +97,22 @@ class SeqRecordEM2(SeqRecord):
 
     def feature_before(self, position, strand=0, nearest=False):
         """
-        Retrieves the features immediately before (but not overlaping) the specified position, on one strand or both.
+        Retrieves the features immediately before (but not overlaping) the specified position, on
+        one strand or both.
         If nearest is True, then only the nearest ones are returned.
 
-        :param nearest: if True, only the nearest features are returned. This only makes sense when strand is O
-        :param strand: strand specification of features to be returned. If strand is 0, then features on
-            both strands are returned
+        :param nearest: if True, only the nearest features are returned. This only makes sense when
+        strand is O
+        :param strand: strand specification of features to be returned. If strand is 0, then
+        features on both strands are returned
         :param position: the position
 
         :return: a list of features before the specified position
         """
-        before_fwd = {f: f.location.end for f in self.features if f.location.end < position and f.strand in [0, 1]}
-        before_rev = {f: f.location.start for f in self.features if f.location.start > position and f.strand in [0, -1]}
+        before_fwd = {f: f.location.end for f in self.features if
+                      f.location.end < position and f.strand in [0, 1]}
+        before_rev = {f: f.location.start for f in self.features if
+                      f.location.start > position and f.strand in [0, -1]}
         fwd_list = [k for k, v in before_fwd.items() if v == max(before_fwd.values())]
         rev_list = [k for k, v in before_rev.items() if v == min(before_rev.values())]
         if strand == 1:
@@ -127,63 +135,72 @@ class SeqRecordEM2(SeqRecord):
 
     def surrounding_features(self, position, strand=0, nearest=False):
         """
-        Retrieves all the features around a given position but not overlaping it. If nearest is True, then only the
-        nearest features are returned.
+        Retrieves all the features around a given position but not overlaping it. If nearest is
+        True, then only the nearest features are returned.
 
         :param position: the position
         :param nearest: if True, only the nearest features are returned.
-        :param strand: strand specification of features to be returned. If strand is 0, then features on
-            both strands are returned
+        :param strand: strand specification of features to be returned. If strand is 0, then
+        features on both strands are returned
 
         :return: a list of features around the specified position
         """
         if nearest is False:
-            return list(set(self.feature_after(position, strand) + self.feature_before(position, strand)))
-        feat_list = {f: min(abs(position - f.location.start), abs(position - f.location.end)) for f in list(
-            set(self.feature_after(position, strand, True) + self.feature_before(position, strand, True)))}
+            return list(
+                set(self.feature_after(position, strand) + self.feature_before(position, strand)))
+        feat_list = {f: min(abs(position - f.location.start), abs(position - f.location.end)) for f
+                     in list(set(self.feature_after(position, strand, True)
+                                 + self.feature_before(position, strand, True)))}
         return [f for f, v in feat_list.items() if v == min(feat_list.values())]
 
     def join(self, other=None, offset=0, keepself=True):
         """
         Joins two SeqRecordEM2 objects into a new one representing the resulting merged sequence
 
-        :param keepself: if True and overlapping subsequences are different, then keep sequence from self record,
-            otherwise keep the sequence of other record.
+        :param keepself: if True and overlapping subsequences are different, then keep sequence from
+         self record, otherwise keep the sequence of other record.
         :param other: the other SeqRecordEM2 object
-        :param offset: the offset of the two sequences. If the value is negative, then the two sequences overlap.
+        :param offset: the offset of the two sequences. If the value is negative, then the two
+        sequences overlap.
 
         :return: the result of merging records as a new SeqRecordEM2 object
         """
         if len(self.seq) + offset < 0:
-            return other.join(self, offset=-len(self.seq) - len(other.seq) - offset, keepself=not keepself)
+            return other.join(self, offset=-len(self.seq) - len(other.seq) - offset,
+                              keepself=not keepself)
 
         if offset >= 0:
             if self.seq.is_protein():
-                newseq = str(self.seq) + 'X' * offset + str(other.seq)
+                new_seq = str(self.seq) + 'X' * offset + str(other.seq)
             else:
-                newseq = str(self.seq) + 'N' * offset + str(other.seq)
+                new_seq = str(self.seq) + 'N' * offset + str(other.seq)
         else:
             if str(self.seq)[offset:] != str(other.seq)[0:-offset]:
                 warnings.warn('Warning!!! Overlapping subsequences are different.')
             if keepself is True:
-                newseq = str(self.seq) + str(other.seq)[-offset:]
+                new_seq = str(self.seq) + str(other.seq)[-offset:]
             else:
-                newseq = str(self.seq)[0:offset] + str(other.seq)
+                new_seq = str(self.seq)[0:offset] + str(other.seq)
 
         if self.seq.is_protein() and other.seq.is_protein():
-            newrecord = SeqRecordEM2(SeqEM2.protein(newseq))
+            new_record = SeqRecordEM2(SeqEM2.protein(new_seq))
         elif not (self.seq.is_protein() or other.seq.is_protein()):
-            newrecord = SeqRecordEM2(SeqEM2.dna(newseq))
+            new_record = SeqRecordEM2(SeqEM2.dna(new_seq))
         else:
             raise ValueError('Sequences are not of the same type. It is impossible to join them.')
 
-        for f in self.features:
-            newrecord.features.append(SeqFeatureEM2(parent=newrecord, location=f.location, strand=f.strand, id=f.id))
+        for feature in self.features:
+            new_record.features.append(
+                SeqFeatureEM2(parent=new_record, location=feature.location, strand=feature.strand,
+                              id=feature.id))
 
-        for f in other.features:
-            newrecord.features.append(SeqFeatureEM2(parent=newrecord,
-                                                    location=FeatureLocation(f.location.start + len(self.seq) + offset,
-                                                                             f.location.end + len(self.seq) + offset),
-                                                    strand=f.strand, id=f.id))
+        for feature in other.features:
+            new_record.features.append(SeqFeatureEM2(parent=new_record,
+                                                     location=FeatureLocation(
+                                                         feature.location.start + len(
+                                                             self.seq) + offset,
+                                                         feature.location.end + len(
+                                                             self.seq) + offset),
+                                                     strand=feature.strand, id=feature.id))
 
-        return newrecord
+        return new_record

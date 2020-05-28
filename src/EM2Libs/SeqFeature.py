@@ -21,15 +21,19 @@ class SeqFeatureEM2(SeqFeature):
 
     def lies_within(self, start, end):
         """
-        Determines whether feature lies entirely with the specified range. Fuzzy positions are turned into integers.
+        Determines whether feature lies entirely with the specified range. Fuzzy positions are
+         turned into integers.
 
         :param start: start of range either int or ExactPosition
         :param end: end of range either int or ExactPosition
 
         :return: True if feature boundaries lie with the specified range.
         """
-        if not all([isinstance(x, ExactPosition) for x in [start, end, self.location.start, self.location.end]]):
-            warnings.warn('Warning: fuzzy positions are not handled as such but are converted into integer values.', )
+        if not all([isinstance(x, ExactPosition) for x in
+                    [start, end, self.location.start, self.location.end]]):
+            warnings.warn(
+                'Warning: fuzzy positions are not handled as such but are '
+                'converted into integer values.', )
         return start <= self.location.start <= self.location.end <= end
 
     def covers(self, start, end):
@@ -54,8 +58,11 @@ class SeqFeatureEM2(SeqFeature):
         """
         if end is None:
             end = start
-        if not all([isinstance(x, ExactPosition) for x in [start, end, self.location.start, self.location.end]]):
-            warnings.warn('Warning: fuzzy positions are not handled as such but are converted into integer values.', )
+        if not all([isinstance(x, ExactPosition) for x in
+                    [start, end, self.location.start, self.location.end]]):
+            warnings.warn(
+                'Warning: fuzzy positions are not handled as such but are'
+                ' converted into integer values.', )
         left = max(self.location.start, start)
         right = min(self.location.end, end)
         return left <= right
@@ -67,7 +74,9 @@ class SeqFeatureEM2(SeqFeature):
         :param other: the other feature
         """
         if id(self.parent) != id(other.parent):
-            raise ValueError('Undetermined intersection of features because of different parent sequence records')
+            raise ValueError(
+                'Undetermined intersection of features because of different'
+                ' parent sequence records')
         if self.overlaps(other.location.start, other.location.end):
             start = max(self.location.start, other.location.start)
             end = min(self.location.end, other.location.end)

@@ -70,8 +70,8 @@ class SeqEM2(Seq):
         :return: a list of re.Match instances
         """
         result: List[Match[Union[str, bytes]]] = []
-        for m in re.finditer(regex, self._data):
-            result.append(m)
+        for match in re.finditer(regex, self._data):
+            result.append(match)
         return result
 
     def search(self, pattern):
