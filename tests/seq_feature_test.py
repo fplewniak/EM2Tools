@@ -2,8 +2,8 @@ import unittest
 
 import pytest
 
-from em2_libs.seq_feature import SeqFeatureEM2
-from em2_libs.seq import SeqEM2
+from em2lib.seq_feature import SeqFeatureEM2
+from em2lib.seq import SeqEM2
 from Bio.SeqRecord import SeqRecord
 from Bio.SeqFeature import FeatureLocation
 from Bio.SeqFeature import AfterPosition, BeforePosition

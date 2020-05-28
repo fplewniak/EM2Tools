@@ -2,7 +2,7 @@
 Tests for the extension module to the standard argparse module.
 """
 import unittest
-from em2_libs import argparse_em2
+from em2lib import argparse_em2
 
 
 class GetListAction(unittest.TestCase):

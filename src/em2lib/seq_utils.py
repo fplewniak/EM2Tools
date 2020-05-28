@@ -7,7 +7,7 @@ from Bio.Data import IUPACData
 from Bio.SeqFeature import FeatureLocation
 from pandas import DataFrame
 from gffpandas.gffpandas import Gff3DataFrame
-from em2_libs.seq_feature import SeqFeatureEM2
+from em2lib.seq_feature import SeqFeatureEM2
 
 
 def ambiguous2string(code, protein=False):
