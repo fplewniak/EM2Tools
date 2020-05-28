@@ -5,11 +5,11 @@ import unittest
 import pytest
 from Bio.SeqFeature import FeatureLocation
 
-from EM2Libs import seq_utils
-from EM2Libs.seq_feature import SeqFeatureEM2
-from EM2Libs.seq_utils import SeqFilter as SF
-from EM2Libs.seq_utils import GFF
-from EM2Libs.seq import SeqEM2
+from em2_libs import seq_utils
+from em2_libs.seq_feature import SeqFeatureEM2
+from em2_libs.seq_utils import SeqFilter as SF
+from em2_libs.seq_utils import GFF
+from em2_libs.seq import SeqEM2
 from Bio.SeqRecord import SeqRecord
 from pandas import DataFrame
 from pandas.testing import assert_frame_equal
