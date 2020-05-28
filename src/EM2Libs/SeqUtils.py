@@ -148,7 +148,7 @@ class SeqFilter:
         """
         test whether length criterion applies to the sequence record
 
-        :param r: the sequence record to test
+        :param rec: the sequence record to test
         :return: boolean True if criterion applies or False otherwise
         """
         if self._keep is True:
@@ -161,7 +161,7 @@ class SeqFilter:
         """
         test whether parameter criterion applies to the sequence record
 
-        :param r: the sequence record to test
+        :param rec: the sequence record to test
         :return: boolean True if criterion applies or False otherwise
         """
         if self._keep is True:
@@ -172,7 +172,7 @@ class SeqFilter:
         """
         test whether name criterion applies to the sequence record
 
-        :param r: the sequence record to test
+        :param rec: the sequence record to test
         :return: boolean True if criterion applies or False otherwise
         """
         if self._keep is True:
