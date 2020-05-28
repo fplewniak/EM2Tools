@@ -1,6 +1,6 @@
-from EM2Libs.Seq import SeqEM2
-from EM2Libs.SeqRecord import SeqRecordEM2
-from EM2Libs.SeqFeature import SeqFeatureEM2
+from EM2Libs.seq import SeqEM2
+from EM2Libs.seq_record import SeqRecordEM2
+from EM2Libs.seq_feature import SeqFeatureEM2
 from Bio.SeqFeature import FeatureLocation
 
 import pytest

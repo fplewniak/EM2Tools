@@ -9,8 +9,8 @@ import warnings
 
 from Bio.SeqFeature import FeatureLocation
 from Bio.SeqRecord import SeqRecord
-from EM2Libs.Seq import SeqEM2
-from EM2Libs.SeqFeature import SeqFeatureEM2
+from EM2Libs.seq import SeqEM2
+from EM2Libs.seq_feature import SeqFeatureEM2
 
 
 class SeqRecordEM2(SeqRecord):

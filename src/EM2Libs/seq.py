@@ -6,7 +6,7 @@ from typing import List, Union, Match
 
 from Bio.Seq import Seq
 
-import EM2Libs.SeqUtils
+import EM2Libs.seq_utils
 
 
 class SeqEM2(Seq):
@@ -81,5 +81,5 @@ class SeqEM2(Seq):
         :param pattern: the pattern to be searched for that is converted into a rgular expression
         :return: a list of re.Match objects
         """
-        regex = EM2Libs.SeqUtils.pattern2regex(pattern, protein=self.is_protein())
+        regex = EM2Libs.seq_utils.pattern2regex(pattern, protein=self.is_protein())
         return self.re_search(regex)
