@@ -243,8 +243,8 @@ class GFF(Gff3DataFrame):
         strand = ['-', '?', '+'][feature.location.strand + 1]
         qual_off = ['phase', 'source', 'score']
         qualifiers = ';'.join(
-            [k + '=' + v for k, v in feature.qualifiers.items() if k not in qual_off] + [
-                'id=' + feature.id])
+            [k + '=' + v for k, v in feature.qualifiers.items() if k not in qual_off]
+            + ['id=' + feature.id])
         return DataFrame(
             [[feature.location.ref, source, feature.type, str(int(feature.location.start)),
               str(int(feature.location.end)),
