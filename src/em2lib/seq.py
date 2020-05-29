@@ -17,6 +17,7 @@ class SeqEM2(Seq):
     def __init__(self, data, seqtype):
         super().__init__(data)
         self.seqtype = seqtype
+        self.any_residue = 'X' if seqtype == 'prot' else 'N'
 
     @classmethod
     def dna(cls, data):

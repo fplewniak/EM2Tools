@@ -170,8 +170,7 @@ class SeqRecordEM2(SeqRecord):
                               keepself=not keepself)
 
         if offset >= 0:
-            any_residue = 'X' if self.seq.is_protein() else 'N'
-            new_seq = str(self.seq) + any_residue * offset + str(other.seq)
+            new_seq = str(self.seq) + self.seq.any_residue * offset + str(other.seq)
         else:
             if str(self.seq)[offset:] != str(other.seq)[0:-offset]:
                 warnings.warn('Warning!!! Overlapping subsequences are different.')
