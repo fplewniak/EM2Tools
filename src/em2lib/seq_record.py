@@ -203,6 +203,21 @@ class SeqRecordEM2(SeqRecord):
         return new_record
 
     def stitch(self, other, fpos_in_self, fpos_in_other, feature_length, **kwargs):
+        """
+        Stitches two records, that is, joins them according to an overlapping feature. The sequences
+        may or may not overlap. If not, Ns or Xs are added to fill the gap. If they overlap, a
+        warning is issued if sequences do not correspond exactly. The new record keeps track of the
+        two original records as Features. By convention, the self record should contain the start
+        position of the feature, the other contains the end position and the overlapping feature
+        should be on the same strand in both records. It is the user's responsibility to provide
+        the records in the right order and direction.
+        :param other: the other SeqRecordEM2 object to stich
+        :param fpos_in_self: feature position in self record (start position of feature)
+        :param fpos_in_other: feature position in other record (end position of feature)
+        :param feature_length: feature length
+        :param kwargs: any additional parameters that may be passed to the created record
+        :return: the stitched record as a new SeqRecordEM2 object
+        """
         offset = feature_length + fpos_in_self - fpos_in_other - len(self.seq) - 1
         print(fpos_in_self, fpos_in_other, feature_length, len(self.seq), offset)
         return self.join(other, offset)
