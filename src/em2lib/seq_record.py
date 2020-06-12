@@ -218,6 +218,8 @@ class SeqRecordEM2(SeqRecord):
         :param kwargs: any additional parameters that may be passed to the created record
         :return: the stitched record as a new SeqRecordEM2 object
         """
+        # TODO define overlapping feature as a new feature of the resulting stitched record
+        # TODO define original records as features of the resulting stitched record
         offset = feature_length + fpos_in_self - fpos_in_other - len(self.seq) - 1
         print(fpos_in_self, fpos_in_other, feature_length, len(self.seq), offset)
         return self.join(other, offset)
