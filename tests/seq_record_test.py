@@ -78,43 +78,28 @@ def test_join_differences(dna_rec1, dna_rec2, dna_rec3, protein_rec):
         assert dna_rec1.join(protein_rec)
 
 
-def test_join_features(dna_rec1, dna_rec2, dna_rec3):
-    newrecord = dna_rec1.join(dna_rec1, offset=3)
-    assert [(f.id, int(f.location.start), int(f.location.end), f.strand, f.ref) for f in newrecord.features] == [
-        ('A1', 0, 5, 1, '<unknown id>'),
-        ('B1', 28, 33, 1, '<unknown id>'),
-        ('A1', 38, 43, 1, '<unknown id>'),
-        ('B1', 66, 71, 1, '<unknown id>'),
-    ]
+def test_join_features(dna_rec1, dna_rec2, dna_rec3, dna_rec1_NNN_rec2, dna_rec1_overlap_rec2):
+    newrecord = dna_rec1.join(dna_rec2, offset=3)
+    assert [(f.id, int(f.location.start), int(f.location.end), f.strand, f.ref) for f in newrecord.features] == \
+           [(f.id, int(f.location.start), int(f.location.end), f.strand, f.ref) for f in dna_rec1_NNN_rec2.features]
 
-    newrecord = dna_rec1.join(dna_rec1, offset=-73)
-    assert [(f.id, int(f.location.start), int(f.location.end), f.strand, f.ref) for f in newrecord.features] == [
-        ('A1', 0, 5, 1, '<unknown id>'),
-        ('B1', 28, 33, 1, '<unknown id>'),
-        ('A1', 38, 43, 1, '<unknown id>'),
-        ('B1', 66, 71, 1, '<unknown id>'),
-    ]
+    newrecord = dna_rec2.join(dna_rec1, offset=-73)
+    assert [(f.id, int(f.location.start), int(f.location.end), f.strand, f.ref) for f in newrecord.features] == \
+           [(f.id, int(f.location.start), int(f.location.end), f.strand, f.ref) for f in dna_rec1_NNN_rec2.features]
 
     newrecord = dna_rec1.join(dna_rec2, offset=-10)
-    assert [(f.id, int(f.location.start), int(f.location.end), f.strand, f.ref) for f in newrecord.features] == [
-        ('A1', 0, 5, 1, '<unknown id>'),
-        ('B1', 28, 33, 1, '<unknown id>'),
-        ('A2', 25, 30, 1, '<unknown id>'),
-        ('B2', 53, 58, 1, '<unknown id>'),
-    ]
+    assert [(f.id, int(f.location.start), int(f.location.end), f.strand, f.ref) for f in newrecord.features] == \
+           [(f.id, int(f.location.start), int(f.location.end), f.strand, f.ref) for f in dna_rec1_overlap_rec2.features]
 
     newrecord = dna_rec2.join(dna_rec1, offset=-60)
-    assert [(f.id, int(f.location.start), int(f.location.end), f.strand, f.ref) for f in newrecord.features] == [
-        ('A1', 0, 5, 1, '<unknown id>'),
-        ('B1', 28, 33, 1, '<unknown id>'),
-        ('A2', 25, 30, 1, '<unknown id>'),
-        ('B2', 53, 58, 1, '<unknown id>'),
-    ]
+    assert [(f.id, int(f.location.start), int(f.location.end), f.strand, f.ref) for f in newrecord.features] == \
+           [(f.id, int(f.location.start), int(f.location.end), f.strand, f.ref) for f in dna_rec1_overlap_rec2.features]
 
 
 def test_stitch_sequences(dna_rec1, dna_rec2, dna_rec1_overlap_rec2, dna_rec1_NNN_rec2):
     assert str(dna_rec1.stitch(dna_rec2, 22, 20, 24).seq) == str(dna_rec1_overlap_rec2.seq)
     assert str(dna_rec1.stitch(dna_rec2, 30, 10, 19).seq) == str(dna_rec1_NNN_rec2.seq)
+
 
 def test_comparisons(dna_rec1, dna_rec2, dna_rec3):
     assert dna_rec1.__lt__(dna_rec2)

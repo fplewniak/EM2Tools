@@ -46,13 +46,23 @@ def dna_rec3():
 @pytest.fixture(scope="session")
 def dna_rec1_NNN_rec2():
     return SeqRecordEM2(SeqEM2.dna('ATGAGTCGGTAACGATGCATGCATGCAGCTGACGCNNNCAGCTGACGCATGAGTCGGTAACGATGCATGCATG'),
-                        id='Rec1_NNN_Rec2', name='DummyDNA')
+                        id='Rec1_NNN_Rec2', name='DummyDNA',
+                        features=[SeqFeatureEM2(location=FeatureLocation(0, 5), strand=1, id='A1', ref='<unknown id>'),
+                                  SeqFeatureEM2(location=FeatureLocation(28, 33), strand=1, id='B1', ref='<unknown id>'),
+                                  SeqFeatureEM2(location=FeatureLocation(38, 43), strand=1, id='A2', ref='<unknown id>'),
+                                  SeqFeatureEM2(location=FeatureLocation(66, 71), strand=1, id='B2', ref='<unknown id>')
+                                  ])
 
 
 @pytest.fixture(scope="session")
 def dna_rec1_overlap_rec2():
     return SeqRecordEM2(SeqEM2.dna('ATGAGTCGGTAACGATGCATGCATGCAGCTGACGCATGAGTCGGTAACGATGCATGCATG'),
-                        id='Rec1_overlap_Rec2', name='DummyDNA')
+                        id='Rec1_overlap_Rec2', name='DummyDNA',
+                        features=[SeqFeatureEM2(location=FeatureLocation(0, 5), strand=1, id='A1', ref='<unknown id>'),
+                                  SeqFeatureEM2(location=FeatureLocation(28, 33), strand=1, id='B1', ref='<unknown id>'),
+                                  SeqFeatureEM2(location=FeatureLocation(25, 30), strand=1, id='A2', ref='<unknown id>'),
+                                  SeqFeatureEM2(location=FeatureLocation(53, 58), strand=1, id='B2', ref='<unknown id>')
+                                  ])
 
 
 @pytest.fixture(scope="session")
