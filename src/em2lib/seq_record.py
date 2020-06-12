@@ -201,3 +201,8 @@ class SeqRecordEM2(SeqRecord):
                                                      strand=feature.strand, id=feature.id))
 
         return new_record
+
+    def stitch(self, other, fpos_in_self, fpos_in_other, feature_length, **kwargs):
+        offset = feature_length + fpos_in_self - fpos_in_other - len(self.seq) - 1
+        print(fpos_in_self, fpos_in_other, feature_length, len(self.seq), offset)
+        return self.join(other, offset)

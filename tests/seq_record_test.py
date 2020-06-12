@@ -1,6 +1,8 @@
 #  CeCILL FREE SOFTWARE LICENSE AGREEMENT Version 2.1 dated 2013-06-21
 #  Frédéric PLEWNIAK, CNRS/Université de Strasbourg UMR7156 - GMGM
 #
+import warnings
+
 import pytest
 
 
@@ -55,21 +57,18 @@ def test_surrounding(dna_rec):
     assert sorted([f.id for f in dna_rec.surrounding_features(11, nearest=True, strand=-1)]) == ['F']
 
 
-def test_join_sequences(dna_rec1, dna_rec2, dna_rec3):
-    assert str(dna_rec1.join(dna_rec2, offset=3).seq) == str(dna_rec1.seq) + 'NNN' + str(dna_rec2.seq)
-    assert str(dna_rec2.join(dna_rec1, offset=-73).seq) == str(dna_rec1.seq) + 'NNN' + str(dna_rec2.seq)
-    assert str(
-        dna_rec1.join(dna_rec2, offset=-10).seq) == 'ATGAGTCGGTAACGATGCATGCATGCAGCTGACGCATGAGTCGGTAACGATGCATGCATG'
-    assert str(
-        dna_rec2.join(dna_rec1, offset=-60).seq) == 'ATGAGTCGGTAACGATGCATGCATGCAGCTGACGCATGAGTCGGTAACGATGCATGCATG'
-    assert str(
-        dna_rec1.join(dna_rec3, offset=-10).seq) == 'ATGAGTCGGTAACGATGCATGCATGCAGCTGACGCATGAGTCGGTAACGATGCATGCATG'
-    assert str(dna_rec1.join(dna_rec3, offset=-10,
-                             keepself=False).seq) == 'ATGAGTCGGTAACGATGCATGCATGCACCTGACGCATGAGTCGGTAACGATGCATGCATG'
-    assert str(
-        dna_rec3.join(dna_rec1, offset=-60).seq) == 'ATGAGTCGGTAACGATGCATGCATGCACCTGACGCATGAGTCGGTAACGATGCATGCATG'
-    assert str(dna_rec3.join(dna_rec1, offset=-60,
-                             keepself=False).seq) == 'ATGAGTCGGTAACGATGCATGCATGCAGCTGACGCATGAGTCGGTAACGATGCATGCATG'
+def test_join_sequences(dna_rec1, dna_rec2, dna_rec3, dna_rec1_NNN_rec2, dna_rec1_overlap_rec2,
+                        dna_rec1_overlap_rec3, dna_rec1_overlap_rec3_keep_false):
+    assert str(dna_rec1.join(dna_rec2, offset=3).seq) == str(dna_rec1_NNN_rec2.seq)
+    assert str(dna_rec2.join(dna_rec1, offset=-73).seq) == str(dna_rec1_NNN_rec2.seq)
+    assert str(dna_rec1.join(dna_rec2, offset=-10).seq) == str(dna_rec1_overlap_rec2.seq)
+    assert str(dna_rec2.join(dna_rec1, offset=-60).seq) == str(dna_rec1_overlap_rec2.seq)
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        assert str(dna_rec1.join(dna_rec3, offset=-10).seq) == str(dna_rec1_overlap_rec3.seq)
+        assert str(dna_rec1.join(dna_rec3, offset=-10, keepself=False).seq) == str(dna_rec1_overlap_rec3_keep_false.seq)
+        assert str(dna_rec3.join(dna_rec1, offset=-60).seq) == str(dna_rec1_overlap_rec3_keep_false.seq)
+        assert str(dna_rec3.join(dna_rec1, offset=-60, keepself=False).seq) == str(dna_rec1_overlap_rec3.seq)
 
 
 def test_join_differences(dna_rec1, dna_rec2, dna_rec3, protein_rec):
@@ -112,6 +111,10 @@ def test_join_features(dna_rec1, dna_rec2, dna_rec3):
         ('B2', 53, 58, 1, '<unknown id>'),
     ]
 
+
+def test_stitch_sequences(dna_rec1, dna_rec2, dna_rec1_overlap_rec2, dna_rec1_NNN_rec2):
+    assert str(dna_rec1.stitch(dna_rec2, 22, 20, 24).seq) == str(dna_rec1_overlap_rec2.seq)
+    assert str(dna_rec1.stitch(dna_rec2, 30, 10, 19).seq) == str(dna_rec1_NNN_rec2.seq)
 
 def test_comparisons(dna_rec1, dna_rec2, dna_rec3):
     assert dna_rec1.__lt__(dna_rec2)

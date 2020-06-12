@@ -39,7 +39,32 @@ def dna_rec2():
 
 @pytest.fixture(scope="session")
 def dna_rec3():
-    return SeqRecordEM2(SeqEM2.dna('CACCTGACGCATGAGTCGGTAACGATGCATGCATG'), id='Rec3', name='DummyDNA')
+    return SeqRecordEM2(SeqEM2.dna('CACCTGACGCATGAGTCGGTAACGATGCATGCATG'), id='Rec3',
+                        name='DummyDNA')
+
+
+@pytest.fixture(scope="session")
+def dna_rec1_NNN_rec2():
+    return SeqRecordEM2(SeqEM2.dna('ATGAGTCGGTAACGATGCATGCATGCAGCTGACGCNNNCAGCTGACGCATGAGTCGGTAACGATGCATGCATG'),
+                        id='Rec1_NNN_Rec2', name='DummyDNA')
+
+
+@pytest.fixture(scope="session")
+def dna_rec1_overlap_rec2():
+    return SeqRecordEM2(SeqEM2.dna('ATGAGTCGGTAACGATGCATGCATGCAGCTGACGCATGAGTCGGTAACGATGCATGCATG'),
+                        id='Rec1_overlap_Rec2', name='DummyDNA')
+
+
+@pytest.fixture(scope="session")
+def dna_rec1_overlap_rec3():
+    return SeqRecordEM2(SeqEM2.dna('ATGAGTCGGTAACGATGCATGCATGCAGCTGACGCATGAGTCGGTAACGATGCATGCATG'),
+                        id='Rec1_overlap_Rec3', name='DummyDNA')
+
+
+@pytest.fixture(scope="session")
+def dna_rec1_overlap_rec3_keep_false():
+    return SeqRecordEM2(SeqEM2.dna('ATGAGTCGGTAACGATGCATGCATGCACCTGACGCATGAGTCGGTAACGATGCATGCATG'),
+                        id='Rec1_overlap_Rec3_keep_false', name='DummyDNA')
 
 
 @pytest.fixture(scope="session")
