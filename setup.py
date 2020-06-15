@@ -5,7 +5,7 @@ with open('README.md', 'r') as fh:
 
 setup(
     name='EM2Tools',
-    version='0.0.0',
+    version='0.1.0',
     packages=find_packages('src'),
     package_dir={'': 'src'},
     url='https://github.com/fplewniak/EM2Tools',
@@ -23,5 +23,5 @@ setup(
         'License :: OSI Approved :: CEA CNRS Inria Logiciel Libre License, version 2.1 (CeCILL-2.1)',
         'Topic :: Scientific/Engineering :: Bio-Informatics',
     ],
-    python_requires='>=3.6', install_requires=['Biopython', 'gffpandas', 'pandas']
+    python_requires='>=3.6', install_requires=['biopython', 'gffpandas', 'pandas']
 )
