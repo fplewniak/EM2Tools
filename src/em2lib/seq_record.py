@@ -153,6 +153,10 @@ class SeqRecordEM2(SeqRecord):
                                  + self.feature_before(position, strand, True)))}
         return [f for f, v in feat_list.items() if v == min(feat_list.values())]
 
+
+    def add_feature(self, **kwargs):
+        self.features.append(SeqFeatureEM2(parent=self, **kwargs))
+
     def join(self, other=None, offset=0, keepself=True):
         """
         Joins two SeqRecordEM2 objects into a new one representing the resulting merged sequence
@@ -187,9 +191,10 @@ class SeqRecordEM2(SeqRecord):
             raise ValueError('Sequences are not of the same type. It is impossible to join them.')
 
         for feature in self.features:
-            new_record.features.append(
-                SeqFeatureEM2(parent=new_record, location=feature.location, strand=feature.strand,
-                              id=feature.id))
+            new_record.add_feature(location=feature.location, strand=feature.strand, id=feature.id)
+            # new_record.features.append(
+            #     SeqFeatureEM2(parent=new_record, location=feature.location, strand=feature.strand,
+            #                   id=feature.id))
 
         for feature in other.features:
             new_record.features.append(SeqFeatureEM2(parent=new_record,
@@ -219,7 +224,6 @@ class SeqRecordEM2(SeqRecord):
         :return: the stitched record as a new SeqRecordEM2 object
         """
         offset = feature_length + fpos_in_self - fpos_in_other - len(self.seq) - 1
-        print(fpos_in_self, fpos_in_other, feature_length, len(self.seq), offset)
         stitched = self.join(other, offset)
         # Adding self sequence as a feature of new record
         stitched.features.append(

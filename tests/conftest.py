@@ -23,7 +23,7 @@ def protein_rec():
 # #####################################################
 # Examples of DNA sequences and records
 # #####################################################
-def dna_sec(name='rec1'):
+def dna_seq(name='rec1'):
     s = {'rec1': 'ATGAGTCGGTAACGATGCATGCATGCAGCTGACGC',
          'rec2': 'CAGCTGACGCATGAGTCGGTAACGATGCATGCATG',
          'rec3': 'CACCTGACGCATGAGTCGGTAACGATGCATGCATG',
@@ -35,7 +35,7 @@ def dna_sec(name='rec1'):
 
 
 def joined_rec1NNNrec2():
-    return SeqRecordEM2(dna_sec('rec1NNNrec2'), id='Rec1_NNN_Rec2', name='R1R2',
+    return SeqRecordEM2(dna_seq('rec1NNNrec2'), id='Rec1_NNN_Rec2', name='R1R2',
                         features=[SeqFeatureEM2(location=FeatureLocation(0, 5), strand=1, id='A1',
                                                 ref='<unknown id>'),
                                   SeqFeatureEM2(location=FeatureLocation(28, 33), strand=1, id='B1',
@@ -48,7 +48,7 @@ def joined_rec1NNNrec2():
 
 
 def joined_rec1_overlap_rec2():
-    return SeqRecordEM2(dna_sec('rec1_overlap_rec2/rec3'),
+    return SeqRecordEM2(dna_seq('rec1_overlap_rec2/rec3'),
                         id='Rec1_overlap_Rec2', name='R1R2',
                         features=[SeqFeatureEM2(location=FeatureLocation(0, 5), strand=1, id='A1',
                                                 ref='<unknown id>'),
@@ -63,7 +63,7 @@ def joined_rec1_overlap_rec2():
 
 @pytest.fixture(scope="session")
 def dna_rec():
-    return SeqRecordEM2(dna_sec('rec1'), id='Rec', name='Rec',
+    return SeqRecordEM2(dna_seq('rec1'), id='Rec', name='Rec',
                         features=[SeqFeatureEM2(location=FeatureLocation(0, 2), strand=1, id='A'),
                                   SeqFeatureEM2(location=FeatureLocation(6, 10), strand=1, id='B'),
                                   SeqFeatureEM2(location=FeatureLocation(15, 20), strand=1, id='C'),
@@ -77,7 +77,7 @@ def dna_rec():
 
 @pytest.fixture(scope="session")
 def dna_rec1():
-    return SeqRecordEM2(dna_sec('rec1'), id='Rec1', name='R1',
+    return SeqRecordEM2(dna_seq('rec1'), id='Rec1', name='R1',
                         features=[SeqFeatureEM2(location=FeatureLocation(0, 5), strand=1, id='A1'),
                                   SeqFeatureEM2(location=FeatureLocation(28, 33), strand=1, id='B1')
                                   ])
@@ -85,7 +85,7 @@ def dna_rec1():
 
 @pytest.fixture(scope="session")
 def dna_rec2():
-    return SeqRecordEM2(dna_sec('rec2'), id='Rec2', name='R2',
+    return SeqRecordEM2(dna_seq('rec2'), id='Rec2', name='R2',
                         features=[SeqFeatureEM2(location=FeatureLocation(0, 5), strand=1, id='A2'),
                                   SeqFeatureEM2(location=FeatureLocation(28, 33), strand=1, id='B2')
                                   ])
@@ -93,10 +93,10 @@ def dna_rec2():
 
 @pytest.fixture(scope="session")
 def dna_rec3():
-    return SeqRecordEM2(dna_sec('rec3'), id='Rec3', name='R3')
+    return SeqRecordEM2(dna_seq('rec3'), id='Rec3', name='R3')
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="function")
 def dna_rec1_NNN_rec2():
     return joined_rec1NNNrec2()
 
@@ -128,20 +128,20 @@ def dna_rec1_overlap_rec2():
 
 @pytest.fixture(scope="session")
 def dna_rec1_overlap_rec3():
-    return SeqRecordEM2(dna_sec('rec1_overlap_rec2/rec3'), id='Rec1_overlap_Rec3', name='R1R3')
+    return SeqRecordEM2(dna_seq('rec1_overlap_rec2/rec3'), id='Rec1_overlap_Rec3', name='R1R3')
 
 
 @pytest.fixture(scope="session")
 def dna_rec1_overlap_rec3_keep_false():
-    return SeqRecordEM2(dna_sec('rec1_overlp_rec3_kpfls'), id='Rec1_overlp_Rec3_kpfls', name='R1R3')
+    return SeqRecordEM2(dna_seq('rec1_overlp_rec3_kpfls'), id='Rec1_overlp_Rec3_kpfls', name='R1R3')
 
 
 @pytest.fixture(scope="session")
 def dna_records():
     return [
-        SeqRecordEM2(dna_sec('rec1'), id='DNA1', name='DNA1'),
-        SeqRecordEM2(dna_sec('rec1'), id='DNA2', name='DNA2'),
-        SeqRecordEM2(dna_sec('rec1'), id='DNA3', name='DNA3'),
-        SeqRecordEM2(dna_sec('rec1'), id='DNA4', name='DNA4'),
-        SeqRecordEM2(dna_sec('rec1'), id='DNA5', name='DNA5')
+        SeqRecordEM2(dna_seq('rec1'), id='DNA1', name='DNA1'),
+        SeqRecordEM2(dna_seq('rec1'), id='DNA2', name='DNA2'),
+        SeqRecordEM2(dna_seq('rec1'), id='DNA3', name='DNA3'),
+        SeqRecordEM2(dna_seq('rec1'), id='DNA4', name='DNA4'),
+        SeqRecordEM2(dna_seq('rec1'), id='DNA5', name='DNA5')
         ]

@@ -4,6 +4,7 @@
 import warnings
 
 import pytest
+from Bio.SeqFeature import FeatureLocation
 
 
 def test_overlap(dna_rec):
@@ -55,6 +56,14 @@ def test_surrounding(dna_rec):
     assert sorted([f.id for f in dna_rec.surrounding_features(11, nearest=True)]) == ['B', 'F']
     assert sorted([f.id for f in dna_rec.surrounding_features(11, nearest=True, strand=1)]) == ['B']
     assert sorted([f.id for f in dna_rec.surrounding_features(11, nearest=True, strand=-1)]) == ['F']
+
+
+def test_add_feature(dna_rec1_NNN_rec2, dna_stitch_rec1_NNN_rec2):
+    dna_rec1_NNN_rec2.add_feature(location=FeatureLocation(0, 34), strand=1, id='Rec1')
+    dna_rec1_NNN_rec2.add_feature(location=FeatureLocation(38, 73), strand=1, id='Rec2')
+    dna_rec1_NNN_rec2.add_feature(location=FeatureLocation(30, 48), strand=1, id='stitcher')
+    assert [(f.id, int(f.location.start), int(f.location.end), f.strand) for f in dna_rec1_NNN_rec2.features] == \
+           [(f.id, int(f.location.start), int(f.location.end), f.strand) for f in dna_stitch_rec1_NNN_rec2.features]
 
 
 def test_join_sequences(dna_rec1, dna_rec2, dna_rec3, dna_rec1_NNN_rec2, dna_rec1_overlap_rec2,
