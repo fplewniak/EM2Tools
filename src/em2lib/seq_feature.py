@@ -82,3 +82,12 @@ class SeqFeatureEM2(SeqFeature):
             end = min(self.location.end, other.location.end)
             return SeqFeatureEM2(parent=self.parent, location=FeatureLocation(start, end), **kwargs)
         return None
+
+    def move(self, offset):
+        """
+        Moves a feature by a certain offset
+
+        :param offset: offset by which the feature must be moved
+        """
+        self.location = FeatureLocation(self.location.start + offset, self.location.end + offset)
+        return self

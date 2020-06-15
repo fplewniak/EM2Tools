@@ -82,3 +82,8 @@ class SeqFeatureTests(unittest.TestCase):
     def test_intersect_fuzzy(cls):
         with pytest.warns(UserWarning):
             cls.sprot.features[5].intersect(cls.sprot.features[0])
+
+    @classmethod
+    def test_move(cls):
+        assert cls.sprot.features[0].move(5).location == FeatureLocation(5, 16)
+
