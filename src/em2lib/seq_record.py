@@ -206,7 +206,7 @@ class SeqRecordEM2(SeqRecord):
                 strand=feature.strand, id=feature.id)
         return new_record
 
-    def stitch(self, other, fpos_in_self, fpos_in_other, feature_length, **kwargs):
+    def stitch(self, other, fpos_in_self, fpos_in_other, feature_length, orientation=1, **kwargs):
         """
         Stitches two records, that is, joins them according to an overlapping feature. The sequences
         may or may not overlap. If not, Ns or Xs are added to fill the gap. If they overlap, a
@@ -219,10 +219,13 @@ class SeqRecordEM2(SeqRecord):
         :param fpos_in_self: feature position in self record (start position of feature)
         :param fpos_in_other: feature position in other record (end position of feature)
         :param feature_length: feature length
-        :param kwargs: any additional parameters that may be passed to the created record
+        :param orientation: the orientation of the other record relative to the self, either 1 if
+        it is in the same orientation, -1 otherwise
+        :param kwargs: any additional parameters that may be passed to the stitching feature in the
+        new record
         :return: the stitched record as a new SeqRecordEM2 object
         """
-        print(kwargs)
+        # TODO: if orientation is -1 then reverse the other record and compute feature locations accordingly
         offset = feature_length + fpos_in_self - fpos_in_other - len(self.seq) - 1
         stitched = self.join(other, offset)
         # Adding self sequence as a feature of new record
@@ -233,17 +236,13 @@ class SeqRecordEM2(SeqRecord):
         # Adding other sequence as a feature of new record
         stitched.add_feature(location=FeatureLocation(len(self.seq) + offset,
                                                       len(self.seq) + len(other.seq) + offset),
-                             id=other.id)
+                             id=other.id, strand=orientation)
 
         if 'other_strand' in kwargs:
             stitched.features[-1].strand = kwargs['other_strand']
 
         # Adding stitching feature as a feature of new record
         stitched.add_feature(location=FeatureLocation(fpos_in_self,
-                                                      len(self.seq) + offset + fpos_in_other))
-        if 'feature_strand' in kwargs:
-            stitched.features[-1].strand = kwargs['feature_strand']
-        if 'feature_id' in kwargs:
-            stitched.features[-1].id = kwargs['feature_id']
-
+                                                      len(self.seq) + offset + fpos_in_other),
+                             **kwargs)
         return stitched
