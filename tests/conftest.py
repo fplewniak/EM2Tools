@@ -104,8 +104,8 @@ def dna_rec1_NNN_rec2():
 @pytest.fixture(scope="session")
 def dna_stitch_rec1_NNN_rec2():
     stitched = joined_rec1NNNrec2()
-    stitched.features += [SeqFeatureEM2(location=FeatureLocation(0, 34), strand=1, id='rec1'),
-                          SeqFeatureEM2(location=FeatureLocation(37, 73), strand=1, id='rec2'),
+    stitched.features += [SeqFeatureEM2(location=FeatureLocation(0, 34), strand=1, id='Rec1'),
+                          SeqFeatureEM2(location=FeatureLocation(37, 73), strand=1, id='Rec2'),
                           SeqFeatureEM2(location=FeatureLocation(30, 47), strand=1, id='stitcher')
                           ]
     return stitched
@@ -114,11 +114,10 @@ def dna_stitch_rec1_NNN_rec2():
 @pytest.fixture(scope="session")
 def dna_stitch_rec1_overlap_rec2():
     stitched = joined_rec1_overlap_rec2()
-    stitched.features += [SeqFeatureEM2(location=FeatureLocation(0, 34), strand=1, id='rec1'),
-                          SeqFeatureEM2(location=FeatureLocation(37, 73), strand=1, id='rec2'),
-                          SeqFeatureEM2(location=FeatureLocation(22, 46), strand=1, id='stitcher')
+    stitched.features += [SeqFeatureEM2(location=FeatureLocation(0, 34), strand=1, id='Rec1'),
+                          SeqFeatureEM2(location=FeatureLocation(25, 60), strand=1, id='Rec2'),
+                          SeqFeatureEM2(location=FeatureLocation(22, 45), strand=1, id='stitcher')
                           ]
-
     return stitched
 
 
