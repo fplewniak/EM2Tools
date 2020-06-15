@@ -154,6 +154,11 @@ class SeqRecordEM2(SeqRecord):
         return [f for f, v in feat_list.items() if v == min(feat_list.values())]
 
     def add_feature(self, **kwargs):
+        """
+        Adds a feature to the current record according to arguments passed as **kwargs
+
+        :param kwargs:
+        """
         self.features.append(SeqFeatureEM2(parent=self, **kwargs))
 
     def join(self, other=None, offset=0, keepself=True):
@@ -193,7 +198,10 @@ class SeqRecordEM2(SeqRecord):
             new_record.add_feature(location=feature.location, strand=feature.strand, id=feature.id)
 
         for feature in other.features:
-            new_record.add_feature(feature.move(len(self.seq) + offset))
+            new_record.add_feature(
+                location=FeatureLocation(feature.location.start + len(self.seq) + offset,
+                                         feature.location.end + len(self.seq) + offset),
+                strand=feature.strand, id=feature.id)
         return new_record
 
     def stitch(self, other, fpos_in_self, fpos_in_other, feature_length, **kwargs):
@@ -212,6 +220,7 @@ class SeqRecordEM2(SeqRecord):
         :param kwargs: any additional parameters that may be passed to the created record
         :return: the stitched record as a new SeqRecordEM2 object
         """
+        print(kwargs)
         offset = feature_length + fpos_in_self - fpos_in_other - len(self.seq) - 1
         stitched = self.join(other, offset)
         # Adding self sequence as a feature of new record
