@@ -22,9 +22,10 @@ def protein_rec():
 
 # #####################################################
 # Examples of DNA sequences and records
-# #####################################################
-def dna_seq(name='rec1'):
-    s = {'rec1': 'ATGAGTCGGTAACGATGCATGCATGCAGCTGACGC',
+# ##############################################Rec1_Rec2#######
+def dna_seq(name='rec'):
+    s = {'rec':  'ATGAGTCGGTAAAGATGCATGCGCGCCGCTGACGC',
+         'rec1': 'ATGAGTCGGTAACGATGCATGCATGCAGCTGACGC',
          'rec2': 'CAGCTGACGCATGAGTCGGTAACGATGCATGCATG',
          'rec3': 'CACCTGACGCATGAGTCGGTAACGATGCATGCATG',
          'rec1NNNrec2': 'ATGAGTCGGTAACGATGCATGCATGCAGCTGACGCNNNCAGCTGACGCATGAGTCGGTAACGATGCATGCATG',
@@ -63,7 +64,7 @@ def joined_rec1_overlap_rec2():
 
 @pytest.fixture(scope="session")
 def dna_rec():
-    return SeqRecordEM2(dna_seq('rec1'), id='Rec', name='Rec',
+    return SeqRecordEM2(dna_seq('rec'), id='Rec', name='Rec',
                         features=[SeqFeatureEM2(location=FeatureLocation(0, 2), strand=1, id='A'),
                                   SeqFeatureEM2(location=FeatureLocation(6, 10), strand=1, id='B'),
                                   SeqFeatureEM2(location=FeatureLocation(15, 20), strand=1, id='C'),
@@ -139,9 +140,9 @@ def dna_rec1_overlap_rec3_keep_false():
 @pytest.fixture(scope="session")
 def dna_records():
     return [
-        SeqRecordEM2(dna_seq('rec1'), id='DNA1', name='DNA1'),
-        SeqRecordEM2(dna_seq('rec1'), id='DNA2', name='DNA2'),
-        SeqRecordEM2(dna_seq('rec1'), id='DNA3', name='DNA3'),
-        SeqRecordEM2(dna_seq('rec1'), id='DNA4', name='DNA4'),
-        SeqRecordEM2(dna_seq('rec1'), id='DNA5', name='DNA5')
+        SeqRecordEM2(SeqEM2.dna('ACAGTACCATGTAA'), id='DNA1', name='DNA1'),
+        SeqRecordEM2(SeqEM2.dna('ACAG'), id='DNA2', name='DNA2'),
+        SeqRecordEM2(SeqEM2.dna('ACAGTA'), id='DNA3', name='DNA3'),
+        SeqRecordEM2(SeqEM2.dna('ACAGTACCAT'), id='DNA4', name='DNA4'),
+        SeqRecordEM2(SeqEM2.dna('ACAGTACCATGT'), id='DNA5', name='DNA5')
         ]
