@@ -153,7 +153,6 @@ class SeqRecordEM2(SeqRecord):
                                  + self.feature_before(position, strand, True)))}
         return [f for f, v in feat_list.items() if v == min(feat_list.values())]
 
-
     def add_feature(self, **kwargs):
         self.features.append(SeqFeatureEM2(parent=self, **kwargs))
 
@@ -192,19 +191,9 @@ class SeqRecordEM2(SeqRecord):
 
         for feature in self.features:
             new_record.add_feature(location=feature.location, strand=feature.strand, id=feature.id)
-            # new_record.features.append(
-            #     SeqFeatureEM2(parent=new_record, location=feature.location, strand=feature.strand,
-            #                   id=feature.id))
 
         for feature in other.features:
-            new_record.features.append(SeqFeatureEM2(parent=new_record,
-                                                     location=FeatureLocation(
-                                                         feature.location.start + len(
-                                                             self.seq) + offset,
-                                                         feature.location.end + len(
-                                                             self.seq) + offset),
-                                                     strand=feature.strand, id=feature.id))
-
+            new_record.add_feature(feature.move(len(self.seq) + offset))
         return new_record
 
     def stitch(self, other, fpos_in_self, fpos_in_other, feature_length, **kwargs):
@@ -226,23 +215,21 @@ class SeqRecordEM2(SeqRecord):
         offset = feature_length + fpos_in_self - fpos_in_other - len(self.seq) - 1
         stitched = self.join(other, offset)
         # Adding self sequence as a feature of new record
-        stitched.features.append(
-            SeqFeatureEM2(location=FeatureLocation(0, len(self.seq) - 1), id=self.id))
+        stitched.add_feature(location=FeatureLocation(0, len(self.seq) - 1), id=self.id)
         if self.seq.is_protein() is False:
             stitched.features[-1].strand = 1
 
         # Adding other sequence as a feature of new record
-        stitched.features.append(
-            SeqFeatureEM2(location=FeatureLocation(len(self.seq) + offset,
-                                                   len(self.seq) + len(other.seq) + offset),
-                          id=other.id))
+        stitched.add_feature(location=FeatureLocation(len(self.seq) + offset,
+                                                      len(self.seq) + len(other.seq) + offset),
+                             id=other.id)
+
         if 'other_strand' in kwargs:
             stitched.features[-1].strand = kwargs['other_strand']
 
         # Adding stitching feature as a feature of new record
-        stitched.features.append(
-            SeqFeatureEM2(location=FeatureLocation(fpos_in_self,
-                                                   len(self.seq) + offset + fpos_in_other)))
+        stitched.add_feature(location=FeatureLocation(fpos_in_self,
+                                                      len(self.seq) + offset + fpos_in_other))
         if 'feature_strand' in kwargs:
             stitched.features[-1].strand = kwargs['feature_strand']
         if 'feature_id' in kwargs:
