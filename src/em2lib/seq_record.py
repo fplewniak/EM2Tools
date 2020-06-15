@@ -194,6 +194,8 @@ class SeqRecordEM2(SeqRecord):
         else:
             raise ValueError('Sequences are not of the same type. It is impossible to join them.')
 
+        new_record.id = self.id + '_' + other.id
+
         for feature in self.features:
             new_record.add_feature(location=feature.location, strand=feature.strand, id=feature.id)
 

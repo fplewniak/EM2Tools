@@ -37,13 +37,13 @@ def dna_seq(name='rec1'):
 def joined_rec1NNNrec2():
     return SeqRecordEM2(dna_seq('rec1NNNrec2'), id='Rec1_NNN_Rec2', name='R1R2',
                         features=[SeqFeatureEM2(location=FeatureLocation(0, 5), strand=1, id='A1',
-                                                ref='<unknown id>'),
+                                                ref='Rec1_Rec2'),
                                   SeqFeatureEM2(location=FeatureLocation(28, 33), strand=1, id='B1',
-                                                ref='<unknown id>'),
+                                                ref='Rec1_Rec2'),
                                   SeqFeatureEM2(location=FeatureLocation(38, 43), strand=1, id='A2',
-                                                ref='<unknown id>'),
+                                                ref='Rec1_Rec2'),
                                   SeqFeatureEM2(location=FeatureLocation(66, 71), strand=1, id='B2',
-                                                ref='<unknown id>')
+                                                ref='Rec1_Rec2')
                                   ])
 
 
@@ -51,13 +51,13 @@ def joined_rec1_overlap_rec2():
     return SeqRecordEM2(dna_seq('rec1_overlap_rec2/rec3'),
                         id='Rec1_overlap_Rec2', name='R1R2',
                         features=[SeqFeatureEM2(location=FeatureLocation(0, 5), strand=1, id='A1',
-                                                ref='<unknown id>'),
+                                                ref='Rec1_Rec2'),
                                   SeqFeatureEM2(location=FeatureLocation(28, 33), strand=1, id='B1',
-                                                ref='<unknown id>'),
+                                                ref='Rec1_Rec2'),
                                   SeqFeatureEM2(location=FeatureLocation(25, 30), strand=1, id='A2',
-                                                ref='<unknown id>'),
+                                                ref='Rec1_Rec2'),
                                   SeqFeatureEM2(location=FeatureLocation(53, 58), strand=1, id='B2',
-                                                ref='<unknown id>')
+                                                ref='Rec1_Rec2')
                                   ])
 
 
