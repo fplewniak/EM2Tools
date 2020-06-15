@@ -101,6 +101,16 @@ def test_stitch_sequences(dna_rec1, dna_rec2, dna_rec1_overlap_rec2, dna_rec1_NN
     assert str(dna_rec1.stitch(dna_rec2, 30, 10, 19).seq) == str(dna_rec1_NNN_rec2.seq)
 
 
+def test_stitch_features(dna_rec1, dna_rec2, dna_stitch_rec1_overlap_rec2, dna_stitch_rec1_NNN_rec2):
+    newrecord = dna_rec1.stitch(dna_rec2, 22, 20, 24)
+    assert [(f.id, int(f.location.start), int(f.location.end), f.strand, f.ref) for f in newrecord.features] == \
+           [(f.id, int(f.location.start), int(f.location.end), f.strand, f.ref) for f in dna_stitch_rec1_overlap_rec2.features]
+
+    newrecord = dna_rec1.stitch(dna_rec2, 30, 10, 19)
+    assert [(f.id, int(f.location.start), int(f.location.end), f.strand, f.ref) for f in newrecord.features] == \
+           [(f.id, int(f.location.start), int(f.location.end), f.strand, f.ref) for f in dna_stitch_rec1_NNN_rec2.features]
+
+
 def test_comparisons(dna_rec1, dna_rec2, dna_rec3):
     assert dna_rec1.__lt__(dna_rec2)
     assert not dna_rec3.__lt__(dna_rec2)
