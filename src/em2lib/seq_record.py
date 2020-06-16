@@ -50,7 +50,6 @@ class SeqRecordEM2(SeqRecord):
         features on both strands are returned. If feature.strand is 0, then all strands will match.
         :param start: start of range
         :param end: end of range, if None, then end=start
-
         :return: a list of overlaping features
         """
         if end is None:
@@ -67,7 +66,6 @@ class SeqRecordEM2(SeqRecord):
         :param strand: strand specification of features to be returned. If strand is 0, then\
         features on both strands are returned
         :param position: the position
-
         :return: a list of features after the specified position
         """
         after_fwd = {f: f.location.start for f in self.features if
@@ -104,7 +102,6 @@ class SeqRecordEM2(SeqRecord):
         :param strand: strand specification of features to be returned. If strand is 0, then\
         features on both strands are returned
         :param position: the position
-
         :return: a list of features before the specified position
         """
         before_fwd = {f: f.location.end for f in self.features if
@@ -140,7 +137,6 @@ class SeqRecordEM2(SeqRecord):
         :param nearest: if True, only the nearest features are returned.
         :param strand: strand specification of features to be returned. If strand is 0, then\
         features on both strands are returned
-
         :return: a list of features around the specified position
         """
         if nearest is False:
@@ -168,7 +164,6 @@ class SeqRecordEM2(SeqRecord):
         :param other: the other SeqRecordEM2 object
         :param offset: the offset of the two sequences. If the value is negative, then the two\
         sequences overlap.
-
         :return: the result of merging records as a new SeqRecordEM2 object
         """
         if len(self.seq) + offset < 0:
@@ -221,12 +216,13 @@ class SeqRecordEM2(SeqRecord):
         :param fpos_in_other: feature position in other record (end position of feature)
         :param feature_length: feature length
         :param orientation: the orientation of the other record relative to the self, either 1 if\
-        it is in the same orientation, -1 if other needs to be reversed before stitching
-        :param kwargs: any additional parameters that may be passed to the stitching feature in the\
-        new record
-
+        it is in the same orientation, -1 if other needs to be reversed before stitching, 0 if \
+        stranded but unknown, None for proteins
+        :param kwargs: any additional parameters that may be passed to the constructor of the \
+        stitching feature in the new record
         :return: the stitched record as a new SeqRecordEM2 object
         """
+        orientation = None if other.seq.is_protein() else orientation
         if orientation == -1:
             other = other.reverse_complement()
             fpos_in_other = len(other.seq) - fpos_in_other - 1
@@ -234,8 +230,7 @@ class SeqRecordEM2(SeqRecord):
         stitched = self.join(other, offset)
         # Adding self sequence as a feature of new record
         stitched.add_feature(location=FeatureLocation(0, len(self.seq) - 1), id=self.id)
-        if self.seq.is_protein() is False:
-            stitched.features[-1].strand = 1
+        stitched.features[-1].strand = None if self.seq.is_protein() else 1
 
         # Adding other sequence as a feature of new record
         stitched.add_feature(location=FeatureLocation(len(self.seq) + offset,
@@ -246,6 +241,8 @@ class SeqRecordEM2(SeqRecord):
         stitched.add_feature(location=FeatureLocation(fpos_in_self,
                                                       len(self.seq) + offset + fpos_in_other),
                              **kwargs)
+        if self.seq.is_protein():
+            stitched.features[-1].strand = None
         return stitched
 
     def reverse_complement(self, id=False, name=False, description=False, features=True,
