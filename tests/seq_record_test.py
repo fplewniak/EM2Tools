@@ -110,7 +110,8 @@ def test_stitch_sequences(dna_rec1, dna_rec2, dna_rec1_overlap_rec2, dna_rec1_NN
     assert str(dna_rec1.stitch(dna_rec2, 30, 10, 19).seq) == str(dna_rec1_NNN_rec2.seq)
 
 
-def test_stitch_features(dna_rec1, dna_rec2, dna_stitch_rec1_overlap_rec2, dna_stitch_rec1_NNN_rec2):
+def test_stitch_features(dna_rec1, dna_rec2, dna_rec2_rev, dna_stitch_rec1_overlap_rec2,
+                         dna_stitch_rec1_NNN_rec2, dna_stitch_rec1_NNN_rec2rev):
     newrecord = dna_rec1.stitch(dna_rec2, 22, 20, 24, orientation=1, strand=1, id='stitcher')
     assert [(f.id, int(f.location.start), int(f.location.end), f.strand, f.ref) for f in newrecord.features] == \
            [(f.id, int(f.location.start), int(f.location.end), f.strand, f.ref) for f in dna_stitch_rec1_overlap_rec2.features]
@@ -118,6 +119,10 @@ def test_stitch_features(dna_rec1, dna_rec2, dna_stitch_rec1_overlap_rec2, dna_s
     newrecord = dna_rec1.stitch(dna_rec2, 30, 10, 19, orientation=1, strand=1, id='stitcher')
     assert [(f.id, int(f.location.start), int(f.location.end), f.strand, f.ref) for f in newrecord.features] == \
            [(f.id, int(f.location.start), int(f.location.end), f.strand, f.ref) for f in dna_stitch_rec1_NNN_rec2.features]
+
+    newrecord = dna_rec1.stitch(dna_rec2_rev, 30, 24, 19, orientation=-1, strand=1, id='stitcher')
+    assert [(f.id, int(f.location.start), int(f.location.end), f.strand, f.ref) for f in newrecord.features] == \
+           [(f.id, int(f.location.start), int(f.location.end), f.strand, f.ref) for f in dna_stitch_rec1_NNN_rec2rev.features]
 
 
 def test_comparisons(dna_rec1, dna_rec2, dna_rec3):

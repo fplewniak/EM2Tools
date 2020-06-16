@@ -212,20 +212,26 @@ class SeqRecordEM2(SeqRecord):
         may or may not overlap. If not, Ns or Xs are added to fill the gap. If they overlap, a
         warning is issued if sequences do not correspond exactly. The new record keeps track of the
         two original records as Features. By convention, the self record should contain the start
-        position of the feature, the other contains the end position and the overlapping feature
-        should be on the same strand in both records. It is the user's responsibility to provide
-        the records in the right order and direction.
-        :param other: the other SeqRecordEM2 object to stich
+        position of the feature on the forward strand, the other contains the end position on the
+        forward strand if orientation=1 or on the reverse strand if orientation=-1. If orientation
+        is -1, then the other record is reversed/complemented before stitching and the position of
+        the overlapping feature is modified accordingly. It is the user's responsibility to provide
+        the records in the right order.
+
+        :param other: the other SeqRecordEM2 object to stitch
         :param fpos_in_self: feature position in self record (start position of feature)
         :param fpos_in_other: feature position in other record (end position of feature)
         :param feature_length: feature length
         :param orientation: the orientation of the other record relative to the self, either 1 if
-        it is in the same orientation, -1 otherwise
+        it is in the same orientation, -1 if other needs to be reversed before stitching
         :param kwargs: any additional parameters that may be passed to the stitching feature in the
         new record
+
         :return: the stitched record as a new SeqRecordEM2 object
         """
-        # TODO: if orientation is -1 then reverse the other record and compute feature locations accordingly
+        if orientation == -1:
+            other = other.reverse_complement()
+            fpos_in_other = len(other.seq) - fpos_in_other - 1
         offset = feature_length + fpos_in_self - fpos_in_other - len(self.seq) - 1
         stitched = self.join(other, offset)
         # Adding self sequence as a feature of new record
@@ -238,11 +244,38 @@ class SeqRecordEM2(SeqRecord):
                                                       len(self.seq) + len(other.seq) + offset),
                              id=other.id, strand=orientation)
 
-        if 'other_strand' in kwargs:
-            stitched.features[-1].strand = kwargs['other_strand']
-
         # Adding stitching feature as a feature of new record
         stitched.add_feature(location=FeatureLocation(fpos_in_self,
                                                       len(self.seq) + offset + fpos_in_other),
                              **kwargs)
         return stitched
+
+    def reverse_complement(self, id=False, name=False, description=False, features=True,
+                           annotations=False, letter_annotations=True, dbxrefs=False):
+        """
+        Reverse-complement the record adjusting features and their positions accordingly. The record
+        id is conserved but if name is not specified 'reversed' is appended. All other arguments are
+        passed and handled by the parent method.
+        Note that the main goal for this method is to replace SeqRecord and Seq objects by their
+        SeqRecordEM2 and SeqEM2 equivalents when reverse/complementing.
+
+        :param id: the id for the reversed record
+        :param name: the name for the reversed record
+        :param description: the description for the reversed record
+        :param features: keep and adjust location of features if True
+        :param annotations: keep annotations if True
+        :param letter_annotations: keep letter_annotations if True
+        :param dbxrefs: keep dbxrefs if True
+        :return: a reversed copy of the record
+        """
+        id = self.id if id is False else id
+        name = self.name + ' reversed' if name is False else name
+        rev_record = super().reverse_complement(id=id, name=name, description=self.description,
+                                                features=features, annotations=False,
+                                                letter_annotations=True, dbxrefs=False)
+        rev_record = SeqRecordEM2(SeqEM2.dna(str(rev_record.seq)), id=self.id, name=rev_record.name,
+                                  description=self.description,
+                                  features=rev_record.features, annotations=rev_record.annotations,
+                                  letter_annotations=rev_record.letter_annotations,
+                                  dbxrefs=rev_record.dbxrefs)
+        return rev_record
