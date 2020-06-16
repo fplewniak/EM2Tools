@@ -49,7 +49,7 @@ class SeqFeatureEM2(SeqFeature):
 
     def overlaps(self, start, end=None):
         """
-        Determines whether feayur overlaps a position range.
+        Determines whether feature overlaps a position range.
 
         :param start: start of range either int or ExactPosition
         :param end: end of range either int or ExactPosition

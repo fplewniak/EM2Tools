@@ -46,7 +46,7 @@ class SeqRecordEM2(SeqRecord):
         """
         Retrieves features that overlap a given position range.
 
-        :param strand: strand specification of features to be returned. If strand is 0, then
+        :param strand: strand specification of features to be returned. If strand is 0, then\
         features on both strands are returned. If feature.strand is 0, then all strands will match.
         :param start: start of range
         :param end: end of range, if None, then end=start
@@ -60,12 +60,11 @@ class SeqRecordEM2(SeqRecord):
     def feature_after(self, position, strand=0, nearest=False):
         """
         Retrieves the features immediately after (but not overlaping) the specified position, on one
-        strand or both.
-        If nearest is True, then only the nearest ones are returned.
+        strand or both. If nearest is True, then only the nearest ones are returned.
 
-        :param nearest: if True, only the nearest features are returned. This only makes sense when
-        strand is O
-        :param strand: strand specification of features to be returned. If strand is 0, then
+        :param nearest: if True, only the nearest features are returned. This only makes sense when\
+        strand is 0
+        :param strand: strand specification of features to be returned. If strand is 0, then\
         features on both strands are returned
         :param position: the position
 
@@ -98,12 +97,11 @@ class SeqRecordEM2(SeqRecord):
     def feature_before(self, position, strand=0, nearest=False):
         """
         Retrieves the features immediately before (but not overlaping) the specified position, on
-        one strand or both.
-        If nearest is True, then only the nearest ones are returned.
+        one strand or both. If nearest is True, then only the nearest ones are returned.
 
-        :param nearest: if True, only the nearest features are returned. This only makes sense when
-        strand is O
-        :param strand: strand specification of features to be returned. If strand is 0, then
+        :param nearest: if True, only the nearest features are returned. This only makes sense when\
+        strand is 0
+        :param strand: strand specification of features to be returned. If strand is 0, then\
         features on both strands are returned
         :param position: the position
 
@@ -140,7 +138,7 @@ class SeqRecordEM2(SeqRecord):
 
         :param position: the position
         :param nearest: if True, only the nearest features are returned.
-        :param strand: strand specification of features to be returned. If strand is 0, then
+        :param strand: strand specification of features to be returned. If strand is 0, then\
         features on both strands are returned
 
         :return: a list of features around the specified position
@@ -157,7 +155,7 @@ class SeqRecordEM2(SeqRecord):
         """
         Adds a feature to the current record according to arguments passed as **kwargs
 
-        :param kwargs:
+        :param kwargs: keyword arguments to pass to SeqFeatureEM2 class
         """
         self.features.append(SeqFeatureEM2(parent=self, **kwargs))
 
@@ -165,10 +163,10 @@ class SeqRecordEM2(SeqRecord):
         """
         Joins two SeqRecordEM2 objects into a new one representing the resulting merged sequence
 
-        :param keepself: if True and overlapping subsequences are different, then keep sequence from
-         self record, otherwise keep the sequence of other record.
+        :param keepself: if True and overlapping subsequences are different, then keep sequence\
+        from self record, otherwise keep the sequence of other record.
         :param other: the other SeqRecordEM2 object
-        :param offset: the offset of the two sequences. If the value is negative, then the two
+        :param offset: the offset of the two sequences. If the value is negative, then the two\
         sequences overlap.
 
         :return: the result of merging records as a new SeqRecordEM2 object
@@ -222,9 +220,9 @@ class SeqRecordEM2(SeqRecord):
         :param fpos_in_self: feature position in self record (start position of feature)
         :param fpos_in_other: feature position in other record (end position of feature)
         :param feature_length: feature length
-        :param orientation: the orientation of the other record relative to the self, either 1 if
+        :param orientation: the orientation of the other record relative to the self, either 1 if\
         it is in the same orientation, -1 if other needs to be reversed before stitching
-        :param kwargs: any additional parameters that may be passed to the stitching feature in the
+        :param kwargs: any additional parameters that may be passed to the stitching feature in the\
         new record
 
         :return: the stitched record as a new SeqRecordEM2 object

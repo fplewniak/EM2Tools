@@ -46,13 +46,13 @@ def isambiguous(code, protein=False):
 def pattern2regex(pattern, protein=False):
     """
     Converts a fuzznuc or fuzzpro-like pattern into a regular expression that can be used to search
-     a sequence string.
-    [ABC] => any of ABC residues
-    {ABC} => any residue except ABC
-    <ABC... => start of sequence
-    ...ABC> => end of sequence
-    A(n)(ABC)(n) => repeat residue or subsequence n times
-    A(n,m)(ABC)(n,m) => repeat residue or subsequence from n up to m times
+    a sequence string.
+    [ABC] => any of ABC residues,
+    {ABC} => any residue except ABC,
+    <ABC... => start of sequence,
+    ...ABC> => end of sequence,
+    A(n)(ABC)(n) => repeat residue or subsequence n times,
+    A(n,m)(ABC)(n,m) => repeat residue or subsequence from n up to m times.
 
     :param pattern: the pattern definition (string)
     :param protein: True if pattern applies to a protein sequence, False otherwise.
@@ -84,14 +84,11 @@ def pattern2regex(pattern, protein=False):
 
 class SeqFilter:
     """
-    Class for the creation of a sequence filter to specify filtering criteria and applying the
-     filter to a list of sequence records.
-    (minlength: minimum length of sequence
-    maxlength: maximum length of sequence
-    pattern: sequence pattern
-    name: sequence name
-    keep: boolean, if True, keep the records respecting the criteria, otherwise, discard them
-    and keep the others)
+    A class for the creation of a sequence filter to specify filtering criteria and applying the\
+     filter to a list of sequence records.\
+    (minlength: minimum length of sequence, maxlength: maximum length of sequence, \
+    pattern: sequence pattern, name: sequence name, keep: boolean, if True, keep the records\
+    respecting the criteria, otherwise, discard them and keep the others.
     """
 
     def __init__(self):
@@ -184,9 +181,10 @@ class SeqFilter:
         Filters a list of SeqRecords instances, keeping only records satisfying the specified
         criteria of length, match of a pattern, name specification. It is possible to invert
         the filtering process by setting the keep boolean to False and thus only keep records
-         which do not satisfy the criteria.
+        which do not satisfy the criteria.
 
         :param records: list of SeqRecord instances to apply
+        :return: the filtered list of records
         """
         filtered = []
         for rec in records:

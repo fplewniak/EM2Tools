@@ -29,7 +29,7 @@ class GetList(argparse.Action):
         This method converts the argument values containing elements and/or files containing
         elements into a list of elements.
 
-        :param values: argument values, this is supposed to be a list of arguments or None
+        :param values: argument values, this is supposed to be a list of arguments or None\
         (returns an empty list)
 
         :return: the list of elements or an empty list if the argument was None
@@ -47,7 +47,7 @@ class GetList(argparse.Action):
 class GetSet(argparse.Action):
     """
     An argparse custom action to return a set from an argument containing a list of elements
-     and/or file names. Files are supposed to contain one element of the list per line. There
+    and/or file names. Files are supposed to contain one element of the list per line. There
     can be more than one file and the argument may take a combination of elements and files.
     In all cases, the returned set will contain all the specified elements keeping only
     one copy of each element. If you do not want to remove redundancy, then use GetList
@@ -66,9 +66,9 @@ class GetSet(argparse.Action):
     def arg2set(values):
         """
         This method converts the argument values containing elements and/or files containing
-         elements into a set of elements.
+        elements into a set of elements.
 
-        :param values: argument values, this is supposed to be a list of arguments or None
+        :param values: argument values, this is supposed to be a list of arguments or None\
         (returns an empty set)
 
         :return: the set of elements or an empty set if the argument was None

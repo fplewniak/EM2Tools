@@ -1,29 +1,29 @@
 The EM2Tools API reference
 =============================
-..  automodule:: EM2Libs
+..  automodule:: em2lib
     :members:
 
-The “SeqRecord” module
+The “seq_record” module
 ----------------------
-..  automodule:: EM2Libs.SeqRecord
+..  automodule:: em2lib.seq_record
     :members:
 
-The “Seq” module
+The “seq” module
 ----------------
-..  automodule:: EM2Libs.Seq
+..  automodule:: em2lib.seq
     :members:
 
-The “SeqFeature” module
+The “seq_feature” module
 -----------------------
-..  automodule:: EM2Libs.SeqFeature
+..  automodule:: em2lib.seq_feature
     :members:
 
-The “SeqUtils” module
+The “seq_utils” module
 ---------------------
-..  automodule:: EM2Libs.SeqUtils
+..  automodule:: em2lib.seq_utils
     :members:
 
-The “ArgParseEM2” module
+The “argparse_em2” module
 ------------------------
-..  automodule:: EM2Libs.ArgparseEM2
+..  automodule:: em2lib.argparse_em2
     :members:
