@@ -84,3 +84,6 @@ class SeqEM2(Seq):
         """
         regex = em2lib.seq_utils.pattern2regex(pattern, protein=self.is_protein())
         return self.re_search(regex)
+
+    def get_orfs(self, start=['ATG'], stop=['TAG', 'TGA', 'TAA']):
+        return []

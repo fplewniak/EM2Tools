@@ -28,3 +28,8 @@ def test_search(protein_rec, dna_rec):
     assert {m.group(): m.start() for m in protein_rec.seq.search('(RE[FD])(2,3)')} == {'REFRED': 5}
     assert {m.group(): m.start() for m in protein_rec.seq.search('{GC}(2,)')} == {'HITHEREFREDAND': 0, 'RE': 15}
     assert protein_rec.seq.search('RRRRRRR') == []
+
+
+def test_get_orfs(dna_rec1_overlap_rec2):
+    assert [(orf.start, orf.end) for orf in dna_rec1_overlap_rec2.seq.get_orfs()] == [(0, 12), (14, 32), (35, 47)]
+    assert [(orf.start, orf.end) for orf in dna_rec1_overlap_rec2.seq.get_orfs(start=None)] == [(0, 12), (12, 39), (41, 47)]
