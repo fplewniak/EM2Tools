@@ -19,6 +19,22 @@ class SeqFeatureEM2(SeqFeature):
         self.parent = parent
         self.ref = parent.id if (parent is not None) and (ref is None) else ref
 
+    def length_in_range(self, minlength=None, maxlength=None):
+        """
+        Checks whether the feature length is with the specified range.
+
+        :param minlength: lower length bound
+        :param maxlength: upper length bound
+        :return: True if feature length is within specified range, False otherwise
+        """
+        if minlength is None and maxlength is None:
+            return True
+        if minlength is None:
+            return self.__len__() <= maxlength
+        if maxlength is None:
+            return minlength <= self.__len__()
+        return minlength <= self.__len__() <= maxlength
+
     def lies_within(self, start, end):
         """
         Determines whether feature lies entirely with the specified range. Fuzzy positions are
@@ -97,7 +113,7 @@ class FeatureFilter():
     def __init__(self):
         self._minlength = None
         self._maxlength = None
-        self._strand = 0
+        self._strand = None
         self._covers = None
         self._overlaps = None
         self._lies_within = None
@@ -105,25 +121,35 @@ class FeatureFilter():
 
     def keep(self, keep=True):
         self._keep = keep
+        return self
 
     def length(self, minlength=None, maxlength=None):
         self._minlength = minlength
         self._maxlength = maxlength
+        return self
 
     def strand(self, strand=0):
         self._strand = strand
+        return self
 
     def covers(self, start=None, end=None):
         self._covers = (start, end)
+        return self
 
     def overlaps(self, start=None, end=None):
         self._overlaps = (start, end)
+        return self
 
     def lies_within(self, start=None, end=None):
         self._lies_within = (start, end)
+        return self
 
     def length_applies(self, feature):
-        pass
+        if self._keep is True:
+            return feature.length_in_range(self._minlength, self._maxlength)
+        return (self._minlength, self._maxlength) == (None, None) or feature.length_in_range(
+            self._minlength,
+            self._maxlength) is False
 
     def covers_applies(self, feature):
         pass
@@ -143,9 +169,7 @@ class FeatureFilter():
     def apply(self, features):
         filtered = []
         for feat in features:
-            if all([self.length_applies(feat),
-                    self.strand_applies(feat),
-                    self.location_applies(feat)
+            if all([self.length_applies(feat)
                     ]):
                 filtered.append(feat)
         return filtered

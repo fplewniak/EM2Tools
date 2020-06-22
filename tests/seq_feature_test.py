@@ -91,7 +91,7 @@ class SeqFeatureTests(unittest.TestCase):
 
 
 def test_filter_length(dna_rec):
-    assert FF().length(8, None).apply(dna_rec.features) == [dna_rec.features[i] for i in [3, 5]]
+    assert FF().length(7, None).apply(dna_rec.features) == [dna_rec.features[i] for i in [3, 5]]
 
 
 def test_filter_strand(dna_rec):
