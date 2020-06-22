@@ -97,7 +97,7 @@ def test_filter_length(dna_rec):
 def test_filter_strand(dna_rec):
     assert FF().strand(1).apply(dna_rec.features) == dna_rec.features[0:4]
     assert FF().strand(-1).apply(dna_rec.features) == dna_rec.features[4:6]
-    assert FF().strand(0).apply(dna_rec.features) == dna_rec.features[6]
+    assert FF().strand(0).apply(dna_rec.features) == [dna_rec.features[6]]
 
 
 def test_filter_location(dna_rec):

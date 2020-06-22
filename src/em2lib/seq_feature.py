@@ -164,12 +164,17 @@ class FeatureFilter():
         pass
 
     def strand_applies(self, feature):
-        pass
+        if self._strand is None:
+            return True
+        if self._keep is True:
+            return feature.strand == self._strand
+        return feature.strand != self._strand
 
     def apply(self, features):
         filtered = []
         for feat in features:
-            if all([self.length_applies(feat)
+            if all([self.length_applies(feat),
+                    self.strand_applies(feat)
                     ]):
                 filtered.append(feat)
         return filtered
