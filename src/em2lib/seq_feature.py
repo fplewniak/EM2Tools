@@ -118,9 +118,14 @@ class FeatureFilter():
         self._overlaps = None
         self._lies_within = None
         self._keep = True
+        self._type = None
 
     def keep(self, keep=True):
         self._keep = keep
+        return self
+
+    def type(self, feat_type=None):
+        self._type = feat_type
         return self
 
     def length(self, minlength=None, maxlength=None):
@@ -143,6 +148,13 @@ class FeatureFilter():
     def lies_within(self, start=None, end=None):
         self._lies_within = (start, end)
         return self
+
+    def type_applies(self, feature):
+        if self._type is None:
+            return True
+        if self._keep is True:
+            return feature.type == self._type
+        return not feature.type == self._type
 
     def length_applies(self, feature):
         if self._keep is True:
@@ -189,7 +201,8 @@ class FeatureFilter():
         for feat in features:
             if all([self.length_applies(feat),
                     self.strand_applies(feat),
-                    self.location_applies(feat)
+                    self.location_applies(feat),
+                    self.type_applies(feat)
                     ]):
                 filtered.append(feat)
         return filtered

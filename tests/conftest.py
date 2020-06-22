@@ -66,12 +66,13 @@ def joined_rec1_overlap_rec2():
 def dna_rec():
     return SeqRecordEM2(dna_seq('rec'), id='Rec', name='Rec',
                         features=[SeqFeatureEM2(location=FeatureLocation(0, 2), strand=1, id='A'),
-                                  SeqFeatureEM2(location=FeatureLocation(6, 10), strand=1, id='B'),
+                                  SeqFeatureEM2(location=FeatureLocation(6, 10), strand=1,
+                                                type='yyy', id='B'),
                                   SeqFeatureEM2(location=FeatureLocation(15, 20), strand=1, id='C'),
                                   SeqFeatureEM2(location=FeatureLocation(20, 30), strand=1, id='D'),
                                   SeqFeatureEM2(location=FeatureLocation(6, 10), strand=-1, id='F'),
                                   SeqFeatureEM2(location=FeatureLocation(18, 25), strand=-1,
-                                                id='G'),
+                                                type='xxx', id='G'),
                                   SeqFeatureEM2(location=FeatureLocation(16, 19), strand=0, id='H')
                                   ])
 
