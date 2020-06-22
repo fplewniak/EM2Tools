@@ -91,3 +91,61 @@ class SeqFeatureEM2(SeqFeature):
         """
         self.location = FeatureLocation(self.location.start + offset, self.location.end + offset)
         return self
+
+
+class FeatureFilter():
+    def __init__(self):
+        self._minlength = None
+        self._maxlength = None
+        self._strand = 0
+        self._covers = None
+        self._overlaps = None
+        self._lies_within = None
+        self._keep = True
+
+    def keep(self, keep=True):
+        self._keep = keep
+
+    def length(self, minlength=None, maxlength=None):
+        self._minlength = minlength
+        self._maxlength = maxlength
+
+    def strand(self, strand=0):
+        self._strand = strand
+
+    def covers(self, start=None, end=None):
+        self._covers = (start, end)
+
+    def overlaps(self, start=None, end=None):
+        self._overlaps = (start, end)
+
+    def lies_within(self, start=None, end=None):
+        self._lies_within = (start, end)
+
+    def length_applies(self, feature):
+        pass
+
+    def covers_applies(self, feature):
+        pass
+
+    def overlaps_applies(self, feature):
+        pass
+
+    def lies_within_applies(self, feature):
+        pass
+
+    def location_applies(self, feature):
+        pass
+
+    def strand_applies(self, feature):
+        pass
+
+    def apply(self, features):
+        filtered = []
+        for feat in features:
+            if all([self.length_applies(feat),
+                    self.strand_applies(feat),
+                    self.location_applies(feat)
+                    ]):
+                filtered.append(feat)
+        return filtered

@@ -1,8 +1,10 @@
 import unittest
 
 import pytest
+import operator
 
 from em2lib.seq_feature import SeqFeatureEM2
+from em2lib.seq_feature import FeatureFilter as FF
 from em2lib.seq import SeqEM2
 from Bio.SeqRecord import SeqRecord
 from Bio.SeqFeature import FeatureLocation
@@ -87,3 +89,19 @@ class SeqFeatureTests(unittest.TestCase):
     def test_move(cls):
         assert cls.sprot.features[0].move(5).location == FeatureLocation(5, 16)
 
+
+def test_filter_length(dna_rec):
+    assert FF().length(8, None).apply(dna_rec.features) == [dna_rec.features[i] for i in [3, 5]]
+
+
+def test_filter_strand(dna_rec):
+    assert FF().strand(1).apply(dna_rec.features) == dna_rec.features[0:4]
+    assert FF().strand(-1).apply(dna_rec.features) == dna_rec.features[4:6]
+    assert FF().strand(0).apply(dna_rec.features) == dna_rec.features[6]
+
+
+def test_filter_location(dna_rec):
+    assert FF().apply(dna_rec.features) == dna_rec.features
+    assert FF().covers(24, 28).apply(dna_rec.features) == dna_rec.features[3]
+    assert FF().overlaps(17, 24).apply(dna_rec.features) == dna_rec.features[2, 3, 5, 6]
+    assert FF().lies_within(12, 27).apply(dna_rec.features) == dna_rec.features[2, 5, 6]
