@@ -102,6 +102,6 @@ def test_filter_strand(dna_rec):
 
 def test_filter_location(dna_rec):
     assert FF().apply(dna_rec.features) == dna_rec.features
-    assert FF().covers(24, 28).apply(dna_rec.features) == dna_rec.features[3]
-    assert FF().overlaps(17, 24).apply(dna_rec.features) == dna_rec.features[2, 3, 5, 6]
-    assert FF().lies_within(12, 27).apply(dna_rec.features) == dna_rec.features[2, 5, 6]
+    assert FF().covers(24, 28).apply(dna_rec.features) == [dna_rec.features[3]]
+    assert FF().overlaps(17, 24).apply(dna_rec.features) == [dna_rec.features[i] for i in [2,3,5,6]]
+    assert FF().lies_within(12, 27).apply(dna_rec.features) == [dna_rec.features[i] for i in [2,5,6]]

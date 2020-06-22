@@ -152,16 +152,30 @@ class FeatureFilter():
             self._maxlength) is False
 
     def covers_applies(self, feature):
-        pass
+        if self._covers is None:
+            return True
+        if self._keep is True:
+            return feature.covers(self._covers[0], self._covers[1])
+        return not feature.covers(self._covers[0], self._covers[1])
 
     def overlaps_applies(self, feature):
-        pass
+        if self._overlaps is None:
+            return True
+        if self._keep is True:
+            return feature.overlaps(self._overlaps[0], self._overlaps[1])
+        return not feature.overlaps(self._overlaps[0], self._overlaps[1])
 
     def lies_within_applies(self, feature):
-        pass
+        if self._lies_within is None:
+            return True
+        if self._keep is True:
+            return feature.lies_within(self._lies_within[0], self._lies_within[1])
+        return not feature.lies_within(self._lies_within[0], self._lies_within[1])
 
     def location_applies(self, feature):
-        pass
+        return all([self.covers_applies(feature),
+                    self.overlaps_applies(feature),
+                    self.lies_within_applies(feature)])
 
     def strand_applies(self, feature):
         if self._strand is None:
@@ -174,7 +188,8 @@ class FeatureFilter():
         filtered = []
         for feat in features:
             if all([self.length_applies(feat),
-                    self.strand_applies(feat)
+                    self.strand_applies(feat),
+                    self.location_applies(feat)
                     ]):
                 filtered.append(feat)
         return filtered
