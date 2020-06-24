@@ -213,23 +213,25 @@ class SeqRecordEM2(SeqRecord):
 
         :param other: the other SeqRecordEM2 object to stitch
         :param fpos_in_self: feature position in self record (start position of feature)
-        :param fpos_in_other: feature position in other record (end position of feature)
+        :param fpos_in_other: feature position in other record (end position of feature), according
+         to FeatureLocation conventions for end position requiring that length = end - start, it is
+         not included in the feature.  
         :param feature_length: feature length
-        :param orientation: the orientation of the other record relative to the self, either 1 if\
-        it is in the same orientation, -1 if other needs to be reversed before stitching, 0 if \
-        stranded but unknown, None for proteins
-        :param kwargs: any additional parameters that may be passed to the constructor of the \
-        stitching feature in the new record
+        :param orientation: the orientation of the other record relative to the self, either 1 if
+         it is in the same orientation, -1 if other needs to be reversed before stitching, 0 if
+         stranded but unknown, None for proteins
+        :param kwargs: any additional parameters that may be passed to the constructor of the
+         stitching feature in the new record
         :return: the stitched record as a new SeqRecordEM2 object
         """
         orientation = None if other.seq.is_protein() else orientation
         if orientation == -1:
             other = other.reverse_complement()
             fpos_in_other = len(other.seq) - fpos_in_other - 1
-        offset = feature_length + fpos_in_self - fpos_in_other - len(self.seq) - 1
+        offset = feature_length + fpos_in_self - fpos_in_other - len(self.seq)
         stitched = self.join(other, offset)
         # Adding self sequence as a feature of new record
-        stitched.add_feature(location=FeatureLocation(0, len(self.seq) - 1), id=self.id)
+        stitched.add_feature(location=FeatureLocation(0, len(self.seq)), id=self.id)
         stitched.features[-1].strand = None if self.seq.is_protein() else 1
 
         # Adding other sequence as a feature of new record
@@ -238,8 +240,7 @@ class SeqRecordEM2(SeqRecord):
                              id=other.id, strand=orientation)
 
         # Adding stitching feature as a feature of new record
-        stitched.add_feature(location=FeatureLocation(fpos_in_self,
-                                                      len(self.seq) + offset + fpos_in_other),
+        stitched.add_feature(location=FeatureLocation(fpos_in_self, fpos_in_self + feature_length),
                              **kwargs)
         if self.seq.is_protein():
             stitched.features[-1].strand = None

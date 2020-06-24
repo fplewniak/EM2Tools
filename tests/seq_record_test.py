@@ -59,7 +59,7 @@ def test_surrounding(dna_rec):
 
 
 def test_add_feature(dna_rec1_NNN_rec2, dna_stitch_rec1_NNN_rec2):
-    dna_rec1_NNN_rec2.add_feature(location=FeatureLocation(0, 34), strand=1, id='Rec1')
+    dna_rec1_NNN_rec2.add_feature(location=FeatureLocation(0, 35), strand=1, id='Rec1')
     dna_rec1_NNN_rec2.add_feature(location=FeatureLocation(38, 73), strand=1, id='Rec2')
     dna_rec1_NNN_rec2.add_feature(location=FeatureLocation(30, 48), strand=1, id='stitcher')
     assert [(f.id, int(f.location.start), int(f.location.end), f.strand) for f in dna_rec1_NNN_rec2.features] == \
@@ -106,21 +106,21 @@ def test_join_features(dna_rec1, dna_rec2, dna_rec3, dna_rec1_NNN_rec2, dna_rec1
 
 
 def test_stitch_sequences(dna_rec1, dna_rec2, dna_rec1_overlap_rec2, dna_rec1_NNN_rec2):
-    assert str(dna_rec1.stitch(dna_rec2, 22, 20, 24).seq) == str(dna_rec1_overlap_rec2.seq)
-    assert str(dna_rec1.stitch(dna_rec2, 30, 10, 19).seq) == str(dna_rec1_NNN_rec2.seq)
+    assert str(dna_rec1.stitch(dna_rec2, 22, 20, 23).seq) == str(dna_rec1_overlap_rec2.seq)
+    assert str(dna_rec1.stitch(dna_rec2, 30, 10, 18).seq) == str(dna_rec1_NNN_rec2.seq)
 
 
 def test_stitch_features(dna_rec1, dna_rec2, dna_rec2_rev, dna_stitch_rec1_overlap_rec2,
                          dna_stitch_rec1_NNN_rec2, dna_stitch_rec1_NNN_rec2rev):
-    newrecord = dna_rec1.stitch(dna_rec2, 22, 20, 24, orientation=1, strand=1, id='stitcher')
+    newrecord = dna_rec1.stitch(dna_rec2, 22, 20, 23, orientation=1, strand=1, id='stitcher')
     assert [(f.id, int(f.location.start), int(f.location.end), f.strand, f.ref) for f in newrecord.features] == \
            [(f.id, int(f.location.start), int(f.location.end), f.strand, f.ref) for f in dna_stitch_rec1_overlap_rec2.features]
 
-    newrecord = dna_rec1.stitch(dna_rec2, 30, 10, 19, orientation=1, strand=1, id='stitcher')
+    newrecord = dna_rec1.stitch(dna_rec2, 30, 10, 18, orientation=1, strand=1, id='stitcher')
     assert [(f.id, int(f.location.start), int(f.location.end), f.strand, f.ref) for f in newrecord.features] == \
            [(f.id, int(f.location.start), int(f.location.end), f.strand, f.ref) for f in dna_stitch_rec1_NNN_rec2.features]
 
-    newrecord = dna_rec1.stitch(dna_rec2_rev, 30, 24, 19, orientation=-1, strand=1, id='stitcher')
+    newrecord = dna_rec1.stitch(dna_rec2_rev, 30, 24, 18, orientation=-1, strand=1, id='stitcher')
     assert [(f.id, int(f.location.start), int(f.location.end), f.strand, f.ref) for f in newrecord.features] == \
            [(f.id, int(f.location.start), int(f.location.end), f.strand, f.ref) for f in dna_stitch_rec1_NNN_rec2rev.features]
 
