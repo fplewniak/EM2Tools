@@ -5,6 +5,8 @@ import re
 from typing import List, Union, Match
 
 from Bio.Seq import Seq
+from pandas import DataFrame
+from pandas import concat
 
 import em2lib.seq_utils
 
@@ -79,11 +81,25 @@ class SeqEM2(Seq):
         """
         Searches sequence for a pattern specified with a fuzznuc or fuzzpro like syntax
 
-        :param pattern: the pattern to be searched for that is converted into a rgular expression
+        :param pattern: the pattern to be searched for that is converted into a regular expression
         :return: a list of re.Match objects
         """
         regex = em2lib.seq_utils.pattern2regex(pattern, protein=self.is_protein())
         return self.re_search(regex)
 
     def get_orfs(self, start=['ATG'], stop=['TAG', 'TGA', 'TAA']):
+        stop_codons = concat([DataFrame([[match.start(), match.end(), match.start() % 3]],
+                                        columns=['start', 'end', 'frame'])
+                              for match in self.re_search('(' + '|'.join(stop) + ')')],
+                             ignore_index=True)
+        if start is not None:
+            start_codons = concat([DataFrame([[match.start(), match.end(), match.start() % 3]],
+                                             columns=['start', 'end', 'frame'])
+                                   for match in self.re_search('(' + '|'.join(start) + ')')],
+                                  ignore_index=True)
+        else:
+            start_codons = concat([DataFrame([[row.end, row.end + 3, row.frame]],
+                                             columns=['start', 'end', 'frame'])
+                                   for idx, row in stop_codons.iterrows()],
+                                  ignore_index=True)
         return []
