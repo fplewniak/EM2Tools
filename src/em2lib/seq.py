@@ -88,18 +88,31 @@ class SeqEM2(Seq):
         return self.re_search(regex)
 
     def get_orfs(self, start=['ATG'], stop=['TAG', 'TGA', 'TAA']):
-        stop_codons = concat([DataFrame([[match.start(), match.end(), match.start() % 3]],
-                                        columns=['start', 'end', 'frame'])
-                              for match in self.re_search('(' + '|'.join(stop) + ')')],
-                             ignore_index=True)
+        l = self.__len__()
+        seq_end = DataFrame([[l - 2, l, (l - 2) % 3], [l - 1, l, (l - 1) % 3], [l, l, l % 3]],
+                            columns=['start', 'end', 'frame'])
+        stop_codons = concat([concat([DataFrame([[match.start(), match.end(), match.start() % 3]],
+                                                columns=['start', 'end', 'frame'])
+                                      for match in self.re_search('(' + '|'.join(stop) + ')')],
+                                     ignore_index=True), seq_end], ignore_index=True)
         if start is not None:
             start_codons = concat([DataFrame([[match.start(), match.end(), match.start() % 3]],
                                              columns=['start', 'end', 'frame'])
                                    for match in self.re_search('(' + '|'.join(start) + ')')],
                                   ignore_index=True)
         else:
-            start_codons = concat([DataFrame([[row.end, row.end + 3, row.frame]],
-                                             columns=['start', 'end', 'frame'])
-                                   for idx, row in stop_codons.iterrows()],
-                                  ignore_index=True)
-        return []
+            seq_start = DataFrame([start_pos for start_pos in [[0, 3, 0], [1, 4, 1], [2, 5, 2]]
+                                   if start_pos not in [[row.start, row.end, row.frame] for row in
+                                                        stop_codons.itertuples()]],
+                                  columns=['start', 'end', 'frame'])
+            start_codons = concat([seq_start, concat([DataFrame([[row.end, row.end + 3, row.frame]],
+                                                                columns=['start', 'end', 'frame'])
+                                                      for row in stop_codons.itertuples()],
+                                                     ignore_index=True)], ignore_index=True)
+        orfs = set()
+        for start_codon in start_codons.itertuples():
+            for stop_codon in stop_codons.itertuples():
+                if start_codon.frame == stop_codon.frame and stop_codon.start > start_codon.end:
+                    orfs.add(tuple([start_codon.start, stop_codon.start]))
+                    break
+        return orfs
