@@ -113,6 +113,7 @@ class FeatureFilter():
         self._minlength = None
         self._maxlength = None
         self._strand = None
+        self._frame = None
         self._covers = None
         self._overlaps = None
         self._lies_within = None
@@ -133,6 +134,11 @@ class FeatureFilter():
         return self
 
     def strand(self, strand=0):
+        self._strand = strand
+        return self
+
+    def frame(self, frame=0, strand=1):
+        self._frame = frame
         self._strand = strand
         return self
 
@@ -195,13 +201,22 @@ class FeatureFilter():
             return feature.strand == self._strand
         return feature.strand != self._strand
 
+    def frame_applies(self, feature):
+        if self._frame is None:
+            return True
+        pos = feature.location.start if self._strand == 1 else feature.location.end
+        if self._keep is True:
+            return (self._frame == pos % 3) and (feature.strand == self._strand)
+        return not (self._frame == pos % 3 and feature.strand == self._strand)
+
     def apply(self, features):
         filtered = []
         for feat in features:
             if all([self.length_applies(feat),
                     self.strand_applies(feat),
                     self.location_applies(feat),
-                    self.type_applies(feat)
+                    self.type_applies(feat),
+                    self.frame_applies(feat)
                     ]):
                 filtered.append(feat)
         return filtered

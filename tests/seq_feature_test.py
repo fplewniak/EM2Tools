@@ -109,3 +109,15 @@ def test_filter_location(dna_rec):
 
 def test_filter_type(dna_rec):
     assert FF().type('xxx').apply(dna_rec.features) == [dna_rec.features[5]]
+
+
+def test_filter_frame(dna_rec1_overlap_rec2):
+    assert {(int(f.location.start), int(f.location.end), f.strand, f.type)
+            for f in FF().frame(2).apply(dna_rec1_overlap_rec2.orfs_to_features(start=None))} == \
+           {(2, 29, 1, 'ORF'), (32, 44, 1, 'ORF'), (47, 59, 1, 'ORF')}
+    assert {(int(f.location.start), int(f.location.end), f.strand, f.type)
+            for f in FF().frame(2).apply(dna_rec1_overlap_rec2.orfs_to_features())} == \
+           {(14, 29, 1, 'ORF'), (35, 44, 1, 'ORF'), (53, 59, 1, 'ORF')}
+    assert {(int(f.location.start), int(f.location.end), f.strand, f.type)
+            for f in FF().frame(0, -1).apply(dna_rec1_overlap_rec2.orfs_to_features())} == \
+           {(36, 60, -1, 'ORF')}
