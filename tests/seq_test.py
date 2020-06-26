@@ -1,3 +1,6 @@
+from em2lib.seq import SeqEM2
+
+
 def test_is_protein(protein_rec, dna_rec):
     assert protein_rec.seq.is_protein() == True
     assert dna_rec.seq.is_protein() == False
@@ -31,7 +34,13 @@ def test_search(protein_rec, dna_rec):
 
 
 def test_get_orfs(dna_rec1_overlap_rec2):
-    assert set([(orf[0], orf[1]) for orf in dna_rec1_overlap_rec2.seq.get_orfs()]) == \
+    assert dna_rec1_overlap_rec2.seq.get_orfs() ==\
            set([(0, 9), (14, 29), (18, 36), (35, 44), (22, 58), (49, 58), (53, 59)])
-    assert set([(orf[0], orf[1]) for orf in dna_rec1_overlap_rec2.seq.get_orfs(start=None)]) ==\
+    assert dna_rec1_overlap_rec2.seq.get_orfs() == \
+           set([(0, 9), (14, 29), (18, 36), (35, 44), (22, 58), (49, 58), (53, 59)])
+    assert dna_rec1_overlap_rec2.seq.get_orfs(start=None) ==\
            set([(0, 9), (2, 29), (12, 36), (32, 44), (4, 58), (47, 59), (39, 60)])
+    assert SeqEM2.dna('ACAGTACCAT').get_orfs(start=None) ==\
+            set([(0, 9), (1, 10), (2, 8)])
+    assert SeqEM2.dna('ACAGTACCAT').get_orfs() ==\
+            set()

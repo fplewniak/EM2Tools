@@ -91,15 +91,26 @@ class SeqEM2(Seq):
         l = self.__len__()
         seq_end = DataFrame([[l - 2, l, (l - 2) % 3], [l - 1, l, (l - 1) % 3], [l, l, l % 3]],
                             columns=['start', 'end', 'frame'])
-        stop_codons = concat([concat([DataFrame([[match.start(), match.end(), match.start() % 3]],
-                                                columns=['start', 'end', 'frame'])
-                                      for match in self.re_search('(' + '|'.join(stop) + ')')],
-                                     ignore_index=True), seq_end], ignore_index=True)
+        if stop is None:
+            stop = ['TAG', 'TGA', 'TAA']
+        stop_matches = self.re_search('(' + '|'.join(stop) + ')')
+        if stop_matches:
+            stop_codons = concat(
+                [concat([DataFrame([[match.start(), match.end(), match.start() % 3]],
+                                   columns=['start', 'end', 'frame']) for match in stop_matches]
+                        , ignore_index=True),
+                 seq_end], ignore_index=True)
+        else:
+            stop_codons = seq_end
+
         if start is not None:
-            start_codons = concat([DataFrame([[match.start(), match.end(), match.start() % 3]],
-                                             columns=['start', 'end', 'frame'])
-                                   for match in self.re_search('(' + '|'.join(start) + ')')],
-                                  ignore_index=True)
+            start_matches = self.re_search('(' + '|'.join(start) + ')')
+            if start_matches:
+                start_codons = concat([DataFrame([[match.start(), match.end(), match.start() % 3]],
+                                                 columns=['start', 'end', 'frame'])
+                                       for match in start_matches], ignore_index=True)
+            else:
+                start_codons = DataFrame([], columns=['start', 'end', 'frame'])
         else:
             seq_start = DataFrame([start_pos for start_pos in [[0, 3, 0], [1, 4, 1], [2, 5, 2]]
                                    if start_pos not in [[row.start, row.end, row.frame] for row in
