@@ -87,13 +87,25 @@ class SeqEM2(Seq):
         regex = em2lib.seq_utils.pattern2regex(pattern, protein=self.is_protein())
         return self.re_search(regex)
 
-    def get_orfs(self, start=['ATG'], stop=['TAG', 'TGA', 'TAA']):
-        l = self.__len__()
-        seq_end = DataFrame([[l - 2, l, (l - 2) % 3], [l - 1, l, (l - 1) % 3], [l, l, l % 3]],
+    def get_orfs(self, start=['ATG'], stop=None):
+        """
+        Determines all open reading frames in a sequence. It only examines the forward strand. All
+        the returned ORFs have a length that is a multiple of 3. Thus, for sequences without any
+        stop codon, 3 ORFs are returned, one for each frame.
+
+        :param start: list of accepted start codon or None if ORFs do not need to start at a start
+         codon.
+        :param stop: list of accepted stop codons
+        :return: a set of tuples (start, end) of orfs where start is the starting positon of the
+         orf and end its ending position, not including the stop codon
+        """
+        seq_end = DataFrame([[self.__len__() - 2, self.__len__(), (self.__len__() - 2) % 3],
+                             [self.__len__() - 1, self.__len__(), (self.__len__() - 1) % 3],
+                             [self.__len__(), self.__len__(), self.__len__() % 3]],
                             columns=['start', 'end', 'frame'])
         if stop is None:
             stop = ['TAG', 'TGA', 'TAA']
-        stop_matches = self.re_search('(' + '|'.join(stop) + ')')
+        stop_matches = self.re_search('|'.join(stop))
         if stop_matches:
             stop_codons = concat(
                 [concat([DataFrame([[match.start(), match.end(), match.start() % 3]],
@@ -104,7 +116,7 @@ class SeqEM2(Seq):
             stop_codons = seq_end
 
         if start is not None:
-            start_matches = self.re_search('(' + '|'.join(start) + ')')
+            start_matches = self.re_search('|'.join(start))
             if start_matches:
                 start_codons = concat([DataFrame([[match.start(), match.end(), match.start() % 3]],
                                                  columns=['start', 'end', 'frame'])

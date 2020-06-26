@@ -215,7 +215,7 @@ class SeqRecordEM2(SeqRecord):
         :param fpos_in_self: feature position in self record (start position of feature)
         :param fpos_in_other: feature position in other record (end position of feature), according
          to FeatureLocation conventions for end position requiring that length = end - start, it is
-         not included in the feature.  
+         not included in the feature.
         :param feature_length: feature length
         :param orientation: the orientation of the other record relative to the self, either 1 if
          it is in the same orientation, -1 if other needs to be reversed before stitching, 0 if
@@ -277,7 +277,20 @@ class SeqRecordEM2(SeqRecord):
                                   dbxrefs=rev_record.dbxrefs)
         return rev_record
 
-    def orfs_to_features(self, start=['ATG'], stop=['TAG', 'TGA', 'TAA'], filter=None, add=False):
+    def orfs_to_features(self, start=['ATG'], stop=None, filter=None, add=False):
+        """
+        Determines all open reading frames in a sequence record. All the returned ORFs have a length
+        that is a multiple of 3. Thus, for sequences without any stop codon, 3 ORFs are returned,
+        one for each frame. Both strands are examined but it is possible to filter the ORFs by
+        length, frame, etc. with the FeatureFilter defined by the filter argument.
+
+        :param start: a list of accepted start codons
+        :param stop: a list of accepted stop codons
+        :param filter: a FeatureFilter object defining a filter to select ORFs according to some
+         criteria
+        :param add: if True, the selected ORFs are added to the record's features
+        :return: a list of ORFs as SeqFeatureEM2 objects
+        """
         features = []
         for orf in self.seq.get_orfs(start=start, stop=stop):
             features.append(

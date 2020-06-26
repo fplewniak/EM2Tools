@@ -108,7 +108,12 @@ class SeqFeatureEM2(SeqFeature):
         return self
 
 
-class FeatureFilter():
+class FeatureFilter:
+    """
+    A class for the definition and application of a filter to a list of features. May be used to
+    retrieve features from a record or any list of features according to length, location, type,
+    strand and frame. It is possible to combine several criteria into one single filter.
+    """
     def __init__(self):
         self._minlength = None
         self._maxlength = None
@@ -121,40 +126,94 @@ class FeatureFilter():
         self._type = None
 
     def keep(self, keep=True):
+        """
+        Set the keep attribute of the filter. If True, the features corresponding to the specified
+        criteria will be kept, otherwise, they will be discarded.
+        :param keep: boolean
+        :return: the current filter
+        """
         self._keep = keep
         return self
 
     def type(self, feat_type=None):
+        """
+        Set the type of feature
+        :param feat_type: the type of feature to select
+        :return: the current filter
+        """
         self._type = feat_type
         return self
 
     def length(self, minlength=None, maxlength=None):
+        """
+        Set the length range of the feature.
+        :param minlength: the minimum length of the feature or 0 if None
+        :param maxlength: the maximum length of the feature or no limit if set to None
+        :return: the current filter
+        """
         self._minlength = minlength
         self._maxlength = maxlength
         return self
 
     def strand(self, strand=0):
+        """
+        Set the strand of the feature
+        :param strand: the strand of the feature
+        :return: the current filter
+        """
         self._strand = strand
         return self
 
     def frame(self, frame=0, strand=1):
+        """
+        Set the frame of the filter. By default, this is on the forward strand unless the strand is
+        set to -1
+        :param frame: the frame 0, 1 or 2
+        :param strand: the strand 1 or - 1
+        :return: the current filter
+        """
         self._frame = frame
         self._strand = strand
         return self
 
     def covers(self, start=None, end=None):
+        """
+        Set a region that must be covered by the feature
+        :param start: start position of the region
+        :param end: end position of the region
+        :return: the current filter
+        """
         self._covers = (start, end)
         return self
 
     def overlaps(self, start=None, end=None):
+        """
+        Set a region that must overlap the feature
+        :param start: start position of the region
+        :param end: end position of the region
+        :return: the current filter
+        """
         self._overlaps = (start, end)
         return self
 
     def lies_within(self, start=None, end=None):
+        """
+        Set a region within which the feature must lie
+        :param start: start position of the region
+        :param end: end position of the region
+        :return: the current filter
+        """
         self._lies_within = (start, end)
         return self
 
     def type_applies(self, feature):
+        """
+        Test if type criterion applies to the feature and return a boolean stating whether the
+        feature should be kept or rejected. If the criterion has not been set, then True is
+        returned.
+        :param feature: the feature to test
+        :return: True the feature must be kept
+        """
         if self._type is None:
             return True
         if self._keep is True:
@@ -162,6 +221,13 @@ class FeatureFilter():
         return not feature.type == self._type
 
     def length_applies(self, feature):
+        """
+        Test if length criterion applies to the feature and return a boolean stating whether the
+        feature should be kept or rejected. If the criterion has not been set, then True is
+        returned.
+        :param feature: the feature to test
+        :return: True the feature must be kept
+        """
         if self._keep is True:
             return feature.length_in_range(self._minlength, self._maxlength)
         return (self._minlength, self._maxlength) == (None, None) or feature.length_in_range(
@@ -169,6 +235,13 @@ class FeatureFilter():
             self._maxlength) is False
 
     def covers_applies(self, feature):
+        """
+        Test if covers criterion applies to the feature and return a boolean stating whether the
+        feature should be kept or rejected. If the criterion has not been set, then True is
+        returned.
+        :param feature: the feature to test
+        :return: True the feature must be kept
+        """
         if self._covers is None:
             return True
         if self._keep is True:
@@ -176,6 +249,13 @@ class FeatureFilter():
         return not feature.covers(self._covers[0], self._covers[1])
 
     def overlaps_applies(self, feature):
+        """
+        Test if overlaps criterion applies to the feature and return a boolean stating whether the
+        feature should be kept or rejected. If the criterion has not been set, then True is
+        returned.
+        :param feature: the feature to test
+        :return: True the feature must be kept
+        """
         if self._overlaps is None:
             return True
         if self._keep is True:
@@ -183,6 +263,13 @@ class FeatureFilter():
         return not feature.overlaps(self._overlaps[0], self._overlaps[1])
 
     def lies_within_applies(self, feature):
+        """
+        Test if lies_within criterion applies to the feature and return a boolean stating
+        the feature should be kept or rejected. If the criterion has not been set, then True is
+        returned.
+        :param feature: the feature to test
+        :return: True the feature must be kept
+        """
         if self._lies_within is None:
             return True
         if self._keep is True:
@@ -190,11 +277,25 @@ class FeatureFilter():
         return not feature.lies_within(self._lies_within[0], self._lies_within[1])
 
     def location_applies(self, feature):
+        """
+        Test if location criterion applies to the feature and return a boolean stating whether the
+        feature should be kept or rejected. If the criterion has not been set, then True is
+        returned.
+        :param feature: the feature to test
+        :return: True the feature must be kept
+        """
         return all([self.covers_applies(feature),
                     self.overlaps_applies(feature),
                     self.lies_within_applies(feature)])
 
     def strand_applies(self, feature):
+        """
+        Test if strand criterion applies to the feature and return a boolean stating whether the
+        feature should be kept or rejected. If the criterion has not been set, then True is
+        returned.
+        :param feature: the feature to test
+        :return: True the feature must be kept
+        """
         if self._strand is None:
             return True
         if self._keep is True:
@@ -202,6 +303,13 @@ class FeatureFilter():
         return feature.strand != self._strand
 
     def frame_applies(self, feature):
+        """
+        Test if frame criterion applies to the feature and return a boolean stating whether the
+        feature should be kept or rejected. If the criterion has not been set, then True is
+        returned.
+        :param feature: the feature to test
+        :return: True the feature must be kept
+        """
         if self._frame is None:
             return True
         pos = feature.location.start if self._strand == 1 else feature.location.end
@@ -210,6 +318,12 @@ class FeatureFilter():
         return not (self._frame == pos % 3 and feature.strand == self._strand)
 
     def apply(self, features):
+        """
+        Test if all defined criteria apply to the features in the list and return the list of
+        features corresponding to the specified criteria.
+        :param features: the list of features to filter
+        :return: The filtered list of features
+        """
         filtered = []
         for feat in features:
             if all([self.length_applies(feat),
