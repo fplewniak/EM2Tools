@@ -4,6 +4,7 @@
 import warnings
 
 import pytest
+from em2lib.seq_feature import FeatureFilter as FF, SeqFeatureEM2
 from Bio.SeqFeature import FeatureLocation
 
 
@@ -89,20 +90,20 @@ def test_join_differences(dna_rec1, dna_rec2, dna_rec3, protein_rec):
 
 def test_join_features(dna_rec1, dna_rec2, dna_rec3, dna_rec1_NNN_rec2, dna_rec1_overlap_rec2):
     newrecord = dna_rec1.join(dna_rec2, offset=3)
-    assert [(f.id, int(f.location.start), int(f.location.end), f.strand, f.ref) for f in newrecord.features] == \
-           [(f.id, int(f.location.start), int(f.location.end), f.strand, f.ref) for f in dna_rec1_NNN_rec2.features]
+    assert [(f.id, int(f.location.start), int(f.location.end), f.strand) for f in newrecord.features] == \
+           [(f.id, int(f.location.start), int(f.location.end), f.strand) for f in dna_rec1_NNN_rec2.features]
 
     newrecord = dna_rec2.join(dna_rec1, offset=-73)
-    assert [(f.id, int(f.location.start), int(f.location.end), f.strand, f.ref) for f in newrecord.features] == \
-           [(f.id, int(f.location.start), int(f.location.end), f.strand, f.ref) for f in dna_rec1_NNN_rec2.features]
+    assert [(f.id, int(f.location.start), int(f.location.end), f.strand) for f in newrecord.features] == \
+           [(f.id, int(f.location.start), int(f.location.end), f.strand) for f in dna_rec1_NNN_rec2.features]
 
     newrecord = dna_rec1.join(dna_rec2, offset=-10)
-    assert [(f.id, int(f.location.start), int(f.location.end), f.strand, f.ref) for f in newrecord.features] == \
-           [(f.id, int(f.location.start), int(f.location.end), f.strand, f.ref) for f in dna_rec1_overlap_rec2.features]
+    assert [(f.id, int(f.location.start), int(f.location.end), f.strand) for f in newrecord.features] == \
+           [(f.id, int(f.location.start), int(f.location.end), f.strand) for f in dna_rec1_overlap_rec2.features]
 
     newrecord = dna_rec2.join(dna_rec1, offset=-60)
-    assert [(f.id, int(f.location.start), int(f.location.end), f.strand, f.ref) for f in newrecord.features] == \
-           [(f.id, int(f.location.start), int(f.location.end), f.strand, f.ref) for f in dna_rec1_overlap_rec2.features]
+    assert [(f.id, int(f.location.start), int(f.location.end), f.strand) for f in newrecord.features] == \
+           [(f.id, int(f.location.start), int(f.location.end), f.strand) for f in dna_rec1_overlap_rec2.features]
 
 
 def test_stitch_sequences(dna_rec1, dna_rec2, dna_rec1_overlap_rec2, dna_rec1_NNN_rec2):
@@ -113,12 +114,12 @@ def test_stitch_sequences(dna_rec1, dna_rec2, dna_rec1_overlap_rec2, dna_rec1_NN
 def test_stitch_features(dna_rec1, dna_rec2, dna_rec2_rev, dna_stitch_rec1_overlap_rec2,
                          dna_stitch_rec1_NNN_rec2, dna_stitch_rec1_NNN_rec2rev):
     newrecord = dna_rec1.stitch(dna_rec2, 22, 20, 23, orientation=1, strand=1, id='stitcher')
-    assert [(f.id, int(f.location.start), int(f.location.end), f.strand, f.ref) for f in newrecord.features] == \
-           [(f.id, int(f.location.start), int(f.location.end), f.strand, f.ref) for f in dna_stitch_rec1_overlap_rec2.features]
+    assert [(f.id, int(f.location.start), int(f.location.end), f.strand) for f in newrecord.features] == \
+           [(f.id, int(f.location.start), int(f.location.end), f.strand) for f in dna_stitch_rec1_overlap_rec2.features]
 
     newrecord = dna_rec1.stitch(dna_rec2, 30, 10, 18, orientation=1, strand=1, id='stitcher')
-    assert [(f.id, int(f.location.start), int(f.location.end), f.strand, f.ref) for f in newrecord.features] == \
-           [(f.id, int(f.location.start), int(f.location.end), f.strand, f.ref) for f in dna_stitch_rec1_NNN_rec2.features]
+    assert [(f.id, int(f.location.start), int(f.location.end), f.strand) for f in newrecord.features] == \
+           [(f.id, int(f.location.start), int(f.location.end), f.strand) for f in dna_stitch_rec1_NNN_rec2.features]
 
     newrecord = dna_rec1.stitch(dna_rec2_rev, 30, 24, 18, orientation=-1, strand=1, id='stitcher')
     assert [(f.id, int(f.location.start), int(f.location.end), f.strand, f.ref) for f in newrecord.features] == \
@@ -142,3 +143,12 @@ def test_comparisons(dna_rec1, dna_rec2, dna_rec3):
     assert not dna_rec1.__ge__(dna_rec2)
     assert dna_rec3 >= dna_rec3 > dna_rec1 == dna_rec1 < dna_rec2 <= dna_rec2
     assert sorted([dna_rec3, dna_rec1, dna_rec2]) == [dna_rec1, dna_rec2, dna_rec3]
+
+
+def test_orfs_to_features(dna_rec1_overlap_rec2):
+    assert dna_rec1_overlap_rec2.orfs_to_features(filter=FF().type('ORF').length(30)) ==\
+        [SeqFeatureEM2(location=FeatureLocation(22, 58), strand=1, type='ORF'),
+         SeqFeatureEM2(location=FeatureLocation(1, 58), strand=-1, type='ORF'),
+         SeqFeatureEM2(location=FeatureLocation(5, 59), strand=-1, type='ORF'),
+         SeqFeatureEM2(location=FeatureLocation(23, 59), strand=-1, type='ORF')
+         ]

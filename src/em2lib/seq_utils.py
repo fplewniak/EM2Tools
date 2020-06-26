@@ -244,7 +244,7 @@ class GFF(Gff3DataFrame):
             [k + '=' + v for k, v in feature.qualifiers.items() if k not in qual_off]
             + ['id=' + feature.id])
         return DataFrame(
-            [[feature.location.ref, source, feature.type, str(int(feature.location.start)),
+            [[feature.parent.id, source, feature.type, str(int(feature.location.start)),
               str(int(feature.location.end)),
               score, strand, phase, qualifiers]],
             columns=['seq_id', 'source', 'type', 'start', 'end', 'score', 'strand',
@@ -275,6 +275,6 @@ class GFF(Gff3DataFrame):
                 SeqFeatureEM2(parent=parents[index],
                               location=FeatureLocation(int(row['start']), int(row['end'])),
                               type=row['type'], id=qualifiers.pop('id', '<unknown id>'),
-                              strand=int(strands[row['strand']]), ref=row['seq_id'],
+                              strand=int(strands[row['strand']]),
                               qualifiers=qualifiers))
         return feature_list
