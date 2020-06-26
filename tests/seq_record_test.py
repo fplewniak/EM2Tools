@@ -146,9 +146,15 @@ def test_comparisons(dna_rec1, dna_rec2, dna_rec3):
 
 
 def test_orfs_to_features(dna_rec1_overlap_rec2):
-    assert dna_rec1_overlap_rec2.orfs_to_features(filter=FF().type('ORF').length(30)) ==\
-        [SeqFeatureEM2(location=FeatureLocation(22, 58), strand=1, type='ORF'),
-         SeqFeatureEM2(location=FeatureLocation(1, 58), strand=-1, type='ORF'),
-         SeqFeatureEM2(location=FeatureLocation(5, 59), strand=-1, type='ORF'),
-         SeqFeatureEM2(location=FeatureLocation(23, 59), strand=-1, type='ORF')
-         ]
+    assert {(int(f.location.start), int(f.location.end), f.strand, f.type)
+            for f in dna_rec1_overlap_rec2.orfs_to_features(filter=FF().length(30))} == \
+           {(22, 58, 1, 'ORF'), (1, 58, -1, 'ORF'), (5, 59, -1, 'ORF'), (23, 59, -1, 'ORF')}
+    assert {(int(f.location.start), int(f.location.end), f.strand, f.type)
+            for f in dna_rec1_overlap_rec2.orfs_to_features(start=None,
+                                                            filter=FF().length(30))} == \
+           {(4, 58, 1, 'ORF'), (1, 58, -1, 'ORF'), (2, 59, -1, 'ORF'), (0, 60, -1, 'ORF')}
+    dna_rec1_overlap_rec2.orfs_to_features(filter=FF().length(30), add=True)
+    assert {(int(f.location.start), int(f.location.end), f.strand, f.type)
+            for f in dna_rec1_overlap_rec2.features} == \
+           {(22, 58, 1, 'ORF'), (1, 58, -1, 'ORF'), (5, 59, -1, 'ORF'), (23, 59, -1, 'ORF'),
+            (0, 5, 1, ''), (28, 33, 1, ''), (25, 30, 1, ''), (53, 58, 1, '')}

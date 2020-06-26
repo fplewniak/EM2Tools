@@ -267,11 +267,26 @@ class SeqRecordEM2(SeqRecord):
         id = self.id if id is False else id
         name = self.name + ' reversed' if name is False else name
         rev_record = super().reverse_complement(id=id, name=name, description=self.description,
-                                                features=features, annotations=False,
-                                                letter_annotations=True, dbxrefs=False)
+                                                features=features, annotations=annotations,
+                                                letter_annotations=letter_annotations,
+                                                dbxrefs=dbxrefs)
         rev_record = SeqRecordEM2(SeqEM2.dna(str(rev_record.seq)), id=self.id, name=rev_record.name,
                                   description=self.description,
                                   features=rev_record.features, annotations=rev_record.annotations,
                                   letter_annotations=rev_record.letter_annotations,
                                   dbxrefs=rev_record.dbxrefs)
         return rev_record
+
+    def orfs_to_features(self, start=['ATG'], stop=['TAG', 'TGA', 'TAA'], filter=None, add=False):
+        features = []
+        for orf in self.seq.get_orfs(start=start, stop=stop):
+            features.append(
+                SeqFeatureEM2(location=FeatureLocation(orf[0], orf[1]), type='ORF', strand=1))
+        for orf in self.reverse_complement().seq.get_orfs(start=start, stop=stop):
+            features.append(
+                SeqFeatureEM2(location=FeatureLocation(orf[0], orf[1]), type='ORF', strand=-1))
+        if filter is not None:
+            features = filter.apply(features)
+        if add:
+            self.features.extend(features)
+        return features

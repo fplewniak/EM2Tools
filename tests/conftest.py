@@ -129,7 +129,7 @@ def dna_stitch_rec1_overlap_rec2():
     return stitched
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="function")
 def dna_rec1_overlap_rec2():
     return joined_rec1_overlap_rec2()
 
