@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-with open('README.md', 'r') as fh:
+with open('README.rst', 'r') as fh:
     long_description = fh.read()
 
 setup(
@@ -14,7 +14,7 @@ setup(
     author_email='f.plewniak@unistra.fr',
     description='Python tools for environmental genomics data analysis and manipulation.',
     long_description=long_description,
-    long_description_content_type='text/markdown',
+    long_description_content_type='text/x-rst',
     classifiers=[
         'Programming Language :: Python :: 3',
         'Operating System :: OS Independent',
