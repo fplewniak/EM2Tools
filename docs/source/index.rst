@@ -10,6 +10,7 @@ Welcome to EM2Tools's documentation!
    :maxdepth: 2
    :caption: Contents:
 
+   getting_started.rst
    api/index.rst
 
 Indices and tables
