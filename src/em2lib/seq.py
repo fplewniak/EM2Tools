@@ -26,7 +26,7 @@ class SeqEM2(Seq):
         """
         Creates a DNA sequence
 
-        :param data: The sequence string
+        :param data: the sequence string
         :return: a SeqEM2 DNA instance
         """
         return cls(data, 'dna')
@@ -36,7 +36,7 @@ class SeqEM2(Seq):
         """
         Creates a protein sequence
 
-        :param data: The sequence string
+        :param data: the sequence string
         :return: a SeqEM2 protein instance
         """
         return cls(data, 'prot')
@@ -45,7 +45,7 @@ class SeqEM2(Seq):
         """
         Tests whether sequence was created as a protein
 
-        :return:
+        :return: boolean, True if sequence was created as a protein, False otherwise.
         """
         return self.seqtype == 'prot'
 

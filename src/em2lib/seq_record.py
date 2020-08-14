@@ -149,7 +149,7 @@ class SeqRecordEM2(SeqRecord):
 
     def add_feature(self, **kwargs):
         """
-        Adds a feature to the current record according to arguments passed as **kwargs
+        Adds a feature to the current record according to arguments passed as \*\*kwargs.
 
         :param kwargs: keyword arguments to pass to SeqFeatureEM2 class
         """

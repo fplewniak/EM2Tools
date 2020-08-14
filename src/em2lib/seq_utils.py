@@ -38,7 +38,7 @@ def isambiguous(code, protein=False):
     :param code: the input code that must be checked for ambiguity
     :param protein: True if code is amino-acid code
 
-    :return: Boolean True if code is ambiguous, False otherwise
+    :return: boolean, True if code is ambiguous, False otherwise
     """
     return (protein is False and code in 'RYSWKMBDHVN') or (protein is True and code in 'BZX')
 
@@ -47,12 +47,13 @@ def pattern2regex(pattern, protein=False):
     """
     Converts a fuzznuc or fuzzpro-like pattern into a regular expression that can be used to search
     a sequence string.
-    [ABC] => any of ABC residues,
-    {ABC} => any residue except ABC,
-    <ABC... => start of sequence,
-    ...ABC> => end of sequence,
-    A(n)(ABC)(n) => repeat residue or subsequence n times,
-    A(n,m)(ABC)(n,m) => repeat residue or subsequence from n up to m times.
+
+    - [ABC] => any of ABC residues,
+    - {ABC} => any residue except ABC,
+    - <ABC... => start of sequence,
+    - ...ABC> => end of sequence,
+    - A(n)(ABC)(n) => repeat residue or subsequence n times,
+    - A(n,m)(ABC)(n,m) => repeat residue or subsequence from n up to m times.
 
     :param pattern: the pattern definition (string)
     :param protein: True if pattern applies to a protein sequence, False otherwise.
@@ -85,10 +86,7 @@ def pattern2regex(pattern, protein=False):
 class SeqFilter:
     """
     A class for the creation of a sequence filter to specify filtering criteria and applying the\
-     filter to a list of sequence records.\
-    (minlength: minimum length of sequence, maxlength: maximum length of sequence, \
-    pattern: sequence pattern, name: sequence name, keep: boolean, if True, keep the records\
-    respecting the criteria, otherwise, discard them and keep the others.
+     filter to a list of sequence records.
     """
 
     def __init__(self):
