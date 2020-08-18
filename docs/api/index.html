@@ -59,6 +59,10 @@
           
             
             
+              <div class="version">
+                0.1.0
+              </div>
+            
           
 
           
@@ -167,6 +171,17 @@
 <em class="property">class </em><code class="sig-prename descclassname">em2lib.seq_record.</code><code class="sig-name descname">SeqRecordEM2</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">seq</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#em2lib.seq_record.SeqRecordEM2" title="Permalink to this definition">¶</a></dt>
 <dd><p>Extension to Biopython SeqRecord class</p>
 <dl class="py method">
+<dt id="em2lib.seq_record.SeqRecordEM2.add_feature">
+<code class="sig-name descname">add_feature</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#em2lib.seq_record.SeqRecordEM2.add_feature" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds a feature to the current record according to arguments passed as **kwargs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>kwargs</strong> – keyword arguments to pass to SeqFeatureEM2 class</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt id="em2lib.seq_record.SeqRecordEM2.overlap">
 <code class="sig-name descname">overlap</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">start</span></em>, <em class="sig-param"><span class="n">end</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">strand</span><span class="o">=</span><span class="default_value">0</span></em><span class="sig-paren">)</span><a class="headerlink" href="#em2lib.seq_record.SeqRecordEM2.overlap" title="Permalink to this definition">¶</a></dt>
 <dd><p>Retrieves features that overlap a given position range.</p>
@@ -237,17 +252,6 @@ True, then only the nearest features are returned.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>a list of features around the specified position</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="em2lib.seq_record.SeqRecordEM2.add_feature">
-<code class="sig-name descname">add_feature</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#em2lib.seq_record.SeqRecordEM2.add_feature" title="Permalink to this definition">¶</a></dt>
-<dd><p>Adds a feature to the current record according to arguments passed as **kwargs.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>kwargs</strong> – keyword arguments to pass to SeqFeatureEM2 class</p>
 </dd>
 </dl>
 </dd></dl>
