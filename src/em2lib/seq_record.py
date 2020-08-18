@@ -42,6 +42,14 @@ class SeqRecordEM2(SeqRecord):
     def __ge__(self, other):
         return self.id.__ge__(other.id)
 
+    def add_feature(self, **kwargs):
+        """
+        Adds a feature to the current record according to arguments passed as \*\*kwargs.
+
+        :param kwargs: keyword arguments to pass to SeqFeatureEM2 class
+        """
+        self.features.append(SeqFeatureEM2(parent=self, **kwargs))
+
     def overlap(self, start, end=None, strand=0):
         """
         Retrieves features that overlap a given position range.
@@ -146,14 +154,6 @@ class SeqRecordEM2(SeqRecord):
                      in list(set(self.feature_after(position, strand, True)
                                  + self.feature_before(position, strand, True)))}
         return [f for f, v in feat_list.items() if v == min(feat_list.values())]
-
-    def add_feature(self, **kwargs):
-        """
-        Adds a feature to the current record according to arguments passed as \*\*kwargs.
-
-        :param kwargs: keyword arguments to pass to SeqFeatureEM2 class
-        """
-        self.features.append(SeqFeatureEM2(parent=self, **kwargs))
 
     def join(self, other=None, offset=0, keepself=True):
         """
