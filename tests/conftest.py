@@ -3,6 +3,8 @@ from em2lib.seq_record import SeqRecordEM2
 from em2lib.seq_feature import SeqFeatureEM2
 from Bio.SeqFeature import FeatureLocation
 
+from em2lib.table import Table
+
 import pytest
 
 
@@ -24,7 +26,7 @@ def protein_rec():
 # Examples of DNA sequences and records
 # ##############################################Rec1_Rec2#######
 def dna_seq(name='rec'):
-    s = {'rec':  'ATGAGTCGGTAAAGATGCATGCGCGCCGCTGACGC',
+    s = {'rec': 'ATGAGTCGGTAAAGATGCATGCGCGCCGCTGACGC',
          'rec1': 'ATGAGTCGGTAACGATGCATGCATGCAGCTGACGC',
          'rec2': 'CAGCTGACGCATGAGTCGGTAACGATGCATGCATG',
          'rec3': 'CACCTGACGCATGAGTCGGTAACGATGCATGCATG',
@@ -84,12 +86,14 @@ def dna_rec2():
                                   SeqFeatureEM2(location=FeatureLocation(28, 33), strand=1, id='B2')
                                   ])
 
+
 @pytest.fixture(scope="session")
 def dna_rec2_rev():
     return SeqRecordEM2(dna_seq('rec2'), id='Rec2', name='R2',
                         features=[SeqFeatureEM2(location=FeatureLocation(0, 5), strand=1, id='A2'),
                                   SeqFeatureEM2(location=FeatureLocation(28, 33), strand=1, id='B2')
                                   ]).reverse_complement()
+
 
 @pytest.fixture(scope="session")
 def dna_rec3():
@@ -110,6 +114,7 @@ def dna_stitch_rec1_NNN_rec2():
                           ]
     return stitched
 
+
 @pytest.fixture(scope="session")
 def dna_stitch_rec1_NNN_rec2rev():
     stitched = joined_rec1NNNrec2()
@@ -118,6 +123,7 @@ def dna_stitch_rec1_NNN_rec2rev():
                           SeqFeatureEM2(location=FeatureLocation(30, 48), strand=1, id='stitcher')
                           ]
     return stitched
+
 
 @pytest.fixture(scope="session")
 def dna_stitch_rec1_overlap_rec2():
@@ -152,4 +158,20 @@ def dna_records():
         SeqRecordEM2(SeqEM2.dna('ACAGTA'), id='DNA3', name='DNA3'),
         SeqRecordEM2(SeqEM2.dna('ACAGTACCAT'), id='DNA4', name='DNA4'),
         SeqRecordEM2(SeqEM2.dna('ACAGTACCATGT'), id='DNA5', name='DNA5')
-        ]
+    ]
+
+
+# #####################################################
+# Examples of Tables and related data
+# #####################################################
+@pytest.fixture(scope="session")
+def table1():
+    return Table(data={'A': {0: 4.0, 1: 6.2, 2: 1.3}, 'B': {0: 'x', 1: 'y', 2: 'z'}, 'C': {0: 8, 1: 9, 2: 5}})
+
+@pytest.fixture(scope="session")
+def table1_as_dict():
+    return {'A': {0: 4.0, 1: 6.2, 2: 1.3}, 'B': {0: 'x', 1: 'y', 2: 'z'}, 'C': {0: 8, 1: 9, 2: 5}}
+
+@pytest.fixture(scope="session")
+def table1_as_string():
+    return '     A  B  C\n0  4.0  x  8\n1  6.2  y  9\n2  1.3  z  5'
