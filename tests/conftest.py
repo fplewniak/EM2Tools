@@ -5,6 +5,8 @@ from Bio.SeqFeature import FeatureLocation
 
 from em2lib.table import Table
 
+from numpy import nan
+
 import pytest
 
 
@@ -168,10 +170,51 @@ def dna_records():
 def table1():
     return Table(data={'A': {0: 4.0, 1: 6.2, 2: 1.3}, 'B': {0: 'x', 1: 'y', 2: 'z'}, 'C': {0: 8, 1: 9, 2: 5}})
 
+
 @pytest.fixture(scope="session")
 def table1_as_dict():
     return {'A': {0: 4.0, 1: 6.2, 2: 1.3}, 'B': {0: 'x', 1: 'y', 2: 'z'}, 'C': {0: 8, 1: 9, 2: 5}}
 
+
 @pytest.fixture(scope="session")
 def table1_as_string():
     return '     A  B  C\n0  4.0  x  8\n1  6.2  y  9\n2  1.3  z  5'
+
+
+@pytest.fixture(scope="function")
+def table2():
+    return Table(data={'A': ['a', 'a', 'y', 'z'], 'B': ['b', 'x', 'w', 'a'], 'C': [1, 2, 5, 3], 'D': [8, 2, 3, 6]})
+
+
+@pytest.fixture(scope="function")
+def table3():
+    return Table(data={'E': ['a', 'y', 'z', 'w'], 'F': [6, 8, 4, 2], 'G': ['b', 'w', 'b', 'a']})
+
+
+@pytest.fixture(scope="function")
+def table4():
+    return Table(data={'A': ['a', 'a', 'y', 'z'], 'B': ['b', 'x', 'w', 'a'], 'C': [1, 2, 5, 3], 'D': [8, 2, 3, 6],
+                       'F': [6, 8, 4, 2]})
+
+
+@pytest.fixture(scope="function")
+def table5():
+    return Table(data={'A': ['a', 'a', 'y', 'z', nan, nan], 'B': ['b', 'x', 'w', 'a', nan, nan],
+                       'C': [1, 2, 5, 3, nan, nan], 'D': [8, 2, 3, 6, nan, nan],
+                       'E': ['a', nan, 'y', nan, 'z', 'w'], 'F': [6, nan, 8, nan, 4, 2],
+                       'G': ['b', nan, 'w', nan, 'b', 'a']})
+
+
+@pytest.fixture(scope="function")
+def table_comon_keys():
+    return Table(data={'A': ['a', 'y'], 'B': ['b', 'w']})
+
+
+@pytest.fixture(scope="function")
+def table_in_2_not_in_3():
+    return Table(data={'A': ['a', 'z'], 'B': ['x', 'a']})
+
+
+@pytest.fixture(scope="function")
+def table_in_3_not_in_2():
+    return Table(data={'E': ['z', 'w'], 'G': ['b', 'a']})
