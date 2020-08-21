@@ -192,23 +192,25 @@ def table3():
 
 
 @pytest.fixture(scope="function")
-def table4():
-    return Table(data={'A': ['a', 'a', 'y', 'z'], 'B': ['b', 'x', 'w', 'a'], 'C': [1, 2, 5, 3], 'D': [8, 2, 3, 6],
-                       'F': [6, 8, 4, 2]})
-
+def table_2_3_comon_rows():
+    return Table(data={'A': ['a', 'y'], 'B': ['b', 'w'], 'C': [1, 5], 'D': [8, 3],
+                       'F': [6, 8]}).set_index(['A', 'B'])
 
 @pytest.fixture(scope="function")
-def table5():
+def table_2_3_comon_rows_full():
+    return Table(data={'A': ['a', 'y'], 'B': ['b', 'w'], 'C': [1, 5], 'D': [8, 3],
+                       'E': ['a', 'y'],'F': [6, 8], 'G': ['b', 'w']}).set_index(['A', 'B'], drop=False)
+
+@pytest.fixture(scope="function")
+def table_2_3_combined():
     return Table(data={'A': ['a', 'a', 'y', 'z', nan, nan], 'B': ['b', 'x', 'w', 'a', nan, nan],
                        'C': [1, 2, 5, 3, nan, nan], 'D': [8, 2, 3, 6, nan, nan],
                        'E': ['a', nan, 'y', nan, 'z', 'w'], 'F': [6, nan, 8, nan, 4, 2],
                        'G': ['b', nan, 'w', nan, 'b', 'a']})
 
-
 @pytest.fixture(scope="function")
-def table_comon_keys():
+def table_2_3_comon_keys():
     return Table(data={'A': ['a', 'y'], 'B': ['b', 'w']})
-
 
 @pytest.fixture(scope="function")
 def table_in_2_not_in_3():

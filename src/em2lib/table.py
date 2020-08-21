@@ -51,29 +51,54 @@ class Table(DataFrame):
         """
         return Table(data=super().set_index(keys, drop, append, inplace, verify_integrity))
 
-    def get_common_keys(self, other, indices=[None, None]):
+    def get_common_keys(self, other, index_self=None, index_other=None):
         """
         Return the index keys in common between self Table and other Table
 
-        :param indices: a list of two lists with references to the columns defining indices in both Tables. None refers
-         to the original index for that Table
         :param other: the other Table object
+        :param index_self: a list of references to the columns defining indices in self Table. None refers
+         to the original index
+        :param index_other: a list of references to the columns defining indices in other Table. None refers
+         to the original index
         :return: Table
          The keys that are common between the two tables.
         """
-        ego = self if indices[0] is None else self.set_index(indices[0])
-        alter = other if indices[1] is None else other.set_index(indices[1])
+        ego = self if index_self is None else self.set_index(index_self)
+        alter = other if index_other is None else other.set_index(index_other)
         return Table(data=[x for x in ego.index if x in alter.index], columns=ego.index.names)
 
-    def get_keys_not_in(self, other, indices=[None, None]):
+    def get_common_rows(self, other, index_self=None, index_other=None, columns=None, drop=True):
+        """
+        Return rows with the same index values. Index columns from the other Table object are droppped by default but
+         can be kept if drop is set to False.
+
+        :param other: the other Table object
+        :param index_self: a list of references to the columns defining indices in self Table. None refers
+         to the original index
+        :param index_other: a list of references to the columns defining indices in other Table. None refers
+         to the original index
+        :param columns: the list of columns to keep in the resulting Table
+        :param drop: True by default. Drop the other index columns in the resulting Table.
+        :return: Table with the same index as self Table
+         The rows that have the same key values between the two tables.
+        """
+        ego = self.copy() if index_self is None else self.set_index(index_self, drop=drop)
+        alter = other.copy() if index_other is None else other.set_index(index_other, drop=drop)
+        alter.index.names = ego.index.names
+        return Table(data=ego.join(alter, how='inner'))
+
+    def get_keys_not_in(self, other, index_self=None, index_other=None):
         """
         Return the index keys in self Table which are not in other Table
 
-        :param indices: a list of two lists with references to the columns defining indices in both Tables
-        :param other: the other Table object.
+        :param other: the other Table object
+        :param index_self: a list of references to the columns defining indices in self Table. None refers
+         to the original index
+        :param index_other: a list of references to the columns defining indices in other Table. None refers
+         to the original index
         :return: Table
          The keys that are in self Table but not in the other one.
         """
-        ego = self.copy() if indices[0] is None else self.set_index(indices[0], drop=False)
-        alter = other.copy() if indices[1] is None else other.set_index(indices[1], drop=False)
+        ego = self.copy() if index_self is None else self.set_index(index_self, drop=False)
+        alter = other.copy() if index_other is None else other.set_index(index_other, drop=False)
         return Table(data=[x for x in ego.index if x not in alter.index], columns=ego.index.names)
