@@ -51,22 +51,29 @@ class Table(DataFrame):
         """
         return Table(data=super().set_index(keys, drop, append, inplace, verify_integrity))
 
-    def get_common_keys(self, other):
+    def get_common_keys(self, other, indices=[None, None]):
         """
         Return the index keys in common between self Table and other Table
 
-        :param other: the other Table object.
+        :param indices: a list of two lists with references to the columns defining indices in both Tables. None refers
+         to the original index for that Table
+        :param other: the other Table object
         :return: Table
          The keys that are common between the two tables.
         """
-        return Table(data=[x for x in self.index if x in other.index], columns=self.index.names)
+        ego = self if indices[0] is None else self.set_index(indices[0])
+        alter = other if indices[1] is None else other.set_index(indices[1])
+        return Table(data=[x for x in ego.index if x in alter.index], columns=ego.index.names)
 
-    def get_keys_not_in(self, other):
+    def get_keys_not_in(self, other, indices=[None, None]):
         """
         Return the index keys in self Table which are not in other Table
 
+        :param indices: a list of two lists with references to the columns defining indices in both Tables
         :param other: the other Table object.
         :return: Table
          The keys that are in self Table but not in the other one.
         """
-        return Table(data=[x for x in self.index if x not in other.index], columns=self.index.names)
+        ego = self.copy() if indices[0] is None else self.set_index(indices[0], drop=False)
+        alter = other.copy() if indices[1] is None else other.set_index(indices[1], drop=False)
+        return Table(data=[x for x in ego.index if x not in alter.index], columns=ego.index.names)
