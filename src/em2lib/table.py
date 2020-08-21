@@ -49,7 +49,7 @@ class Table(DataFrame):
         :return: Table
          With a new index.
         """
-        return Table(data=super().set_index(keys, drop=True, append=False, inplace=False, verify_integrity=False))
+        return Table(data=super().set_index(keys, drop, append, inplace, verify_integrity))
 
     def get_common_keys(self, other):
         """
