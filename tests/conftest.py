@@ -192,19 +192,19 @@ def table3():
 
 
 @pytest.fixture(scope="function")
-def table_2_3_comon_rows():
+def table_2_3_common_rows():
     return Table(data={'A': ['a', 'y'], 'B': ['b', 'w'], 'C': [1, 5], 'D': [8, 3],
                        'F': [6, 8]})
 
 
 @pytest.fixture(scope="function")
-def table_2_3_comon_rows_full():
+def table_2_3_common_rows_full():
     return Table(data={'A': ['a', 'y'], 'B': ['b', 'w'], 'C': [1, 5], 'D': [8, 3],
                        'E': ['a', 'y'], 'F': [6, 8], 'G': ['b', 'w']})
 
 
 @pytest.fixture(scope="function")
-def table_2_2_comon_rows():
+def table_2_2_common_rows():
     return Table(data={'A': ['a', 'a', 'y', 'z'], 'B': ['b', 'x', 'w', 'a'], 'C': [1, 2, 5, 3], 'D': [8, 2, 3, 6],
                        'C_2': [1, 2, 5, 3], 'D_2': [8, 2, 3, 6]})
 
@@ -218,7 +218,7 @@ def table_2_3_combined():
 
 
 @pytest.fixture(scope="function")
-def table_2_3_comon_keys():
+def table_2_3_common_keys():
     return Table(data={'A': ['a', 'y'], 'B': ['b', 'w']})
 
 
