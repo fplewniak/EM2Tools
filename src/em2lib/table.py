@@ -87,7 +87,7 @@ class Table(DataFrame):
         alter = other if index_other is None else other.set_index(index_other)
         return Table(data=[x for x in ego.index if x in alter.index], columns=ego.index.names)
 
-    def get_common_rows(self, other, index_self=None, index_other=None, columns=None, drop=True):
+    def get_common_rows(self, other, index_self=None, index_other=None, lsuffix="", rsuffix="", drop=True):
         """
         Return rows with the same index values. Index columns from the other Table object are droppped by default but
          can be kept if drop is set to False.
@@ -97,7 +97,10 @@ class Table(DataFrame):
          to the original index
         :param index_other: a list of references to the columns defining indices in other Table. None refers
          to the original index
-        :param columns: the list of columns to keep in the resulting Table
+        :param lsuffix: str,
+         Suffix to add to left column names in case of redundancy.
+        :param rsuffix: str,
+         Suffix to add to right column names in case of redundancy.
         :param drop: True by default. Drop the other index columns in the resulting Table.
         :return: Table with the same index as self Table
          The rows that have the same key values between the two tables.
@@ -105,7 +108,7 @@ class Table(DataFrame):
         ego = self.copy() if index_self is None else self.set_index(index_self)
         alter = other.copy() if index_other is None else other.set_index(index_other, drop=drop)
         alter.index.names = ego.index.names
-        return Table(data=ego.join(alter, how='inner').reset_index())
+        return ego.join(alter, how='inner', lsuffix=lsuffix, rsuffix=rsuffix).reset_index()
 
     def get_keys_not_in(self, other, index_self=None, index_other=None):
         """

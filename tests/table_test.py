@@ -21,9 +21,11 @@ def test_table_different_keys(table2, table3, table_in_2_not_in_3, table_in_3_no
                                   index_other=['A', 'B']).to_string() == table_in_3_not_in_2.to_string()
 
 
-def test_table_common_rows(table2, table3, table_2_3_comon_rows):
+def test_table_common_rows(table2, table3, table_2_2_comon_rows, table_2_3_comon_rows):
     assert table2.get_common_rows(table3, index_self=['A', 'B'], index_other=['E', 'G'],
                                   drop=True).to_string() == table_2_3_comon_rows.to_string()
+    assert table2.get_common_rows(table2, index_self=['A', 'B'], index_other=['A', 'B'], rsuffix='_2',
+                                  drop=True).to_string() == table_2_2_comon_rows.to_string()
 
 
 def test_table_common_rows_full(table2, table3, table_2_3_comon_rows_full):
