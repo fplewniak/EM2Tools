@@ -51,6 +51,26 @@ class Table(DataFrame):
         """
         return Table(data=super().set_index(keys, drop, append, inplace, verify_integrity))
 
+    def join(self, other, on=None, how="left", lsuffix="", rsuffix="", sort=False):
+        """
+        Overwrite DataFrame.join method in order to return a Table object.
+
+        :param other: the other Table (or DataFrame) to join
+        :param on: str, list of str or array-like
+         Column or index level name(s) on the caller to join on the index of other. If None, then joins index on index.
+        :param how: {'left', 'right', 'outer', 'inner'}, default 'left'
+         How to handle the operation of the two objects. See DataFrame.join() documentation for more details.
+        :param lsuffix: str, default ''
+         Suffix to use for left frames's overlapping columns
+        :param rsuffix: str, default ''
+         Suffix to use for right frames's overlapping columns
+        :param sort: bool, default False
+         Order result DataFrame lexicographically by the join key. If False, the order of the join key depends on the
+        join type (how keyword).
+        :return: A Table containing columns from both the caller and `other`
+        """
+        return Table(data=super().join(other, on, how, lsuffix, rsuffix, sort))
+
     def get_common_keys(self, other, index_self=None, index_other=None):
         """
         Return the index keys in common between self Table and other Table
