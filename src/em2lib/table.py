@@ -125,3 +125,19 @@ class Table(DataFrame):
         ego = self.copy() if index_self is None else self.set_index(index_self, drop=False)
         alter = other.copy() if index_other is None else other.set_index(index_other, drop=False)
         return Table(data=[x for x in ego.index if x not in alter.index], columns=ego.index.names)
+
+    def get_rows_not_in(self, other, index_self=None, index_other=None):
+        """
+        Return a Table with rows with keys that are in self but not in other.
+
+        :param other: the other Table object
+        :param index_self: a list of references to the columns defining indices in self Table. None refers
+         to the original index
+        :param index_other: a list of references to the columns defining indices in other Table. None refers
+         to the original index
+        :return: Table
+         The rows whose keys are in self Table but not in the other one.
+        """
+        ego = self.copy() if index_self is None else self.set_index(index_self)
+        alter = other.copy() if index_other is None else other.set_index(index_other)
+        return Table(data=ego.loc[[x for x in ego.index if x not in alter.index]]).reset_index()

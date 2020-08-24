@@ -230,3 +230,13 @@ def table_in_2_not_in_3():
 @pytest.fixture(scope="function")
 def table_in_3_not_in_2():
     return Table(data={'E': ['z', 'w'], 'G': ['b', 'a']})
+
+
+@pytest.fixture(scope="function")
+def table_row_in_2_not_in_3():
+    return Table(data={'A': ['a', 'z'], 'B': ['x', 'a'], 'C': [2, 3], 'D': [2, 6]})
+
+
+@pytest.fixture(scope="function")
+def table_row_in_3_not_in_2():
+    return Table(data={'E': ['z', 'w'], 'F': [4, 2], 'G': ['b', 'a']})

@@ -31,3 +31,9 @@ def test_table_common_rows(table2, table3, table_2_2_common_rows, table_2_3_comm
 def test_table_common_rows_full(table2, table3, table_2_3_common_rows_full):
     assert table2.get_common_rows(table3, index_self=['A', 'B'],
                                   index_other=['E', 'G'], drop=False).to_dict() == table_2_3_common_rows_full.to_dict()
+
+def test_table_rows_not_in(table2, table3, table_row_in_2_not_in_3, table_row_in_3_not_in_2):
+    assert table2.get_rows_not_in(table3, index_self=['A', 'B'],
+                                  index_other=['E', 'G']).to_dict() == table_row_in_2_not_in_3.to_dict()
+    assert table3.get_rows_not_in(table2, index_self=['E', 'G'],
+                                  index_other=['A', 'B']).to_dict() == table_row_in_3_not_in_2.to_dict()
