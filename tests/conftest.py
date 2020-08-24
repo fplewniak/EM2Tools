@@ -194,12 +194,12 @@ def table3():
 @pytest.fixture(scope="function")
 def table_2_3_comon_rows():
     return Table(data={'A': ['a', 'y'], 'B': ['b', 'w'], 'C': [1, 5], 'D': [8, 3],
-                       'F': [6, 8]}).set_index(['A', 'B'])
+                       'F': [6, 8]})
 
 @pytest.fixture(scope="function")
 def table_2_3_comon_rows_full():
     return Table(data={'A': ['a', 'y'], 'B': ['b', 'w'], 'C': [1, 5], 'D': [8, 3],
-                       'E': ['a', 'y'],'F': [6, 8], 'G': ['b', 'w']}).set_index(['A', 'B'], drop=False)
+                       'E': ['a', 'y'],'F': [6, 8], 'G': ['b', 'w']})
 
 @pytest.fixture(scope="function")
 def table_2_3_combined():

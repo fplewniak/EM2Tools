@@ -82,10 +82,10 @@ class Table(DataFrame):
         :return: Table with the same index as self Table
          The rows that have the same key values between the two tables.
         """
-        ego = self.copy() if index_self is None else self.set_index(index_self, drop=drop)
+        ego = self.copy() if index_self is None else self.set_index(index_self)
         alter = other.copy() if index_other is None else other.set_index(index_other, drop=drop)
         alter.index.names = ego.index.names
-        return Table(data=ego.join(alter, how='inner'))
+        return Table(data=ego.join(alter, how='inner').reset_index())
 
     def get_keys_not_in(self, other, index_self=None, index_other=None):
         """
