@@ -3,7 +3,7 @@ from em2lib.seq_record import SeqRecordEM2
 from em2lib.seq_feature import SeqFeatureEM2
 from Bio.SeqFeature import FeatureLocation
 
-from em2lib.table import Table
+from em2lib.table import DataFrame
 
 from numpy import nan
 
@@ -168,7 +168,7 @@ def dna_records():
 # #####################################################
 @pytest.fixture(scope="session")
 def table1():
-    return Table(data={'A': {0: 4.0, 1: 6.2, 2: 1.3}, 'B': {0: 'x', 1: 'y', 2: 'z'}, 'C': {0: 8, 1: 9, 2: 5}})
+    return DataFrame(data={'A': {0: 4.0, 1: 6.2, 2: 1.3}, 'B': {0: 'x', 1: 'y', 2: 'z'}, 'C': {0: 8, 1: 9, 2: 5}})
 
 
 @pytest.fixture(scope="session")
@@ -183,35 +183,35 @@ def table1_as_string():
 
 @pytest.fixture(scope="function")
 def table2():
-    return Table(data={'A': ['a', 'a', 'y', 'z'], 'B': ['b', 'x', 'w', 'a'], 'C': [1, 2, 5, 3], 'D': [8, 2, 3, 6]})
+    return DataFrame(data={'A': ['a', 'a', 'y', 'z'], 'B': ['b', 'x', 'w', 'a'], 'C': [1, 2, 5, 3], 'D': [8, 2, 3, 6]})
 
 
 @pytest.fixture(scope="function")
 def table3():
-    return Table(data={'E': ['a', 'y', 'z', 'w'], 'F': [6, 8, 4, 2], 'G': ['b', 'w', 'b', 'a']})
+    return DataFrame(data={'E': ['a', 'y', 'z', 'w'], 'F': [6, 8, 4, 2], 'G': ['b', 'w', 'b', 'a']})
 
 
 @pytest.fixture(scope="function")
 def table_2_3_common_rows():
-    return Table(data={'A': ['a', 'y'], 'B': ['b', 'w'], 'C': [1, 5], 'D': [8, 3],
+    return DataFrame(data={'A': ['a', 'y'], 'B': ['b', 'w'], 'C': [1, 5], 'D': [8, 3],
                        'F': [6, 8]})
 
 
 @pytest.fixture(scope="function")
 def table_2_3_common_rows_full():
-    return Table(data={'A': ['a', 'y'], 'B': ['b', 'w'], 'C': [1, 5], 'D': [8, 3],
+    return DataFrame(data={'A': ['a', 'y'], 'B': ['b', 'w'], 'C': [1, 5], 'D': [8, 3],
                        'E': ['a', 'y'], 'F': [6, 8], 'G': ['b', 'w']})
 
 
 @pytest.fixture(scope="function")
 def table_2_2_common_rows():
-    return Table(data={'A': ['a', 'a', 'y', 'z'], 'B': ['b', 'x', 'w', 'a'], 'C': [1, 2, 5, 3], 'D': [8, 2, 3, 6],
+    return DataFrame(data={'A': ['a', 'a', 'y', 'z'], 'B': ['b', 'x', 'w', 'a'], 'C': [1, 2, 5, 3], 'D': [8, 2, 3, 6],
                        'C_2': [1, 2, 5, 3], 'D_2': [8, 2, 3, 6]})
 
 
 @pytest.fixture(scope="function")
 def table_2_3_combined():
-    return Table(data={'A': ['a', 'a', 'y', 'z', nan, nan], 'B': ['b', 'x', 'w', 'a', nan, nan],
+    return DataFrame(data={'A': ['a', 'a', 'y', 'z', nan, nan], 'B': ['b', 'x', 'w', 'a', nan, nan],
                        'C': [1, 2, 5, 3, nan, nan], 'D': [8, 2, 3, 6, nan, nan],
                        'E': ['a', nan, 'y', nan, 'z', 'w'], 'F': [6, nan, 8, nan, 4, 2],
                        'G': ['b', nan, 'w', nan, 'b', 'a']})
@@ -219,24 +219,24 @@ def table_2_3_combined():
 
 @pytest.fixture(scope="function")
 def table_2_3_common_keys():
-    return Table(data={'A': ['a', 'y'], 'B': ['b', 'w']})
+    return DataFrame(data={'A': ['a', 'y'], 'B': ['b', 'w']})
 
 
 @pytest.fixture(scope="function")
 def table_in_2_not_in_3():
-    return Table(data={'A': ['a', 'z'], 'B': ['x', 'a']})
+    return DataFrame(data={'A': ['a', 'z'], 'B': ['x', 'a']})
 
 
 @pytest.fixture(scope="function")
 def table_in_3_not_in_2():
-    return Table(data={'E': ['z', 'w'], 'G': ['b', 'a']})
+    return DataFrame(data={'E': ['z', 'w'], 'G': ['b', 'a']})
 
 
 @pytest.fixture(scope="function")
 def table_row_in_2_not_in_3():
-    return Table(data={'A': ['a', 'z'], 'B': ['x', 'a'], 'C': [2, 3], 'D': [2, 6]})
+    return DataFrame(data={'A': ['a', 'z'], 'B': ['x', 'a'], 'C': [2, 3], 'D': [2, 6]})
 
 
 @pytest.fixture(scope="function")
 def table_row_in_3_not_in_2():
-    return Table(data={'E': ['z', 'w'], 'F': [4, 2], 'G': ['b', 'a']})
+    return DataFrame(data={'E': ['z', 'w'], 'F': [4, 2], 'G': ['b', 'a']})
