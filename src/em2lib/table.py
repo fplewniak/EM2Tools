@@ -1,5 +1,5 @@
 """
-Extension of pandas.DataFrame class to add or make functionalities easier to use
+Some utilities for Table manipulation, comparison, etc. using pandas.DataFrame module.
 """
 #  CeCILL FREE SOFTWARE LICENSE AGREEMENT Version 2.1 dated 2013-06-21
 #  Frédéric PLEWNIAK, CNRS/Université de Strasbourg UMR7156 - GMGM
@@ -23,8 +23,7 @@ class Table:
          to the original index
         :param keys_other: a list of references to the columns defining indices in other DataFrame. None refers
          to the original index
-        :return: DataFrame
-         The keys that are common between the two DataFrames.
+        :return: DataFrame, the keys that are common between the two DataFrames.
         """
         ego = first if keys_first is None else first.set_index(keys_first)
         alter = other if keys_other is None else other.set_index(keys_other)
@@ -47,8 +46,8 @@ class Table:
         :param rsuffix: str,
          Suffix to add to right column names in case of redundancy.
         :param drop: True by default. Drop the other key columns in the resulting DataFrame.
-        :return: DataFrame with the same keys as first DataFrame
-         The rows that have the same key values between the two DataFrames.
+        :return: DataFrame with the same keys as first DataFrame, containing the rows that have the same key values
+         between the two DataFrames.
         """
         ego = first.copy() if keys_first is None else first.set_index(keys_first)
         alter = other.copy() if keys_other is None else other.set_index(keys_other, drop=drop)
@@ -66,8 +65,7 @@ class Table:
          to the original index
         :param keys_other: a list of references to the columns defining keys in other DataFrame. None refers
          to the original index
-        :return: DataFrame
-         The keys that are in first DataFrame but not in the other one.
+        :return: DataFrame, the keys that are in first DataFrame but not in the other one.
         """
         ego = first.copy() if keys_first is None else first.set_index(keys_first, drop=False)
         alter = other.copy() if keys_other is None else other.set_index(keys_other, drop=False)
@@ -84,8 +82,7 @@ class Table:
          to the original index
         :param keys_other: a list of references to the columns defining keys in other DataFrame. None refers
          to the original index
-        :return: DataFrame
-         The rows whose keys are in first DataFrame but not in the other one.
+        :return: DataFrame, the rows whose keys are in first DataFrame but not in the other one.
         """
         ego = first.copy() if keys_first is None else first.set_index(keys_first)
         alter = other.copy() if keys_other is None else other.set_index(keys_other)

@@ -27,3 +27,8 @@ The “argparse_em2” module
 -------------------------
 ..  automodule:: em2lib.argparse_em2
     :members:
+
+The “table” module
+-------------------------
+..  automodule:: em2lib.table
+    :members:

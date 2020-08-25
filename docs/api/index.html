@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>The EM2Tools API reference &mdash; EM2Tools 0.1.0 documentation</title>
+  <title>The EM2Tools API reference &mdash; EM2Tools 0.2.0 documentation</title>
   
 
   
@@ -60,7 +60,7 @@
             
             
               <div class="version">
-                0.1.0
+                0.2.0
               </div>
             
           
@@ -94,6 +94,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#module-em2lib.seq_feature">The “seq_feature” module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-em2lib.seq_utils">The “seq_utils” module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-em2lib.argparse_em2">The “argparse_em2” module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-em2lib.table">The “table” module</a></li>
 </ul>
 </li>
 </ul>
@@ -1137,6 +1138,109 @@ elements into a set of elements.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>the set of elements or an empty set if the argument was None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-em2lib.table">
+<span id="the-table-module"></span><h2>The “table” module<a class="headerlink" href="#module-em2lib.table" title="Permalink to this headline">¶</a></h2>
+<p>Some utilities for Table manipulation, comparison, etc. using pandas.DataFrame module.</p>
+<dl class="py class">
+<dt id="em2lib.table.Table">
+<em class="property">class </em><code class="sig-prename descclassname">em2lib.table.</code><code class="sig-name descname">Table</code><a class="headerlink" href="#em2lib.table.Table" title="Permalink to this definition">¶</a></dt>
+<dd><p>A class adding some utilities for easier DataFrame manipulation, comparison, etc.</p>
+<dl class="py method">
+<dt id="em2lib.table.Table.get_common_keys">
+<em class="property">classmethod </em><code class="sig-name descname">get_common_keys</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">first</span></em>, <em class="sig-param"><span class="n">other</span></em>, <em class="sig-param"><span class="n">keys_first</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">keys_other</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#em2lib.table.Table.get_common_keys" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the index keys in common between first DataFrame and other DataFrame</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>first</strong> – the first DataFrame object to compare</p></li>
+<li><p><strong>other</strong> – the other DataFrame object to compare</p></li>
+<li><p><strong>keys_first</strong> – a list of references to the columns defining indices in first DataFrame. None refers
+to the original index</p></li>
+<li><p><strong>keys_other</strong> – a list of references to the columns defining indices in other DataFrame. None refers
+to the original index</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>DataFrame, the keys that are common between the two DataFrames.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="em2lib.table.Table.get_common_rows">
+<em class="property">classmethod </em><code class="sig-name descname">get_common_rows</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">first</span></em>, <em class="sig-param"><span class="n">other</span></em>, <em class="sig-param"><span class="n">keys_first</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">keys_other</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">lsuffix</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">rsuffix</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">drop</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#em2lib.table.Table.get_common_rows" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="simple">
+<dt>Return rows with the same key values. Key columns from the other DataFrame object are droppped by default</dt><dd><p>but can be kept if drop is set to False.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>first</strong> – the first DataFrame object to compare</p></li>
+<li><p><strong>other</strong> – the other DataFrame object to compare</p></li>
+<li><p><strong>keys_first</strong> – a list of references to the columns defining keys in first DataFrame. None refers
+to the original index</p></li>
+<li><p><strong>keys_other</strong> – a list of references to the columns defining keys in other DataFrame. None refers
+to the original index</p></li>
+<li><p><strong>lsuffix</strong> – str,
+Suffix to add to first column names in case of redundancy.</p></li>
+<li><p><strong>rsuffix</strong> – str,
+Suffix to add to right column names in case of redundancy.</p></li>
+<li><p><strong>drop</strong> – True by default. Drop the other key columns in the resulting DataFrame.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>DataFrame with the same keys as first DataFrame, containing the rows that have the same key values
+between the two DataFrames.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="em2lib.table.Table.get_keys_not_in">
+<em class="property">classmethod </em><code class="sig-name descname">get_keys_not_in</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">first</span></em>, <em class="sig-param"><span class="n">other</span></em>, <em class="sig-param"><span class="n">keys_first</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">keys_other</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#em2lib.table.Table.get_keys_not_in" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the keys in first DataFrame which are not in other DataFrame</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>first</strong> – the first DataFrame object to compare</p></li>
+<li><p><strong>other</strong> – the other DataFrame object to compare</p></li>
+<li><p><strong>keys_first</strong> – a list of references to the columns defining keys in first DataFrame. None refers
+to the original index</p></li>
+<li><p><strong>keys_other</strong> – a list of references to the columns defining keys in other DataFrame. None refers
+to the original index</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>DataFrame, the keys that are in first DataFrame but not in the other one.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="em2lib.table.Table.get_rows_not_in">
+<em class="property">classmethod </em><code class="sig-name descname">get_rows_not_in</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">first</span></em>, <em class="sig-param"><span class="n">other</span></em>, <em class="sig-param"><span class="n">keys_first</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">keys_other</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#em2lib.table.Table.get_rows_not_in" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a DataFrame with rows with keys that are in first but not in other.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>first</strong> – the first DataFrame object to compare</p></li>
+<li><p><strong>other</strong> – the other DataFrame object to compare</p></li>
+<li><p><strong>keys_first</strong> – a list of references to the columns defining keys in first DataFrame. None refers
+to the original index</p></li>
+<li><p><strong>keys_other</strong> – a list of references to the columns defining keys in other DataFrame. None refers
+to the original index</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>DataFrame, the rows whose keys are in first DataFrame but not in the other one.</p>
 </dd>
 </dl>
 </dd></dl>
