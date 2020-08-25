@@ -1154,7 +1154,7 @@ elements into a set of elements.</p>
 <dd><p>A class adding some utilities for easier DataFrame manipulation, comparison, etc.</p>
 <dl class="py method">
 <dt id="em2lib.table.Table.get_common_keys">
-<em class="property">classmethod </em><code class="sig-name descname">get_common_keys</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">first</span></em>, <em class="sig-param"><span class="n">other</span></em>, <em class="sig-param"><span class="n">keys_first</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">keys_other</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#em2lib.table.Table.get_common_keys" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="sig-name descname">get_common_keys</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">first</span></em>, <em class="sig-param"><span class="n">other</span></em>, <em class="sig-param"><span class="n">keys_first</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">keys_other</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#em2lib.table.Table.get_common_keys" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the index keys in common between first DataFrame and other DataFrame</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1175,7 +1175,7 @@ to the original index</p></li>
 
 <dl class="py method">
 <dt id="em2lib.table.Table.get_common_rows">
-<em class="property">classmethod </em><code class="sig-name descname">get_common_rows</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">first</span></em>, <em class="sig-param"><span class="n">other</span></em>, <em class="sig-param"><span class="n">keys_first</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">keys_other</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">lsuffix</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">rsuffix</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">drop</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#em2lib.table.Table.get_common_rows" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="sig-name descname">get_common_rows</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">first</span></em>, <em class="sig-param"><span class="n">other</span></em>, <em class="sig-param"><span class="n">keys_first</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">keys_other</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">lsuffix</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">rsuffix</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">drop</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#em2lib.table.Table.get_common_rows" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="simple">
 <dt>Return rows with the same key values. Key columns from the other DataFrame object are droppped by default</dt><dd><p>but can be kept if drop is set to False.</p>
 </dd>
@@ -1205,7 +1205,7 @@ between the two DataFrames.</p>
 
 <dl class="py method">
 <dt id="em2lib.table.Table.get_keys_not_in">
-<em class="property">classmethod </em><code class="sig-name descname">get_keys_not_in</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">first</span></em>, <em class="sig-param"><span class="n">other</span></em>, <em class="sig-param"><span class="n">keys_first</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">keys_other</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#em2lib.table.Table.get_keys_not_in" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="sig-name descname">get_keys_not_in</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">first</span></em>, <em class="sig-param"><span class="n">other</span></em>, <em class="sig-param"><span class="n">keys_first</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">keys_other</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#em2lib.table.Table.get_keys_not_in" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the keys in first DataFrame which are not in other DataFrame</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1226,7 +1226,7 @@ to the original index</p></li>
 
 <dl class="py method">
 <dt id="em2lib.table.Table.get_rows_not_in">
-<em class="property">classmethod </em><code class="sig-name descname">get_rows_not_in</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">first</span></em>, <em class="sig-param"><span class="n">other</span></em>, <em class="sig-param"><span class="n">keys_first</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">keys_other</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#em2lib.table.Table.get_rows_not_in" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="sig-name descname">get_rows_not_in</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">first</span></em>, <em class="sig-param"><span class="n">other</span></em>, <em class="sig-param"><span class="n">keys_first</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">keys_other</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#em2lib.table.Table.get_rows_not_in" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a DataFrame with rows with keys that are in first but not in other.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>

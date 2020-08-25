@@ -12,8 +12,8 @@ class Table:
     A class adding some utilities for easier DataFrame manipulation, comparison, etc.
     """
 
-    @classmethod
-    def get_common_keys(cls, first, other, keys_first=None, keys_other=None):
+    @staticmethod
+    def get_common_keys(first, other, keys_first=None, keys_other=None):
         """
         Return the index keys in common between first DataFrame and other DataFrame
 
@@ -29,8 +29,8 @@ class Table:
         alter = other if keys_other is None else other.set_index(keys_other)
         return DataFrame(data=[x for x in ego.index if x in alter.index], columns=ego.index.names)
 
-    @classmethod
-    def get_common_rows(cls, first, other, keys_first=None, keys_other=None, lsuffix="", rsuffix="", drop=True):
+    @staticmethod
+    def get_common_rows(first, other, keys_first=None, keys_other=None, lsuffix="", rsuffix="", drop=True):
         """
         Return rows with the same key values. Key columns from the other DataFrame object are droppped by default
          but can be kept if drop is set to False.
@@ -54,8 +54,8 @@ class Table:
         alter.index.names = ego.index.names
         return ego.join(alter, how='inner', lsuffix=lsuffix, rsuffix=rsuffix).reset_index()
 
-    @classmethod
-    def get_keys_not_in(cls, first, other, keys_first=None, keys_other=None):
+    @staticmethod
+    def get_keys_not_in(first, other, keys_first=None, keys_other=None):
         """
         Return the keys in first DataFrame which are not in other DataFrame
 
@@ -71,8 +71,8 @@ class Table:
         alter = other.copy() if keys_other is None else other.set_index(keys_other, drop=False)
         return DataFrame(data=[x for x in ego.index if x not in alter.index], columns=ego.index.names)
 
-    @classmethod
-    def get_rows_not_in(cls, first, other, keys_first=None, keys_other=None):
+    @staticmethod
+    def get_rows_not_in(first, other, keys_first=None, keys_other=None):
         """
         Return a DataFrame with rows with keys that are in first but not in other.
 
