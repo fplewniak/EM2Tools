@@ -87,3 +87,18 @@ class Table:
         ego = first.copy() if keys_first is None else first.set_index(keys_first)
         alter = other.copy() if keys_other is None else other.set_index(keys_other)
         return DataFrame(data=ego.loc[[x for x in ego.index if x not in alter.index]]).reset_index()
+
+
+    @staticmethod
+    def cond_transform(df, cond=lambda x: True, iftrue=lambda x: x):
+        """
+        Conditional transform of a DataFrame. If condition function returns True, then the iftrue function is applied
+         to transform the corresponding element.
+        :param df: the DataFrame to transform
+        :param cond: the condition function or a mask DataFrame with the same shape as df and containing bool values
+        :param iftrue: the function to apply if condition is True
+        :return: the transformed DataFrame
+        """
+        mask = cond if isinstance(cond, DataFrame) else df.applymap(cond)
+
+        return df.mask(mask, df.applymap(iftrue))

@@ -181,62 +181,88 @@ def table1_as_string():
     return '     A  B  C\n0  4.0  x  8\n1  6.2  y  9\n2  1.3  z  5'
 
 
-@pytest.fixture(scope="function")
+@pytest.fixture(scope="session")
 def table2():
     return DataFrame(data={'A': ['a', 'a', 'y', 'z'], 'B': ['b', 'x', 'w', 'a'], 'C': [1, 2, 5, 3], 'D': [8, 2, 3, 6]})
 
 
-@pytest.fixture(scope="function")
+@pytest.fixture(scope="session")
 def table3():
     return DataFrame(data={'E': ['a', 'y', 'z', 'w'], 'F': [6, 8, 4, 2], 'G': ['b', 'w', 'b', 'a']})
 
 
-@pytest.fixture(scope="function")
+@pytest.fixture(scope="session")
+def table4():
+    """
+    :return: table with column C containing D - C value if D > C in table2
+    """
+    return DataFrame(data={'A': ['a', 'a', 'y', 'z'], 'B': ['b', 'x', 'w', 'a'], 'C': [7, 2, 5, 3], 'D': [8, 2, 3, 6]})
+
+
+@pytest.fixture(scope="session")
+def table5():
+    """
+    :return: table with column C containing D - C value if D > C in table2 and column D containing '*' if D + C > 8
+    """
+    return DataFrame(data={'A': ['a', 'a', 'y', 'z'], 'B': ['b', 'x', 'w', 'a'], 'C': [7, 2, 5, 3],
+                           'D': ['X', 2, 3, 'X']})
+
+
+@pytest.fixture(scope="session")
+def table6():
+    """
+    :return: table2 copy with columns C and D modified to indicate whether the value is > 3 or <= 3
+    """
+    return DataFrame(data={'A': ['a', 'a', 'y', 'z'], 'B': ['b', 'x', 'w', 'a'], 'C': ['1<=3', '2<=3', '5>3', '3<=3'],
+                           'D': ['8>3', '2<=3', '3<=3', '6>3']})
+
+
+@pytest.fixture(scope="session")
 def table_2_3_common_rows():
     return DataFrame(data={'A': ['a', 'y'], 'B': ['b', 'w'], 'C': [1, 5], 'D': [8, 3],
-                       'F': [6, 8]})
+                           'F': [6, 8]})
 
 
-@pytest.fixture(scope="function")
+@pytest.fixture(scope="session")
 def table_2_3_common_rows_full():
     return DataFrame(data={'A': ['a', 'y'], 'B': ['b', 'w'], 'C': [1, 5], 'D': [8, 3],
-                       'E': ['a', 'y'], 'F': [6, 8], 'G': ['b', 'w']})
+                           'E': ['a', 'y'], 'F': [6, 8], 'G': ['b', 'w']})
 
 
-@pytest.fixture(scope="function")
+@pytest.fixture(scope="session")
 def table_2_2_common_rows():
     return DataFrame(data={'A': ['a', 'a', 'y', 'z'], 'B': ['b', 'x', 'w', 'a'], 'C': [1, 2, 5, 3], 'D': [8, 2, 3, 6],
-                       'C_2': [1, 2, 5, 3], 'D_2': [8, 2, 3, 6]})
+                           'C_2': [1, 2, 5, 3], 'D_2': [8, 2, 3, 6]})
 
 
-@pytest.fixture(scope="function")
+@pytest.fixture(scope="session")
 def table_2_3_combined():
     return DataFrame(data={'A': ['a', 'a', 'y', 'z', nan, nan], 'B': ['b', 'x', 'w', 'a', nan, nan],
-                       'C': [1, 2, 5, 3, nan, nan], 'D': [8, 2, 3, 6, nan, nan],
-                       'E': ['a', nan, 'y', nan, 'z', 'w'], 'F': [6, nan, 8, nan, 4, 2],
-                       'G': ['b', nan, 'w', nan, 'b', 'a']})
+                           'C': [1, 2, 5, 3, nan, nan], 'D': [8, 2, 3, 6, nan, nan],
+                           'E': ['a', nan, 'y', nan, 'z', 'w'], 'F': [6, nan, 8, nan, 4, 2],
+                           'G': ['b', nan, 'w', nan, 'b', 'a']})
 
 
-@pytest.fixture(scope="function")
+@pytest.fixture(scope="session")
 def table_2_3_common_keys():
     return DataFrame(data={'A': ['a', 'y'], 'B': ['b', 'w']})
 
 
-@pytest.fixture(scope="function")
+@pytest.fixture(scope="session")
 def table_in_2_not_in_3():
     return DataFrame(data={'A': ['a', 'z'], 'B': ['x', 'a']})
 
 
-@pytest.fixture(scope="function")
+@pytest.fixture(scope="session")
 def table_in_3_not_in_2():
     return DataFrame(data={'E': ['z', 'w'], 'G': ['b', 'a']})
 
 
-@pytest.fixture(scope="function")
+@pytest.fixture(scope="session")
 def table_row_in_2_not_in_3():
     return DataFrame(data={'A': ['a', 'z'], 'B': ['x', 'a'], 'C': [2, 3], 'D': [2, 6]})
 
 
-@pytest.fixture(scope="function")
+@pytest.fixture(scope="session")
 def table_row_in_3_not_in_2():
     return DataFrame(data={'E': ['z', 'w'], 'F': [4, 2], 'G': ['b', 'a']})
