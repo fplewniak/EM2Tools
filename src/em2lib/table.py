@@ -121,7 +121,8 @@ class TableTransform():
           working DataFrame should be transformed.
          A DataFrame is a mask of bool values with the same shape as the original DataFrame. Elements in the working
          A Series is a mask of bool values defining in which rows the transformation should be applied.
-        :param iftrue: the function to apply if condition is True
+        :param iftrue: the function to apply if condition is True, returns a single value from a single value. This
+         function should test whether it is applicable to its input and return the original value if not.
         :param columns: str or list thereof specifying the column(s) which the transformation should be applied to
         :return: the transformed DataFrame
         """
