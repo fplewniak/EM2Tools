@@ -156,3 +156,22 @@ class TableTransform():
         else:
             self.wrkg_df = tmp_df
         return self
+
+    def replace(self, columns=None, **kwargs):
+        """
+        A method wrapping the DataFrame.replace() method and adding the columns parameter to apply the replacement only
+         in the specified columns.
+
+        :param columns: str or list thereof specifying the column(s) to apply replacement to
+        :param kwargs: named arguments to pass to DataFrame.replace() method. Note that inplace argument is deactivated
+         as it is not needed here and might actually interfere with the columns argument. As a matter of fact, the
+         working DataFrame is always modified.
+        :return: this TableTransform instance
+        """
+        kwargs['inplace'] = False
+        tmp_df = self.wrkg_df.replace(**kwargs)
+        if columns is not None:
+            self.wrkg_df.loc[:, columns] = tmp_df.loc[:, columns]
+        else:
+            self.wrkg_df = tmp_df
+        return self

@@ -103,3 +103,7 @@ def test_cond_transform(table2, table3, table6, table7, table8, table9, table10,
                 .cond_transform(cond=lambda x: x<5 if isinstance(x, Number) else False, iftrue=f)\
                 .cond_transform(cond=lambda x: x>2 if isinstance(x, Number) else False, iftrue=f)\
                .result().to_string() == table14.to_string()
+    assert TableTransform(table3).replace(to_replace='a', value='A').result().to_string() == table11.to_string()
+    assert TableTransform(table3).replace(to_replace='a', value='A',
+                                          columns='E').result().to_string() == table12.to_string()
+

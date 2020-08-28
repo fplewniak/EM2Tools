@@ -250,6 +250,14 @@ def table10():
     return DataFrame(data={'A': ['a', 'a', 'y', 'z'], 'B': ['b', 'x', 'w', 'a'], 'C': [7, 2, 'X', 3], 'D': [8, 2, 3, 6]})
 
 @pytest.fixture(scope="session")
+def table11():
+    return DataFrame(data={'E': ['A', 'y', 'z', 'w'], 'F': [6, 8, 4, 2], 'G': ['b', 'w', 'b', 'A']})
+
+@pytest.fixture(scope="session")
+def table12():
+    return DataFrame(data={'E': ['A', 'y', 'z', 'w'], 'F': [6, 8, 4, 2], 'G': ['b', 'w', 'b', 'a']})
+
+@pytest.fixture(scope="session")
 def table13():
     return DataFrame(data={'E': ['a', 'y', 'z', 'w'], 'F': [-6, -8, -4, -2], 'G': ['b', 'w', 'b', 'a']})
 
