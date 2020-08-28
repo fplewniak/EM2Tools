@@ -89,16 +89,42 @@ class Table:
         return DataFrame(data=ego.loc[[x for x in ego.index if x not in alter.index]]).reset_index()
 
 
-    @staticmethod
-    def cond_transform(df, cond=lambda x: True, iftrue=lambda x: x):
+class TableTransform():
+    """
+    Class of objects to transform a DataFrame according to different criteria. Different independent transformations
+     can be chained since all transformation methods return self object.
+    """
+    def __init__(self, df):
+        """
+        TableTransform object creator
+
+        :param df: The original DataFrame to transform
+        """
+        self.orgnl_df = df
+        self.wrkg_df = df.copy()
+
+    def result(self):
+        """
+        Getter method to retrieve the DataFrame resulting from the transformations
+        :return: the transformed DataFrame
+        """
+        return self.wrkg_df
+
+    def cond_transform(self, cond=lambda x: True, iftrue=lambda x: x, columns=None):
         """
         Conditional transform of a DataFrame. If condition function returns True, then the iftrue function is applied
          to transform the corresponding element.
-        :param df: the DataFrame to transform
+
         :param cond: the condition function or a mask DataFrame with the same shape as df and containing bool values
         :param iftrue: the function to apply if condition is True
+        :param columns: str or list thereof specifying the column(s) which the transformation should be applied to
         :return: the transformed DataFrame
         """
-        mask = cond if isinstance(cond, DataFrame) else df.applymap(cond)
+        mask = cond if isinstance(cond, DataFrame) else self.orgnl_df.applymap(cond)
+        tmp_df = self.wrkg_df.mask(mask, self.wrkg_df.applymap(iftrue))
+        if columns is not None:
+            self.wrkg_df.loc[:, columns] = tmp_df.loc[:, columns]
+        else:
+            self.wrkg_df = tmp_df
+        return self
 
-        return df.mask(mask, df.applymap(iftrue))

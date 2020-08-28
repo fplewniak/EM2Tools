@@ -2,6 +2,7 @@
 #  Frédéric PLEWNIAK, CNRS/Université de Strasbourg UMR7156 - GMGM
 #
 from em2lib.table import Table
+from em2lib.table import TableTransform
 from numbers import Number
 
 
@@ -42,8 +43,10 @@ def gt3(x):
     else:
         return False
 
+
 def dgt3(df):
     return df.applymap(lambda x: gt3(x))
+
 
 def le3(x):
     if isinstance(x, Number):
@@ -51,13 +54,18 @@ def le3(x):
     else:
         return False
 
+
 def dle3(df):
     return df.applymap(lambda x: le3(x))
 
-def test_cond_transform(table2, table6):
-    assert Table.cond_transform(Table.cond_transform(table2, cond=lambda x: gt3(x), iftrue=lambda x: str(x) + '>3'),
-                                cond=lambda x: le3(x),
-                                iftrue=lambda x: str(x) + '<=3').to_string() == table6.to_string()
-    assert Table.cond_transform(Table.cond_transform(table2, cond=dgt3(table2), iftrue=lambda x: str(x) + '>3'),
-                                cond=dle3(table2),
-                                iftrue=lambda x: str(x) + '<=3').to_string() == table6.to_string()
+
+def test_cond_transform(table2, table6, table7):
+    assert TableTransform(table2).cond_transform(cond=lambda x: gt3(x), iftrue=lambda x: str(x) + '>3') \
+               .cond_transform(cond=lambda x: le3(x),
+                               iftrue=lambda x: str(x) + '<=3').result().to_string() == table6.to_string()
+    assert TableTransform(table2).cond_transform(cond=dgt3(table2), iftrue=lambda x: str(x) + '>3') \
+               .cond_transform(cond=dle3(table2),
+                               iftrue=lambda x: str(x) + '<=3').result().to_string() == table6.to_string()
+    assert TableTransform(table2).cond_transform(cond=dgt3(table2), iftrue=lambda x: str(x) + '>3', columns='C') \
+               .cond_transform(cond=dle3(table2), iftrue=lambda x: str(x) + '<=3',
+                               columns='C').result().to_string() == table7.to_string()
