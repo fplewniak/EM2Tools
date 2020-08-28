@@ -4,6 +4,7 @@
 from em2lib.table import Table
 from em2lib.table import TableTransform
 from numbers import Number
+import numpy as np
 
 
 def test_table_common_keys(table2, table3, table_2_3_common_keys):
@@ -59,7 +60,14 @@ def dle3(df):
     return df.applymap(lambda x: le3(x))
 
 
-def test_cond_transform(table2, table6, table7):
+def mysqrt(x):
+    if isinstance(x, Number):
+        return np.sqrt(x)
+    else:
+        return x
+
+
+def test_cond_transform(table2, table6, table7, table8):
     assert TableTransform(table2).cond_transform(cond=lambda x: gt3(x), iftrue=lambda x: str(x) + '>3') \
                .cond_transform(cond=lambda x: le3(x),
                                iftrue=lambda x: str(x) + '<=3').result().to_string() == table6.to_string()
@@ -69,3 +77,5 @@ def test_cond_transform(table2, table6, table7):
     assert TableTransform(table2).cond_transform(cond=dgt3(table2), iftrue=lambda x: str(x) + '>3', columns='C') \
                .cond_transform(cond=dle3(table2), iftrue=lambda x: str(x) + '<=3',
                                columns='C').result().to_string() == table7.to_string()
+    assert TableTransform(table2).cond_transform(cond=table2.eval('C + D > 5'), iftrue=mysqrt,
+                                                 columns='D').result().to_string() == table8.to_string()

@@ -216,6 +216,7 @@ def table6():
     return DataFrame(data={'A': ['a', 'a', 'y', 'z'], 'B': ['b', 'x', 'w', 'a'], 'C': ['1<=3', '2<=3', '5>3', '3<=3'],
                            'D': ['8>3', '2<=3', '3<=3', '6>3']})
 
+
 @pytest.fixture(scope="session")
 def table7():
     """
@@ -223,6 +224,15 @@ def table7():
     """
     return DataFrame(data={'A': ['a', 'a', 'y', 'z'], 'B': ['b', 'x', 'w', 'a'], 'C': ['1<=3', '2<=3', '5>3', '3<=3'],
                            'D': [8, 2, 3, 6]})
+
+
+@pytest.fixture(scope="session")
+def table8():
+    """
+     :return: table2 copy with columns D containing sqrt(x) if C + D > 5
+     """
+    return DataFrame(data={'A': ['a', 'a', 'y', 'z'], 'B': ['b', 'x', 'w', 'a'], 'C': [1, 2, 5, 3],
+                           'D': [2.828427, 2.000000, 1.732051, 2.449490]})
 
 
 @pytest.fixture(scope="session")
