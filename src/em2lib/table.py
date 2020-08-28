@@ -121,13 +121,13 @@ class TableTransform():
         self.orgnl_df = self.wrkg_df
         return self
 
-    def cond_transform(self, cond=lambda x: True, iftrue=lambda x: x, columns=None):
+    def cond_transform(self, cond=lambda x: True, iftrue=lambda x: x, columns=None, original=True):
         """
         Conditional transform of a DataFrame. If condition function returns True, then the iftrue function is applied
          to transform the corresponding element.
 
-        :param cond: lambda function, DataFrame or Series
-         A lambda function is applied to elements of the original DataFrame in order to define which elements in the
+        :param cond: function, DataFrame or Series
+         A function is applied to elements of the original DataFrame in order to define which elements in the
           working DataFrame should be transformed.
          A DataFrame is a mask of bool values with the same shape as the original DataFrame. Elements in the working
          A Series is a mask of bool values defining in which rows the transformation should be applied.
@@ -135,12 +135,18 @@ class TableTransform():
          the function to apply if condition is True, returns a single value from a single value. This
          function should test whether it is applicable to its input and return the original value if not.
         :param columns: str or list thereof specifying the column(s) which the transformation should be applied to
-        :return: the transformed DataFrame
+        :param original: if True, the original DataFrame is used to assess the condition function, otherwise, the
+         working copy is used. This has an effect only if cond is a function and therefore only works for elementwise
+         transformation. For rowwise selection, cond should be a DataFrame that can be computed by a function taking as
+         input the current result DataFrame self.result()
+        :return: this TableTransform instance
         """
         if isinstance(cond, DataFrame) or isinstance(cond, Series):
             mask = cond
-        else:
+        elif original:
             mask = self.orgnl_df.applymap(cond)
+        else:
+            mask = self.wrkg_df.applymap(cond)
         if isinstance(iftrue, DataFrame):
             tmp_df = self.wrkg_df.mask(mask, iftrue)
         else:

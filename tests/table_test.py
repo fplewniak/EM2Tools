@@ -66,6 +66,11 @@ def mysqrt(x):
     else:
         return x
 
+def f(x):
+    if isinstance(x, Number):
+        return -x
+    else:
+        return x
 
 def test_cond_transform(table2, table6, table7, table8, table9, table10):
     assert TableTransform(table2)\
@@ -89,3 +94,11 @@ def test_cond_transform(table2, table6, table7, table8, table9, table10):
                .update()\
                .cond_transform(cond=lambda x: x<0 if isinstance(x, Number) else False, iftrue=lambda x: 'X')\
                .result().to_string() == table10.to_string()
+    assert TableTransform(table3)\
+                .cond_transform(cond=lambda x: x<5 if isinstance(x, Number) else False, iftrue=f)\
+                .cond_transform(cond=lambda x: x>2 if isinstance(x, Number) else False, iftrue=f, original=False)\
+               .result().to_string() == table13.to_string()
+    assert TableTransform(table3)\
+                .cond_transform(cond=lambda x: x<5 if isinstance(x, Number) else False, iftrue=f)\
+                .cond_transform(cond=lambda x: x>2 if isinstance(x, Number) else False, iftrue=f)\
+               .result().to_string() == table14.to_string()
