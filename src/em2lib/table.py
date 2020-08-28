@@ -5,6 +5,7 @@ Some utilities for Table manipulation, comparison, etc. using pandas.DataFrame m
 #  Frédéric PLEWNIAK, CNRS/Université de Strasbourg UMR7156 - GMGM
 #
 from pandas import DataFrame
+from pandas import Series
 
 
 class Table:
@@ -115,12 +116,19 @@ class TableTransform():
         Conditional transform of a DataFrame. If condition function returns True, then the iftrue function is applied
          to transform the corresponding element.
 
-        :param cond: the condition function or a mask DataFrame with the same shape as df and containing bool values
+        :param cond: lambda function, DataFrame or Series
+         A lambda function is applied to elements of the original DataFrame in order to define which elements in the
+          working DataFrame should be transformed.
+         A DataFrame is a mask of bool values with the same shape as the original DataFrame. Elements in the working
+         A Series is a mask of bool values defining in which rows the transformation should be applied.
         :param iftrue: the function to apply if condition is True
         :param columns: str or list thereof specifying the column(s) which the transformation should be applied to
         :return: the transformed DataFrame
         """
-        mask = cond if isinstance(cond, DataFrame) else self.orgnl_df.applymap(cond)
+        if isinstance(cond, DataFrame) or isinstance(cond, Series):
+            mask = cond
+        else:
+            mask = self.orgnl_df.applymap(cond)
         tmp_df = self.wrkg_df.mask(mask, self.wrkg_df.applymap(iftrue))
         if columns is not None:
             self.wrkg_df.loc[:, columns] = tmp_df.loc[:, columns]
