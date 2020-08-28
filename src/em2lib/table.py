@@ -95,6 +95,7 @@ class TableTransform():
     Class of objects to transform a DataFrame according to different criteria. Different independent transformations
      can be chained since all transformation methods return self object.
     """
+
     def __init__(self, df):
         """
         TableTransform object creator
@@ -110,6 +111,15 @@ class TableTransform():
         :return: the transformed DataFrame
         """
         return self.wrkg_df
+
+    def update(self):
+        """
+        Update orginal DataFrame with the current working copy. This enables the application of conditions to previously
+         modified values. This action cannot be undone, so it is recommended to use it after all modifications based on
+         original data have been performed.
+        """
+        self.orgnl_df = self.wrkg_df
+        return self
 
     def cond_transform(self, cond=lambda x: True, iftrue=lambda x: x, columns=None):
         """
@@ -140,4 +150,3 @@ class TableTransform():
         else:
             self.wrkg_df = tmp_df
         return self
-

@@ -67,17 +67,25 @@ def mysqrt(x):
         return x
 
 
-def test_cond_transform(table2, table6, table7, table8, table9):
-    assert TableTransform(table2).cond_transform(cond=lambda x: gt3(x), iftrue=lambda x: str(x) + '>3') \
-               .cond_transform(cond=lambda x: le3(x),
-                               iftrue=lambda x: str(x) + '<=3').result().to_string() == table6.to_string()
-    assert TableTransform(table2).cond_transform(cond=dgt3(table2), iftrue=lambda x: str(x) + '>3') \
-               .cond_transform(cond=dle3(table2),
-                               iftrue=lambda x: str(x) + '<=3').result().to_string() == table6.to_string()
-    assert TableTransform(table2).cond_transform(cond=dgt3(table2), iftrue=lambda x: str(x) + '>3', columns='C') \
-               .cond_transform(cond=dle3(table2), iftrue=lambda x: str(x) + '<=3',
-                               columns='C').result().to_string() == table7.to_string()
-    assert TableTransform(table2).cond_transform(cond=table2.eval('C + D > 5'), iftrue=mysqrt,
-                                                 columns='D').result().to_string() == table8.to_string()
-    assert TableTransform(table2).cond_transform(cond=table2.eval('C + D > 5'), iftrue=table2.eval('D = C*2 +D')).\
-               result().to_string() == table9.to_string()
+def test_cond_transform(table2, table6, table7, table8, table9, table10):
+    assert TableTransform(table2)\
+               .cond_transform(cond=lambda x: gt3(x), iftrue=lambda x: str(x) + '>3')\
+               .cond_transform(cond=lambda x: le3(x), iftrue=lambda x: str(x) + '<=3')\
+               .result().to_string() == table6.to_string()
+    assert TableTransform(table2)\
+               .cond_transform(cond=dgt3(table2), iftrue=lambda x: str(x) + '>3')\
+               .cond_transform(cond=dle3(table2), iftrue=lambda x: str(x) + '<=3')\
+               .result().to_string() == table6.to_string()
+    assert TableTransform(table2)\
+               .cond_transform(cond=dgt3(table2), iftrue=lambda x: str(x) + '>3', columns='C')\
+               .cond_transform(cond=dle3(table2), iftrue=lambda x: str(x) + '<=3', columns='C')\
+               .result().to_string() == table7.to_string()
+    assert TableTransform(table2).cond_transform(cond=table2.eval('C + D > 5'), iftrue=mysqrt, columns='D')\
+               .result().to_string() == table8.to_string()
+    assert TableTransform(table2).cond_transform(cond=table2.eval('C + D > 5'), iftrue=table2.eval('D = C*2 +D'))\
+               .result().to_string() == table9.to_string()
+    assert TableTransform(table2)\
+               .cond_transform(cond=table2.eval('D + C> 5'), iftrue=table2.eval('C = D - C'))\
+               .update()\
+               .cond_transform(cond=lambda x: x<0 if isinstance(x, Number) else False, iftrue=lambda x: 'X')\
+               .result().to_string() == table10.to_string()
