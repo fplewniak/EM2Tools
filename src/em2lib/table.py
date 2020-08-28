@@ -121,7 +121,8 @@ class TableTransform():
           working DataFrame should be transformed.
          A DataFrame is a mask of bool values with the same shape as the original DataFrame. Elements in the working
          A Series is a mask of bool values defining in which rows the transformation should be applied.
-        :param iftrue: the function to apply if condition is True, returns a single value from a single value. This
+        :param iftrue: function or a DataFrame with the same shape as te original table.
+         the function to apply if condition is True, returns a single value from a single value. This
          function should test whether it is applicable to its input and return the original value if not.
         :param columns: str or list thereof specifying the column(s) which the transformation should be applied to
         :return: the transformed DataFrame
@@ -130,7 +131,10 @@ class TableTransform():
             mask = cond
         else:
             mask = self.orgnl_df.applymap(cond)
-        tmp_df = self.wrkg_df.mask(mask, self.wrkg_df.applymap(iftrue))
+        if isinstance(iftrue, DataFrame):
+            tmp_df = self.wrkg_df.mask(mask, iftrue)
+        else:
+            tmp_df = self.wrkg_df.mask(mask, self.wrkg_df.applymap(iftrue))
         if columns is not None:
             self.wrkg_df.loc[:, columns] = tmp_df.loc[:, columns]
         else:
