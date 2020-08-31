@@ -141,7 +141,7 @@ class TableTransform():
          input the current result DataFrame self.result()
         :return: this TableTransform instance
         """
-        if isinstance(cond, DataFrame) or isinstance(cond, Series):
+        if isinstance(cond, (DataFrame, Series)):
             mask = cond
         elif original:
             mask = self.orgnl_df.applymap(cond)
