@@ -237,7 +237,7 @@ def table8():
 @pytest.fixture(scope="session")
 def table9():
     """
-     :return: table2 copy with columns D containing sqrt(x) if C + D > 5
+     :return: table2 copy with columns D containing D = C*2 +D if C + D > 5
      """
     return DataFrame(data={'A': ['a', 'a', 'y', 'z'], 'B': ['b', 'x', 'w', 'a'], 'C': [1, 2, 5, 3],
                            'D': [10, 2, 13, 12]})
