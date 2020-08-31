@@ -6,6 +6,7 @@ Some utilities for Table manipulation, comparison, etc. using pandas.DataFrame m
 #
 from pandas import DataFrame
 from pandas import Series
+import numpy
 
 
 class Table:
@@ -174,4 +175,21 @@ class TableTransform():
             self.wrkg_df.loc[:, columns] = tmp_df.loc[:, columns]
         else:
             self.wrkg_df = tmp_df
+        return self
+
+    def randomize(self, by=None, replacement=False):
+        """
+        Randomize a DataFrame by row, column or both with or without replacement. If by is row (or column), then whole
+         rows (or whole columns) are randomized. Otherwise, all elements of the DataFrame are resampled.
+
+        :param by: specifies whether randomization should be performed by row, by column or by element (None)
+        :param replacement: if True, then randomization will occur with replacement.
+        :return: the current TableTransform object
+        """
+        if by == 'column':
+            pass
+        elif by == 'row':
+            pass
+        else:
+            pass
         return self
