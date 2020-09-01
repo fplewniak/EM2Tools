@@ -187,12 +187,13 @@ class TableTransform():
         :param seed: seed for random numbers generation passed to sample() method as the random_state argument
         :return: the current TableTransform object
         """
-        tmp_df = DataFrame(columns=self.wrkg_df.columns)
         if by == 'column':
+            tmp_df = DataFrame(columns=self.wrkg_df.columns)
             for column in self.wrkg_df.columns:
                 tmp_df[column] = self.wrkg_df[column].sample(frac=1, axis=0, replace=replacement,
                                                              random_state=seed).reset_index(drop=True)
         elif by == 'row':
+            tmp_df = DataFrame(columns=self.wrkg_df.columns)
             for row in self.wrkg_df.index:
                 t = DataFrame(list(self.wrkg_df.loc[row, :])).transpose().sample(frac=1, axis=1, replace=replacement,
                                                                                  random_state=seed)
@@ -200,6 +201,9 @@ class TableTransform():
                 tmp_df = tmp_df.append(t)
             tmp_df = tmp_df.reset_index(drop=True)
         else:
-            pass
+            df_array = self.wrkg_df.to_numpy()
+            tmp_df = DataFrame(numpy.reshape(
+                numpy.random.choice([x for x in df_array.flat], size=len(df_array.flat), replace=replacement),
+                df_array.shape), columns=self.wrkg_df.columns)
         self.wrkg_df = tmp_df
         return self
