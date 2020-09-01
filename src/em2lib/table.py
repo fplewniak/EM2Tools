@@ -188,7 +188,7 @@ class TableTransform():
             self.wrkg_df = tmp_df
         return self
 
-    def randomize(self, by=None, replacement=False, seed=None):
+    def randomize(self, by=None, replacement=False, columns=None, seed=None):
         """
         Randomize a DataFrame by row, column or all elements across the whole table with or without replacement.
          If by=row (or column), then elements of each row (or each column) are randomized within the row (or the column)
@@ -196,6 +196,7 @@ class TableTransform():
 
         :param by: specifies whether randomization should be performed by row, by column or by element (None)
         :param replacement: if True, then randomization will occur with replacement.
+        :param columns: str or list thereof specifying the column(s) which the columns affected by the randomization
         :param seed: seed for random numbers generation passed to sample() method as the random_state argument
         :return: the current TableTransform object
         """
@@ -217,5 +218,9 @@ class TableTransform():
             tmp_df = DataFrame(numpy.reshape(
                 numpy.random.choice([x for x in df_array.flat], size=len(df_array.flat), replace=replacement),
                 df_array.shape), columns=self.wrkg_df.columns)
-        self.wrkg_df = tmp_df
+
+        if columns is not None:
+            self.wrkg_df.loc[:, columns] = tmp_df.loc[:, columns]
+        else:
+            self.wrkg_df = tmp_df
         return self
