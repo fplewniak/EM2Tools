@@ -193,7 +193,13 @@ class TableTransform():
                 tmp_df[column] = self.wrkg_df[column].sample(frac=1, axis=0, replace=replacement,
                                                              random_state=seed).reset_index(drop=True)
         elif by == 'row':
-            pass
+            for row in self.wrkg_df.index:
+                t = DataFrame(list(self.wrkg_df.loc[row, :])).transpose().sample(frac=1, axis=1, replace=replacement,
+                                                                                 random_state=seed)
+                t.columns = self.wrkg_df.columns
+                tmp_df = tmp_df.append(t)
+            tmp_df = tmp_df.reset_index(drop=True)
         else:
             pass
+        self.wrkg_df = tmp_df
         return self
