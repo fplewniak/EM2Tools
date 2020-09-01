@@ -179,8 +179,9 @@ class TableTransform():
 
     def randomize(self, by=None, replacement=False, seed=None):
         """
-        Randomize a DataFrame by row, column or both with or without replacement. If by is row (or column), then whole
-         rows (or whole columns) are randomized. Otherwise, all elements of the DataFrame are resampled.
+        Randomize a DataFrame by row, column or all elements across the whole table with or without replacement.
+         If by=row (or column), then elements of each row (or each column) are randomized within the row (or the column)
+         Otherwise, all elements of the DataFrame are resampled across the whole table independently of rows or columns.
 
         :param by: specifies whether randomization should be performed by row, by column or by element (None)
         :param replacement: if True, then randomization will occur with replacement.
