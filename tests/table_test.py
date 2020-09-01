@@ -90,6 +90,8 @@ def test_cond_transform(table2, table3, table6, table7, table8, table9, table10,
                .result().to_string() == table8.to_string()
     assert TableTransform(table2).cond_transform(cond=table2.eval('C + D > 5'), iftrue=table2.eval('D = C*2 +D')) \
                .result().to_string() == table9.to_string()
+    assert TableTransform(table2).cond_transform(cond='C + D > 5', iftrue='D = C*2 +D') \
+               .result().to_string() == table9.to_string()
     assert TableTransform(table2) \
                .cond_transform(cond=table2.eval('D + C> 5'), iftrue=table2.eval('C = D - C')) \
                .update() \

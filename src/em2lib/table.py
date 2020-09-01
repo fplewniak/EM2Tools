@@ -127,14 +127,18 @@ class TableTransform():
         Conditional transform of a DataFrame. If condition function returns True, then the iftrue function is applied
          to transform the corresponding element.
 
-        :param cond: function, DataFrame or Series
+        :param cond: string, function, DataFrame or Series
+         A string considered as a test function on the columns of the DataFrame working copy. This string is passed to
+         self.wrkg_df.eval() for evaluation to produce a mask DataFrame.
          A function is applied to elements of the original DataFrame in order to define which elements in the
-          working DataFrame should be transformed.
+         working DataFrame should be transformed.
          A DataFrame is a mask of bool values with the same shape as the original DataFrame. Elements in the working
          A Series is a mask of bool values defining in which rows the transformation should be applied.
-        :param iftrue: function or a DataFrame with the same shape as te original table.
-         the function to apply if condition is True, returns a single value from a single value. This
+        :param iftrue: string, function or a DataFrame with the same shape as te original table.
+         The function to apply if condition is True, returns a single value from a single value. This
          function should test whether it is applicable to its input and return the original value if not.
+         If a DataFrame, it defines the values that will replace those where the condition is True.
+         If a string, it is passed to self.wrkg_df.eval() for evaluation and is used as a DataFrame.
         :param columns: str or list thereof specifying the column(s) which the transformation should be applied to
         :param original: if True, the original DataFrame is used to assess the condition function, otherwise, the
          working copy is used. This has an effect only if cond is a function and therefore only works for elementwise
@@ -142,16 +146,23 @@ class TableTransform():
          input the current result DataFrame self.result()
         :return: this TableTransform instance
         """
-        if isinstance(cond, (DataFrame, Series)):
+        if isinstance(cond, str):
+            mask = self.wrkg_df.eval(cond)
+        elif isinstance(cond, (DataFrame, Series)):
             mask = cond
         elif original:
             mask = self.orgnl_df.applymap(cond)
         else:
             mask = self.wrkg_df.applymap(cond)
+
+        if isinstance(iftrue, str):
+            iftrue = self.wrkg_df.eval(iftrue)
+
         if isinstance(iftrue, DataFrame):
             tmp_df = self.wrkg_df.mask(mask, iftrue)
         else:
             tmp_df = self.wrkg_df.mask(mask, self.wrkg_df.applymap(iftrue))
+
         if columns is not None:
             self.wrkg_df.loc[:, columns] = tmp_df.loc[:, columns]
         else:
