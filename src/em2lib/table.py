@@ -216,7 +216,7 @@ class TableTransform():
         else:
             df_array = self.wrkg_df.to_numpy()
             tmp_df = DataFrame(numpy.reshape(
-                numpy.random.choice([x for x in df_array.flat], size=len(df_array.flat), replace=replacement),
+                numpy.random.choice(df_array.flat, size=len(df_array.flat), replace=replacement),
                 df_array.shape), columns=self.wrkg_df.columns)
 
         if columns is not None:
