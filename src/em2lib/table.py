@@ -184,6 +184,7 @@ class TableTransform():
 
         :param by: specifies whether randomization should be performed by row, by column or by element (None)
         :param replacement: if True, then randomization will occur with replacement.
+        :param seed: seed for random numbers generation passed to sample() method as the random_state argument
         :return: the current TableTransform object
         """
         tmp_df = DataFrame(columns=self.wrkg_df.columns)
