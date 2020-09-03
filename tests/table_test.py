@@ -73,7 +73,7 @@ def f(x):
         return x
 
 
-def test_cond_transform(table2, table3, table6, table7, table8, table9, table10, table11, table12, table13, table14):
+def test_cond_transform(table2, table3, table6, table7, table8, table9, table10, table13, table14):
     assert TableTransform(table2) \
                .cond_transform(cond=lambda x: gt3(x), iftrue=lambda x: str(x) + '>3') \
                .cond_transform(cond=lambda x: le3(x), iftrue=lambda x: str(x) + '<=3') \
@@ -105,7 +105,17 @@ def test_cond_transform(table2, table3, table6, table7, table8, table9, table10,
                 .cond_transform(cond=lambda x: x<5 if isinstance(x, Number) else False, iftrue=f)\
                 .cond_transform(cond=lambda x: x>2 if isinstance(x, Number) else False, iftrue=f)\
                .result().to_string() == table14.to_string()
+
+
+def test_replace(table2, table3, table11, table12):
     assert TableTransform(table3).replace(to_replace='a', value='A').result().to_string() == table11.to_string()
     assert TableTransform(table3).replace(to_replace='a', value='A',
                                           columns='E').result().to_string() == table12.to_string()
+
+
+def test_combine(table2, table4):
+    assert TableTransform(table2).combine(table4, lambda s1, s2: s1 if s1.sum() > s2.sum() else s2)\
+        .result().to_string() == table4.to_string()
+    assert TableTransform(table2).combine(table4, lambda s1, s2: s1 if s1.sum() < s2.sum() else s2)\
+        .result().to_string() == table2.to_string()
 
