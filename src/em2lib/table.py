@@ -169,6 +169,24 @@ class TableTransform():
             self.wrkg_df = tmp_df
         return self
 
+    def combine(self, other, func, columns=None, **kwargs):
+        """
+        A method wrapping the DataFrame.combine() method and adding the columns parameter to apply the method only
+         to the specified columns.
+        :param other: the other DataFrame to combine to the current working DataFrame
+        :param func: function that takes two series as inputs and returns a Series or a scalar to merge the two
+         dataframes column by column.
+        :param columns: str or list thereof specifying the column(s) which should be kept in the final result.
+        :param kwargs: named arguments to pass to DataFrame.replace() method.
+        :return: this TableTransform instance
+        """
+        tmp_df = self.wrkg_df.combine(other, func, **kwargs)
+        if columns is not None:
+            self.wrkg_df.loc[:, columns] = tmp_df.loc[:, columns]
+        else:
+            self.wrkg_df = tmp_df
+        return self
+
     def replace(self, columns=None, **kwargs):
         """
         A method wrapping the DataFrame.replace() method and adding the columns parameter to apply the replacement only
