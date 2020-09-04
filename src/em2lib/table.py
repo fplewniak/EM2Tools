@@ -7,6 +7,7 @@ Some utilities for Table manipulation, comparison, etc. using pandas.DataFrame m
 from pandas import DataFrame
 from pandas import Series
 import numpy
+from sklearn.preprocessing import normalize
 
 
 class Table:
@@ -185,6 +186,34 @@ class TableTransform():
             self.wrkg_df.loc[:, columns] = tmp_df.loc[:, columns]
         else:
             self.wrkg_df = tmp_df
+        return self
+
+    def normalize(self, columns=None, norm='l1', axis=None):
+        """
+        Normalize values in DataFrame. This method is a wrapper for sklearn.preprocessing.normalize
+         for row or column normalization. It further allows normalization over all the values in
+         DataFrame.
+
+        :param columns: the columns whose values should be normalized
+        :param norm: the normalization method 'l1' (sum to one), 'l2' (spatial sign preprocessing)
+         or 'max'
+        :param axis: the axis along which values are normalized. If None, then all values are used.
+        :return: this TableTransform instance
+        """
+        if columns is None:
+            tmp_df = self.wrkg_df.copy()
+        else:
+            tmp_df = self.wrkg_df[columns].copy()
+        if axis is not None:
+            tmp_df = DataFrame(normalize(tmp_df, norm=norm, axis=axis), columns=tmp_df.columns)
+        else:
+            tmp_df = DataFrame(numpy.reshape(
+                normalize([[x for x in tmp_df.to_numpy().flat]], norm=norm),
+                tmp_df.shape), columns=tmp_df.columns)
+        if columns is None:
+            self.wrkg_df = tmp_df
+        else:
+            self.wrkg_df[columns] = tmp_df[columns]
         return self
 
     def replace(self, columns=None, **kwargs):

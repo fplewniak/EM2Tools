@@ -6,6 +6,7 @@ from Bio.SeqFeature import FeatureLocation
 from em2lib.table import DataFrame
 
 from numpy import nan
+from numpy import sqrt
 
 import pytest
 
@@ -232,7 +233,7 @@ def table8():
      :return: table2 copy with columns D containing sqrt(x) if C + D > 5
      """
     return DataFrame(data={'A': ['a', 'a', 'y', 'z'], 'B': ['b', 'x', 'w', 'a'], 'C': [1, 2, 5, 3],
-                           'D': [2.828427, 2.000000, 1.732051, 2.449490]})
+                           'D': [sqrt(8.0), 2.000000, sqrt(3.0), sqrt(6.0)]})
 
 @pytest.fixture(scope="session")
 def table9():
