@@ -206,7 +206,7 @@ class TableTransform():
             tmp_df = DataFrame(normalize(tmp_df, norm=norm, axis=axis), columns=tmp_df.columns)
         else:
             tmp_df = DataFrame(numpy.reshape(
-                normalize([[x for x in tmp_df.to_numpy().flat]], norm=norm),
+                normalize([list(tmp_df.to_numpy().flat)], norm=norm),
                 tmp_df.shape), columns=tmp_df.columns)
         self.wrkg_df.loc[:, columns] = tmp_df.loc[:, columns]
         return self
