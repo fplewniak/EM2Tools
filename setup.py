@@ -23,5 +23,5 @@ setup(
         'License :: OSI Approved :: CEA CNRS Inria Logiciel Libre License, version 2.1 (CeCILL-2.1)',
         'Topic :: Scientific/Engineering :: Bio-Informatics',
     ],
-    python_requires='>=3.6', install_requires=['biopython', 'gffpandas', 'pandas>=1.0.0', 'numpy']
+    python_requires='>=3.6', install_requires=['biopython', 'gffpandas', 'pandas>=1.0.0', 'numpy', 'scikit-learn']
 )
