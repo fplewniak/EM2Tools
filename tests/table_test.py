@@ -43,8 +43,7 @@ def test_table_rows_not_in(table2, table3, table_row_in_2_not_in_3, table_row_in
 def gt3(x):
     if isinstance(x, Number):
         return x > 3
-    else:
-        return False
+    return False
 
 
 def dgt3(df):
@@ -54,8 +53,7 @@ def dgt3(df):
 def le3(x):
     if isinstance(x, Number):
         return x <= 3
-    else:
-        return False
+    return False
 
 
 def dle3(df):
@@ -65,14 +63,12 @@ def dle3(df):
 def mysqrt(x):
     if isinstance(x, Number):
         return np.sqrt(x)
-    else:
-        return x
+    return x
 
 def f(x):
     if isinstance(x, Number):
         return -x
-    else:
-        return x
+    return x
 
 
 def test_cond_transform(table2, table3, table6, table7, table8, table9, table10, table13, table14):
