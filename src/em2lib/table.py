@@ -200,19 +200,15 @@ class TableTransform():
         :return: this TableTransform instance
         """
         if columns is None:
-            tmp_df = self.wrkg_df.copy()
-        else:
-            tmp_df = self.wrkg_df[columns].copy()
+            columns = self.wrkg_df.columns
+        tmp_df = self.wrkg_df.loc[:, columns].copy()
         if axis is not None:
             tmp_df = DataFrame(normalize(tmp_df, norm=norm, axis=axis), columns=tmp_df.columns)
         else:
             tmp_df = DataFrame(numpy.reshape(
                 normalize([[x for x in tmp_df.to_numpy().flat]], norm=norm),
                 tmp_df.shape), columns=tmp_df.columns)
-        if columns is None:
-            self.wrkg_df = tmp_df
-        else:
-            self.wrkg_df[columns] = tmp_df[columns]
+        self.wrkg_df.loc[:, columns] = tmp_df.loc[:, columns]
         return self
 
     def replace(self, columns=None, **kwargs):
