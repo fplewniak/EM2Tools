@@ -181,11 +181,10 @@ class TableTransform():
         :param kwargs: named arguments to pass to DataFrame.replace() method.
         :return: this TableTransform instance
         """
-        tmp_df = self.wrkg_df.combine(other, func, **kwargs)
         if columns is not None:
-            self.wrkg_df.loc[:, columns] = tmp_df.loc[:, columns]
+            self.wrkg_df.loc[:, columns] = self.wrkg_df.loc[:, columns].combine(other.loc[:, columns], func, **kwargs)
         else:
-            self.wrkg_df = tmp_df
+            self.wrkg_df = self.wrkg_df.combine(other, func, **kwargs)
         return self
 
     def normalize(self, columns=None, norm='l1', axis=None):

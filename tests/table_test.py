@@ -120,6 +120,9 @@ def test_combine(table2, table4):
         .result().equals(table4)
     assert TableTransform(table2).combine(table4, lambda s1, s2: s1 if s1.sum() < s2.sum() else s2)\
         .result().equals(table2)
+    assert TableTransform(table2).combine(table4, lambda s1, s2: s1-s2, columns=['C', 'D'])\
+        .result().equals(DataFrame(data={'A': ['a', 'a', 'y', 'z'], 'B': ['b', 'x', 'w', 'a'],
+                                         'C': [-6, 0, 0, 0], 'D': [0, 0, 0, 0]}))
 
 def test_normalize(table2):
     assert TableTransform(table2).normalize(columns=['C', 'D'], axis=1, norm='max')\
