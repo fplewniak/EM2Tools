@@ -4,6 +4,7 @@
 from em2lib.table import Table
 from em2lib.table import TableTransform
 from pandas import DataFrame
+from pandas import Series
 from numbers import Number
 import numpy as np
 from sklearn.preprocessing import normalize
@@ -111,6 +112,15 @@ def test_replace(table2, table3, table11, table12):
                                           columns='E').result().equals(table12)
 
 
+def f_df(s1, s2):
+    d = []
+    for x in s1.index:
+        if s1[x] < s2[x]:
+            d.append('Good')
+        else:
+            d.append('Bad')
+    return Series(d)
+
 def test_combine(table2, table4):
     assert TableTransform(table2).combine(table4, lambda s1, s2: s1 if s1.sum() > s2.sum() else s2)\
         .result().equals(table4)
@@ -119,6 +129,9 @@ def test_combine(table2, table4):
     assert TableTransform(table2).combine(table4, lambda s1, s2: s1-s2, columns=['C', 'D'])\
         .result().equals(DataFrame(data={'A': ['a', 'a', 'y', 'z'], 'B': ['b', 'x', 'w', 'a'],
                                          'C': [-6, 0, 0, 0], 'D': [0, 0, 0, 0]}))
+    assert TableTransform(table2[['C', 'D']]).combine(table4[['C', 'D']], f_df)\
+        .result().equals(DataFrame(data={'C': {0: 'Good', 1: 'Bad', 2: 'Bad', 3: 'Bad'},
+                                         'D': {0: 'Bad', 1: 'Bad', 2: 'Bad', 3: 'Bad'}}))
 
 def test_normalize(table2):
     assert TableTransform(table2).normalize(columns=['C', 'D'], axis=1, norm='max')\
