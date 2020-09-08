@@ -120,14 +120,6 @@ def f_df(s1, s2):
             d.append('Bad')
     return Series(d)
 
-def f_df(s1, s2):
-    d = []
-    for x in s1.index:
-        if s1[x] < s2[x]:
-            d.append('Good')
-        else:
-            d.append('Bad')
-    return Series(d)
 
 def test_combine(table2, table4):
     assert TableTransform(table2).combine(table4, lambda s1, s2: s1 if s1.sum() > s2.sum() else s2)\
