@@ -111,6 +111,14 @@ def test_replace(table2, table3, table11, table12):
     assert TableTransform(table3).replace(to_replace='a', value='A',
                                           columns='E').result().equals(table12)
 
+def f_df(s1, s2):
+    d = []
+    for x in s1.index:
+        if s1[x] < s2[x]:
+            d.append('Good')
+        else:
+            d.append('Bad')
+    return Series(d)
 
 def f_df(s1, s2):
     d = []
