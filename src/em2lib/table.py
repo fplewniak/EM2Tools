@@ -174,6 +174,7 @@ class TableTransform():
         """
         A method wrapping the DataFrame.combine() method and adding the columns parameter to apply the method only
          to the specified columns.
+         
         :param other: the other DataFrame to combine to the current working DataFrame
         :param func: function that takes two series as inputs and returns a Series or a scalar to merge the two
          dataframes column by column.
