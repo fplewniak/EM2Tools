@@ -1176,10 +1176,8 @@ to the original index</p></li>
 <dl class="py method">
 <dt id="em2lib.table.Table.get_common_rows">
 <em class="property">static </em><code class="sig-name descname">get_common_rows</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">first</span></em>, <em class="sig-param"><span class="n">other</span></em>, <em class="sig-param"><span class="n">keys_first</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">keys_other</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">lsuffix</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">rsuffix</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">drop</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#em2lib.table.Table.get_common_rows" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="simple">
-<dt>Return rows with the same key values. Key columns from the other DataFrame object are droppped by default</dt><dd><p>but can be kept if drop is set to False.</p>
-</dd>
-</dl>
+<dd><p>Return rows with the same key values. Key columns from the other DataFrame object are droppped by default
+but can be kept if drop is set to False.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -1241,6 +1239,144 @@ to the original index</p></li>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>DataFrame, the rows whose keys are in first DataFrame but not in the other one.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="em2lib.table.TableTransform">
+<em class="property">class </em><code class="sig-prename descclassname">em2lib.table.</code><code class="sig-name descname">TableTransform</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">df</span></em><span class="sig-paren">)</span><a class="headerlink" href="#em2lib.table.TableTransform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class of objects to transform a DataFrame according to different criteria. Different independent transformations
+can be chained since all transformation methods return self object.</p>
+<dl class="py method">
+<dt id="em2lib.table.TableTransform.result">
+<code class="sig-name descname">result</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#em2lib.table.TableTransform.result" title="Permalink to this definition">¶</a></dt>
+<dd><p>Getter method to retrieve the DataFrame resulting from the transformations
+:return: the transformed DataFrame</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="em2lib.table.TableTransform.update">
+<code class="sig-name descname">update</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#em2lib.table.TableTransform.update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update orginal DataFrame with the current working copy. This enables the application of conditions to previously
+modified values. This action cannot be undone, so it is recommended to use it after all modifications based on
+original data have been performed.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="em2lib.table.TableTransform.cond_transform">
+<code class="sig-name descname">cond_transform</code><span class="sig-paren">(</span><em class="sig-param">cond=&lt;function TableTransform.&lt;lambda&gt;&gt;</em>, <em class="sig-param">iftrue=&lt;function TableTransform.&lt;lambda&gt;&gt;</em>, <em class="sig-param">columns=None</em>, <em class="sig-param">original=True</em><span class="sig-paren">)</span><a class="headerlink" href="#em2lib.table.TableTransform.cond_transform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Conditional transform of a DataFrame. If condition function returns True, then the iftrue function is applied
+to transform the corresponding element.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cond</strong> – string, function, DataFrame or Series
+A string considered as a test function on the columns of the DataFrame working copy. This string is passed to
+self.wrkg_df.eval() for evaluation to produce a mask DataFrame.
+A function is applied to elements of the original DataFrame in order to define which elements in the
+working DataFrame should be transformed.
+A DataFrame is a mask of bool values with the same shape as the original DataFrame. Elements in the working
+A Series is a mask of bool values defining in which rows the transformation should be applied.</p></li>
+<li><p><strong>iftrue</strong> – string, function or a DataFrame with the same shape as te original table.
+The function to apply if condition is True, returns a single value from a single value. This
+function should test whether it is applicable to its input and return the original value if not.
+If a DataFrame, it defines the values that will replace those where the condition is True.
+If a string, it is passed to self.wrkg_df.eval() for evaluation and is used as a DataFrame.</p></li>
+<li><p><strong>columns</strong> – str or list thereof specifying the column(s) which the transformation should be applied to</p></li>
+<li><p><strong>original</strong> – if True, the original DataFrame is used to assess the condition function, otherwise, the
+working copy is used. This has an effect only if cond is a function and therefore only works for elementwise
+transformation. For rowwise selection, cond should be a DataFrame that can be computed by a function taking as
+input the current result DataFrame self.result()</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>this TableTransform instance</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="em2lib.table.TableTransform.combine">
+<code class="sig-name descname">combine</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">other</span></em>, <em class="sig-param"><span class="n">func</span></em>, <em class="sig-param"><span class="n">columns</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#em2lib.table.TableTransform.combine" title="Permalink to this definition">¶</a></dt>
+<dd><p>A method wrapping the DataFrame.combine() method and adding the columns parameter to apply the method only
+to the specified columns.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>other</strong> – the other DataFrame to combine to the current working DataFrame</p></li>
+<li><p><strong>func</strong> – function that takes two series as inputs and returns a Series or a scalar to merge the two
+dataframes column by column.</p></li>
+<li><p><strong>columns</strong> – str or list thereof specifying the column(s) which should be kept in the final result.</p></li>
+<li><p><strong>kwargs</strong> – named arguments to pass to DataFrame.replace() method.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>this TableTransform instance</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="em2lib.table.TableTransform.normalize">
+<code class="sig-name descname">normalize</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">columns</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">norm</span><span class="o">=</span><span class="default_value">'l1'</span></em>, <em class="sig-param"><span class="n">axis</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#em2lib.table.TableTransform.normalize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Normalize values in DataFrame. This method is a wrapper for sklearn.preprocessing.normalize
+for row or column normalization. It further allows normalization over all the values in
+DataFrame.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>columns</strong> – the columns whose values should be normalized</p></li>
+<li><p><strong>norm</strong> – the normalization method ‘l1’ (sum to one), ‘l2’ (spatial sign preprocessing)
+or ‘max’</p></li>
+<li><p><strong>axis</strong> – the axis along which values are normalized. If None, then all values are used.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>this TableTransform instance</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="em2lib.table.TableTransform.replace">
+<code class="sig-name descname">replace</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">columns</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#em2lib.table.TableTransform.replace" title="Permalink to this definition">¶</a></dt>
+<dd><p>A method wrapping the DataFrame.replace() method and adding the columns parameter to apply the replacement only
+in the specified columns.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>columns</strong> – str or list thereof specifying the column(s) to apply replacement to</p></li>
+<li><p><strong>kwargs</strong> – named arguments to pass to DataFrame.replace() method. Note that inplace argument is deactivated
+as it is not needed here and might actually interfere with the columns argument. As a matter of fact, the
+working DataFrame is always modified.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>this TableTransform instance</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="em2lib.table.TableTransform.randomize">
+<code class="sig-name descname">randomize</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">by</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">replacement</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">columns</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">seed</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#em2lib.table.TableTransform.randomize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Randomize a DataFrame by row, column or all elements across the whole table with or without replacement.
+If by=row (or column), then elements of each row (or each column) are randomized within the row (or the column)
+Otherwise, all elements of the DataFrame are resampled across the whole table independently of rows or columns.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>by</strong> – specifies whether randomization should be performed by row, by column or by element (None)</p></li>
+<li><p><strong>replacement</strong> – if True, then randomization will occur with replacement.</p></li>
+<li><p><strong>columns</strong> – str or list thereof specifying the column(s) which the columns affected by the randomization</p></li>
+<li><p><strong>seed</strong> – seed for random numbers generation passed to sample() method as the random_state argument</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the current TableTransform object</p>
 </dd>
 </dl>
 </dd></dl>
