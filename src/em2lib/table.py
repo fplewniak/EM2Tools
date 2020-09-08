@@ -36,7 +36,7 @@ class Table:
     def get_common_rows(first, other, keys_first=None, keys_other=None, lsuffix="", rsuffix="", drop=True):
         """
         Return rows with the same key values. Key columns from the other DataFrame object are droppped by default
-         but can be kept if drop is set to False.
+        but can be kept if drop is set to False.
 
         :param first: the first DataFrame object to compare
         :param other: the other DataFrame object to compare
@@ -95,7 +95,7 @@ class Table:
 class TableTransform():
     """
     Class of objects to transform a DataFrame according to different criteria. Different independent transformations
-     can be chained since all transformation methods return self object.
+    can be chained since all transformation methods return self object.
     """
 
     def __init__(self, df):
@@ -117,8 +117,9 @@ class TableTransform():
     def update(self):
         """
         Update orginal DataFrame with the current working copy. This enables the application of conditions to previously
-         modified values. This action cannot be undone, so it is recommended to use it after all modifications based on
-         original data have been performed.
+        modified values. This action cannot be undone, so it is recommended to use it after all modifications based on
+        original data have been performed.
+
         """
         self.orgnl_df = self.wrkg_df
         return self
@@ -126,7 +127,7 @@ class TableTransform():
     def cond_transform(self, cond=lambda x: True, iftrue=lambda x: x, columns=None, original=True):
         """
         Conditional transform of a DataFrame. If condition function returns True, then the iftrue function is applied
-         to transform the corresponding element.
+        to transform the corresponding element.
 
         :param cond: string, function, DataFrame or Series
          A string considered as a test function on the columns of the DataFrame working copy. This string is passed to
@@ -173,8 +174,8 @@ class TableTransform():
     def combine(self, other, func, columns=None, **kwargs):
         """
         A method wrapping the DataFrame.combine() method and adding the columns parameter to apply the method only
-         to the specified columns.
-         
+        to the specified columns.
+
         :param other: the other DataFrame to combine to the current working DataFrame
         :param func: function that takes two series as inputs and returns a Series or a scalar to merge the two
          dataframes column by column.
@@ -191,8 +192,8 @@ class TableTransform():
     def normalize(self, columns=None, norm='l1', axis=None):
         """
         Normalize values in DataFrame. This method is a wrapper for sklearn.preprocessing.normalize
-         for row or column normalization. It further allows normalization over all the values in
-         DataFrame.
+        for row or column normalization. It further allows normalization over all the values in
+        DataFrame.
 
         :param columns: the columns whose values should be normalized
         :param norm: the normalization method 'l1' (sum to one), 'l2' (spatial sign preprocessing)
@@ -215,7 +216,7 @@ class TableTransform():
     def replace(self, columns=None, **kwargs):
         """
         A method wrapping the DataFrame.replace() method and adding the columns parameter to apply the replacement only
-         in the specified columns.
+        in the specified columns.
 
         :param columns: str or list thereof specifying the column(s) to apply replacement to
         :param kwargs: named arguments to pass to DataFrame.replace() method. Note that inplace argument is deactivated
@@ -234,8 +235,8 @@ class TableTransform():
     def randomize(self, by=None, replacement=False, columns=None, seed=None):
         """
         Randomize a DataFrame by row, column or all elements across the whole table with or without replacement.
-         If by=row (or column), then elements of each row (or each column) are randomized within the row (or the column)
-         Otherwise, all elements of the DataFrame are resampled across the whole table independently of rows or columns.
+        If by=row (or column), then elements of each row (or each column) are randomized within the row (or the column)
+        Otherwise, all elements of the DataFrame are resampled across the whole table independently of rows or columns.
 
         :param by: specifies whether randomization should be performed by row, by column or by element (None)
         :param replacement: if True, then randomization will occur with replacement.
