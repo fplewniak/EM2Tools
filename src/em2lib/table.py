@@ -252,10 +252,11 @@ class TableTransform():
         elif by == 'row':
             tmp_df = DataFrame(columns=self.wrkg_df.columns)
             for row in self.wrkg_df.index:
-                t = DataFrame(list(self.wrkg_df.loc[row, :])).transpose().sample(frac=1, axis=1, replace=replacement,
-                                                                                 random_state=seed)
-                t.columns = self.wrkg_df.columns
-                tmp_df = tmp_df.append(t)
+                rand_row = DataFrame(list(self.wrkg_df.loc[row, :])).transpose().sample(frac=1, axis=1,
+                                                                                        replace=replacement,
+                                                                                        random_state=seed)
+                rand_row.columns = self.wrkg_df.columns
+                tmp_df = tmp_df.append(rand_row)
             tmp_df = tmp_df.reset_index(drop=True)
         else:
             df_array = self.wrkg_df.to_numpy()
