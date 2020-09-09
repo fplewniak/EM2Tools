@@ -6,6 +6,7 @@ Some utilities for Table manipulation, comparison, etc. using pandas.DataFrame m
 #
 from pandas import DataFrame
 from pandas import Series
+from pandas import MultiIndex
 import numpy
 from sklearn.preprocessing import normalize
 
@@ -90,6 +91,33 @@ class Table:
         ego = first.copy() if keys_first is None else first.set_index(keys_first)
         alter = other.copy() if keys_other is None else other.set_index(keys_other)
         return DataFrame(data=ego.loc[[x for x in ego.index if x not in alter.index]]).reset_index()
+
+    @staticmethod
+    def statistics(table, groupby=None, columns=None, func=numpy.mean):
+        """
+        Returns a DataFrame containing the requested statistics on the specified columns in a table, optionally grouping
+        data according to one or several other columns.
+
+        :param table: the table to compute the statistics
+        :param groupby: the column or list of columns for grouping data
+        :param columns: the column or list of columns to compute the statistics about
+        :param func: the statistical function or list thereof to be computed
+        :return: a DataFrame with the requested statistics
+        """
+        if not isinstance(func, list):
+            func = [func]
+        if columns is None:
+            columns = table.columns
+        if not isinstance(columns, list):
+            columns = [columns]
+        if groupby is None:
+            return table[columns].agg(func)
+        stat_index = MultiIndex.from_product([[f.__name__ for f in func], columns])
+        stat_df = DataFrame(columns=stat_index)
+        for each_func in func:
+            stat_df[[x for x in stat_index if x[0] == each_func.__name__]] =\
+                table.groupby(groupby)[columns].apply(func=each_func)
+        return stat_df
 
 
 class TableTransform():

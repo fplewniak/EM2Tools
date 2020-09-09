@@ -41,6 +41,29 @@ def test_table_rows_not_in(table2, table3, table_row_in_2_not_in_3, table_row_in
                                  keys_other=['A', 'B']).to_dict() == table_row_in_3_not_in_2.to_dict()
 
 
+def test_table_statistics(table2, table4):
+    assert Table.statistics(table2, groupby='A', columns=['C', 'D'], func=[sum, np.mean])\
+        .equals(DataFrame({('sum', 'C'): {'a': 3, 'y': 5, 'z': 3},
+                           ('sum', 'D'): {'a': 10, 'y': 3, 'z': 6},
+                           ('mean', 'C'): {'a': 1.5, 'y': 5.0, 'z': 3.0},
+                           ('mean', 'D'): {'a': 5.0, 'y': 3.0, 'z': 6.0}}))
+    assert Table.statistics(table2, groupby='A', columns='C', func=[sum, np.mean]) \
+        .equals(DataFrame({('sum', 'C'): {'a': 3, 'y': 5, 'z': 3},
+                           ('mean', 'C'): {'a': 1.5, 'y': 5.0, 'z': 3.0}}))
+    assert Table.statistics(table2, groupby='A', columns=['C', 'D'], func=[min, max])\
+        .equals(DataFrame({('min', 'C'): {'a': 1, 'y': 5, 'z': 3},
+                           ('min', 'D'): {'a': 2, 'y': 3, 'z': 6},
+                           ('max', 'C'): {'a': 2, 'y': 5, 'z': 3},
+                           ('max', 'D'): {'a': 8, 'y': 3, 'z': 6}}))
+    assert Table.statistics(table2.append(table4), groupby=['A', 'B'], columns=['C', 'D'], func=[sum, np.mean])\
+        .equals(DataFrame({('sum', 'C'): {('a', 'b'): 8, ('a', 'x'): 4, ('y', 'w'): 10, ('z', 'a'): 6},
+                           ('sum', 'D'): {('a', 'b'): 16, ('a', 'x'): 4, ('y', 'w'): 6, ('z', 'a'): 12},
+                           ('mean', 'C'): {('a', 'b'): 4.0, ('a', 'x'): 2.0, ('y', 'w'): 5.0, ('z', 'a'): 3.0},
+                           ('mean', 'D'): {('a', 'b'): 8.0, ('a', 'x'): 2.0, ('y', 'w'): 3.0, ('z', 'a'): 6.0}}))
+    assert Table.statistics(table2,columns=['C', 'D'], func=[sum, np.mean])\
+        .equals(DataFrame({'C': {'sum': 11.0, 'mean': 2.75}, 'D': {'sum': 19.0, 'mean': 4.75}}))
+
+
 def gt3(x):
     if isinstance(x, Number):
         return x > 3
@@ -65,6 +88,7 @@ def mysqrt(x):
     if isinstance(x, Number):
         return np.sqrt(x)
     return x
+
 
 def f(x):
     if isinstance(x, Number):
@@ -111,6 +135,7 @@ def test_replace(table2, table3, table11, table12):
     assert TableTransform(table3).replace(to_replace='a', value='A',
                                           columns='E').result().equals(table12)
 
+
 def f_df(s1, s2):
     d = []
     for x in s1.index:
@@ -133,6 +158,7 @@ def test_combine(table2, table4):
         .result().equals(DataFrame(data={'C': {0: 'Good', 1: 'Bad', 2: 'Bad', 3: 'Bad'},
                                          'D': {0: 'Bad', 1: 'Bad', 2: 'Bad', 3: 'Bad'}}))
 
+
 def test_normalize(table2):
     assert TableTransform(table2).normalize(columns=['C', 'D'], axis=1, norm='max')\
         .result().equals(DataFrame({'A': ['a', 'a', 'y', 'z'],
@@ -150,3 +176,4 @@ def test_normalize(table2):
                                     'B': ['b', 'x', 'w', 'a'],
                                     'C': [0.125, 0.25, 0.625, 0.375],
                                     'D': [1., 0.25, 0.375, 0.75]}))
+
