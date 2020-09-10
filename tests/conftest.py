@@ -314,6 +314,16 @@ def table_expanded_imp():
 
 
 @pytest.fixture(scope="session")
+def table_collapsed_all():
+    return DataFrame({'collapsed': {'A': [('x', 'a'), ('z','c')], 'B': [('y', 'b'), ('w','d')]}})
+
+
+@pytest.fixture(scope="session")
+def table_collapsed_1():
+    return DataFrame({'collapsed': {'A': ['x', 'z'], 'B': ['y', 'w']}})
+
+
+@pytest.fixture(scope="session")
 def table_2_3_common_rows():
     return DataFrame(data={'A': ['a', 'y'], 'B': ['b', 'w'], 'C': [1, 5], 'D': [8, 3],
                            'F': [6, 8]})

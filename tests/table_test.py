@@ -71,6 +71,13 @@ def test_implode(table_org, table_expB, table_expBC, table_expBC_noidx, table_ex
     assert Table.implode(table_expanded, index=0).to_string() == table_expanded_imp.to_string()
 
 
+def test_collapse(table_expanded, table_collapsed_all, table_collapsed_1, table_expB):
+    assert Table.collapse(table_expanded, groupby=0).to_string() == table_collapsed_all.to_string()
+    assert Table.collapse(table_expanded, groupby=0, columns=1).to_string() == table_collapsed_1.to_string()
+    assert Table.collapse(table_expB, groupby='A', columns='B', name='B').to_string() == DataFrame(
+        {'B': {'a': ['x', 'y', 'z'], 'b': ['x', 'z'], 'c': 'y'}}).to_string()
+
+
 def gt3(x):
     if isinstance(x, Number):
         return x > 3
