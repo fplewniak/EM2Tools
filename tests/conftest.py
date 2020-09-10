@@ -273,6 +273,46 @@ def table13():
 def table14():
     return DataFrame(data={'E': ['a', 'y', 'z', 'w'], 'F': [-6, -8, 4, -2], 'G': ['b', 'w', 'b', 'a']})
 
+
+table_original = DataFrame(data={'A': {0: 'a', 1: 'b', 2: 'c'},
+                                 'B': {0: ['x', 'y', 'z'], 1: ['x', 'z'], 2: 'y'},
+                                 'C': {0: ['x', 'y'], 1: 'x', 2: ['y', 'z']}})
+
+
+@pytest.fixture(scope="session")
+def table_org():
+    return table_original
+
+
+@pytest.fixture(scope="session")
+def table_expB():
+    return table_original.explode(column='B')
+
+
+@pytest.fixture(scope="session")
+def table_expBC():
+    return table_original.explode(column='B').explode(column='C')
+
+
+@pytest.fixture(scope="session")
+def table_expBC_noidx():
+    return DataFrame({'A': {0: 'a', 1: 'a', 2: 'a', 3: 'a', 4: 'a', 5: 'a', 6: 'b', 7: 'b', 8: 'c', 9: 'c'},
+                      'B': {0: 'x', 1: 'x', 2: 'y', 3: 'y', 4: 'z', 5: 'z', 6: 'x', 7: 'z', 8: 'y', 9: 'y'},
+                      'C': {0: 'x', 1: 'y', 2: 'x', 3: 'y', 4: 'x', 5: 'y', 6: 'x', 7: 'x', 8: 'y', 9: 'z'}})
+
+
+@pytest.fixture(scope="session")
+def table_expanded():
+    return DataFrame({0: {0: 'A', 1: 'B', 2: 'A', 3: 'B'},
+                      1: {0: 'x', 1: 'y', 2: 'z', 3: 'w'},
+                      2: {0: 'a', 1: 'b', 2: 'c', 3: 'd'}})
+
+
+@pytest.fixture(scope="session")
+def table_expanded_imp():
+    return DataFrame({0: {0: 'A', 1: 'B'}, 1: {0: ['x', 'z'], 1: ['y', 'w']}, 2: {0: ['a', 'c'], 1: ['b', 'd']}})
+
+
 @pytest.fixture(scope="session")
 def table_2_3_common_rows():
     return DataFrame(data={'A': ['a', 'y'], 'B': ['b', 'w'], 'C': [1, 5], 'D': [8, 3],

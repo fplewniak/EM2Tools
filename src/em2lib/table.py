@@ -4,6 +4,7 @@ Some utilities for Table manipulation, comparison, etc. using pandas.DataFrame m
 #  CeCILL FREE SOFTWARE LICENSE AGREEMENT Version 2.1 dated 2013-06-21
 #  Frédéric PLEWNIAK, CNRS/Université de Strasbourg UMR7156 - GMGM
 #
+from functools import cmp_to_key
 from pandas import DataFrame
 from pandas import Series
 from pandas import MultiIndex
@@ -118,6 +119,40 @@ class Table:
             stat_df[[x for x in stat_index if x[0] == each_func.__name__]] = \
                 table.groupby(groupby)[columns].apply(func=each_func)
         return stat_df
+
+    @staticmethod
+    def implode(input_df, index=None):
+        """
+        Reverts action of DataFrame.explode method. This method can also be applied to DataFrames that are not the
+        result of an explode() call but in this case, applying back the explode() method will not yield the original
+        DataFrame.
+
+        :param input_df: the input DataFrame
+        :param index: the index column(s)
+        :return: the resulting DataFrame
+        """
+        # copy input DataFrame to avoid any modification of the original object
+        exp_df = input_df.copy()
+        # set the index if needed
+        if index is not None:
+            exp_df.set_index(index, drop=False, inplace=True)
+        # prepare the DataFrame for output
+        tmp_df = DataFrame(index=numpy.unique(exp_df.index), columns=exp_df.columns)
+        # gather elements of each column in a list for each unique value in index
+        for col in exp_df.columns:
+            ordered_lists = {}
+            for i in exp_df.index:
+                # get unique elements in column for the current index level, and their original order
+                list_unique, order = numpy.unique(list(exp_df.loc[i, col]), return_index=True, axis=0)
+                # combine elements and original index in tuples for sorting
+                unordered_tuples = [(list_unique[j], order[j]) for j in range(len(order))]
+                # sort the tuples and keep only the element in the same order as in the original DataFrame
+                ordered_lists[i] = [x[0] for x in sorted(unordered_tuples, key=cmp_to_key(lambda x, y: x[1] - y[1]))]
+            # update the current column with the ordered lists
+            tmp_df[col] = Series(ordered_lists)
+        # replace list with only one element by the element itself and return the resulting DataFrame with reset index
+        return TableTransform(tmp_df).cond_transform(cond=lambda x: len(x) == 1,
+                                                     iftrue=lambda x: x[0]).result().reset_index(drop=True)
 
 
 class TableTransform():

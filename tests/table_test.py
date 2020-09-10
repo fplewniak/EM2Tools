@@ -64,6 +64,13 @@ def test_table_statistics(table2, table4):
         .equals(DataFrame({'C': {'sum': 11.0, 'mean': 2.75}, 'D': {'sum': 19.0, 'mean': 4.75}}))
 
 
+def test_implode(table_org, table_expB, table_expBC, table_expBC_noidx, table_expanded, table_expanded_imp):
+    assert Table.implode(table_expB).to_string() == table_org.to_string()
+    assert Table.implode(table_expBC).to_string() == table_org.to_string()
+    assert Table.implode(table_expBC_noidx, index='A').to_string() == table_org.to_string()
+    assert Table.implode(table_expanded, index=0).to_string() == table_expanded_imp.to_string()
+
+
 def gt3(x):
     if isinstance(x, Number):
         return x > 3
