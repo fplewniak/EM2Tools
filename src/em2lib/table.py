@@ -115,7 +115,7 @@ class Table:
         stat_index = MultiIndex.from_product([[f.__name__ for f in func], columns])
         stat_df = DataFrame(columns=stat_index)
         for each_func in func:
-            stat_df[[x for x in stat_index if x[0] == each_func.__name__]] =\
+            stat_df[[x for x in stat_index if x[0] == each_func.__name__]] = \
                 table.groupby(groupby)[columns].apply(func=each_func)
         return stat_df
 

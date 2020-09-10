@@ -161,7 +161,7 @@ def dna_records():
         SeqRecordEM2(SeqEM2.dna('ACAGTA'), id='DNA3', name='DNA3'),
         SeqRecordEM2(SeqEM2.dna('ACAGTACCAT'), id='DNA4', name='DNA4'),
         SeqRecordEM2(SeqEM2.dna('ACAGTACCATGT'), id='DNA5', name='DNA5')
-    ]
+        ]
 
 
 # #####################################################
@@ -235,6 +235,7 @@ def table8():
     return DataFrame(data={'A': ['a', 'a', 'y', 'z'], 'B': ['b', 'x', 'w', 'a'], 'C': [1, 2, 5, 3],
                            'D': [sqrt(8.0), 2.000000, sqrt(3.0), sqrt(6.0)]})
 
+
 @pytest.fixture(scope="session")
 def table9():
     """
@@ -243,24 +244,30 @@ def table9():
     return DataFrame(data={'A': ['a', 'a', 'y', 'z'], 'B': ['b', 'x', 'w', 'a'], 'C': [1, 2, 5, 3],
                            'D': [10, 2, 13, 12]})
 
+
 @pytest.fixture(scope="session")
 def table10():
     """
     :return: table2 copy with columns C containing D - C if C + D > 5 or 'X' if the result was negative.
     """
-    return DataFrame(data={'A': ['a', 'a', 'y', 'z'], 'B': ['b', 'x', 'w', 'a'], 'C': [7, 2, 'X', 3], 'D': [8, 2, 3, 6]})
+    return DataFrame(
+        data={'A': ['a', 'a', 'y', 'z'], 'B': ['b', 'x', 'w', 'a'], 'C': [7, 2, 'X', 3], 'D': [8, 2, 3, 6]})
+
 
 @pytest.fixture(scope="session")
 def table11():
     return DataFrame(data={'E': ['A', 'y', 'z', 'w'], 'F': [6, 8, 4, 2], 'G': ['b', 'w', 'b', 'A']})
 
+
 @pytest.fixture(scope="session")
 def table12():
     return DataFrame(data={'E': ['A', 'y', 'z', 'w'], 'F': [6, 8, 4, 2], 'G': ['b', 'w', 'b', 'a']})
 
+
 @pytest.fixture(scope="session")
 def table13():
     return DataFrame(data={'E': ['a', 'y', 'z', 'w'], 'F': [-6, -8, -4, -2], 'G': ['b', 'w', 'b', 'a']})
+
 
 @pytest.fixture(scope="session")
 def table14():

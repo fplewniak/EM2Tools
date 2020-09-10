@@ -42,7 +42,7 @@ def test_table_rows_not_in(table2, table3, table_row_in_2_not_in_3, table_row_in
 
 
 def test_table_statistics(table2, table4):
-    assert Table.statistics(table2, groupby='A', columns=['C', 'D'], func=[sum, np.mean])\
+    assert Table.statistics(table2, groupby='A', columns=['C', 'D'], func=[sum, np.mean]) \
         .equals(DataFrame({('sum', 'C'): {'a': 3, 'y': 5, 'z': 3},
                            ('sum', 'D'): {'a': 10, 'y': 3, 'z': 6},
                            ('mean', 'C'): {'a': 1.5, 'y': 5.0, 'z': 3.0},
@@ -50,17 +50,17 @@ def test_table_statistics(table2, table4):
     assert Table.statistics(table2, groupby='A', columns='C', func=[sum, np.mean]) \
         .equals(DataFrame({('sum', 'C'): {'a': 3, 'y': 5, 'z': 3},
                            ('mean', 'C'): {'a': 1.5, 'y': 5.0, 'z': 3.0}}))
-    assert Table.statistics(table2, groupby='A', columns=['C', 'D'], func=[min, max])\
+    assert Table.statistics(table2, groupby='A', columns=['C', 'D'], func=[min, max]) \
         .equals(DataFrame({('min', 'C'): {'a': 1, 'y': 5, 'z': 3},
                            ('min', 'D'): {'a': 2, 'y': 3, 'z': 6},
                            ('max', 'C'): {'a': 2, 'y': 5, 'z': 3},
                            ('max', 'D'): {'a': 8, 'y': 3, 'z': 6}}))
-    assert Table.statistics(table2.append(table4), groupby=['A', 'B'], columns=['C', 'D'], func=[sum, np.mean])\
+    assert Table.statistics(table2.append(table4), groupby=['A', 'B'], columns=['C', 'D'], func=[sum, np.mean]) \
         .equals(DataFrame({('sum', 'C'): {('a', 'b'): 8, ('a', 'x'): 4, ('y', 'w'): 10, ('z', 'a'): 6},
                            ('sum', 'D'): {('a', 'b'): 16, ('a', 'x'): 4, ('y', 'w'): 6, ('z', 'a'): 12},
                            ('mean', 'C'): {('a', 'b'): 4.0, ('a', 'x'): 2.0, ('y', 'w'): 5.0, ('z', 'a'): 3.0},
                            ('mean', 'D'): {('a', 'b'): 8.0, ('a', 'x'): 2.0, ('y', 'w'): 3.0, ('z', 'a'): 6.0}}))
-    assert Table.statistics(table2,columns=['C', 'D'], func=[sum, np.mean])\
+    assert Table.statistics(table2, columns=['C', 'D'], func=[sum, np.mean]) \
         .equals(DataFrame({'C': {'sum': 11.0, 'mean': 2.75}, 'D': {'sum': 19.0, 'mean': 4.75}}))
 
 
@@ -98,36 +98,36 @@ def f(x):
 
 def test_cond_transform(table2, table3, table6, table7, table8, table9, table10, table13, table14):
     assert TableTransform(table2) \
-               .cond_transform(cond=lambda x: gt3(x), iftrue=lambda x: str(x) + '>3') \
-               .cond_transform(cond=lambda x: le3(x), iftrue=lambda x: str(x) + '<=3') \
-               .result().equals(table6)
+        .cond_transform(cond=lambda x: gt3(x), iftrue=lambda x: str(x) + '>3') \
+        .cond_transform(cond=lambda x: le3(x), iftrue=lambda x: str(x) + '<=3') \
+        .result().equals(table6)
     assert TableTransform(table2) \
-               .cond_transform(cond=dgt3(table2), iftrue=lambda x: str(x) + '>3') \
-               .cond_transform(cond=dle3(table2), iftrue=lambda x: str(x) + '<=3') \
-               .result().equals(table6)
+        .cond_transform(cond=dgt3(table2), iftrue=lambda x: str(x) + '>3') \
+        .cond_transform(cond=dle3(table2), iftrue=lambda x: str(x) + '<=3') \
+        .result().equals(table6)
     assert TableTransform(table2) \
-               .cond_transform(cond=dgt3(table2), iftrue=lambda x: str(x) + '>3', columns='C') \
-               .cond_transform(cond=dle3(table2), iftrue=lambda x: str(x) + '<=3', columns='C') \
-               .result().equals(table7)
+        .cond_transform(cond=dgt3(table2), iftrue=lambda x: str(x) + '>3', columns='C') \
+        .cond_transform(cond=dle3(table2), iftrue=lambda x: str(x) + '<=3', columns='C') \
+        .result().equals(table7)
     assert TableTransform(table2).cond_transform(cond=table2.eval('C + D > 5'), iftrue=mysqrt, columns='D') \
-               .result().equals(table8)
+        .result().equals(table8)
     assert TableTransform(table2).cond_transform(cond=table2.eval('C + D > 5'), iftrue=table2.eval('D = C*2 +D')) \
-               .result().equals(table9)
+        .result().equals(table9)
     assert TableTransform(table2).cond_transform(cond='C + D > 5', iftrue='D = C*2 +D') \
-               .result().equals(table9)
+        .result().equals(table9)
     assert TableTransform(table2) \
-               .cond_transform(cond=table2.eval('D + C> 5'), iftrue=table2.eval('C = D - C')) \
-               .update() \
-               .cond_transform(cond=lambda x: x < 0 if isinstance(x, Number) else False, iftrue=lambda x: 'X') \
-               .result().equals(table10)
-    assert TableTransform(table3)\
-                .cond_transform(cond=lambda x: x<5 if isinstance(x, Number) else False, iftrue=f)\
-                .cond_transform(cond=lambda x: x>2 if isinstance(x, Number) else False, iftrue=f, original=False)\
-               .result().equals(table13)
-    assert TableTransform(table3)\
-                .cond_transform(cond=lambda x: x<5 if isinstance(x, Number) else False, iftrue=f)\
-                .cond_transform(cond=lambda x: x>2 if isinstance(x, Number) else False, iftrue=f)\
-               .result().equals(table14)
+        .cond_transform(cond=table2.eval('D + C> 5'), iftrue=table2.eval('C = D - C')) \
+        .update() \
+        .cond_transform(cond=lambda x: x < 0 if isinstance(x, Number) else False, iftrue=lambda x: 'X') \
+        .result().equals(table10)
+    assert TableTransform(table3) \
+        .cond_transform(cond=lambda x: x < 5 if isinstance(x, Number) else False, iftrue=f) \
+        .cond_transform(cond=lambda x: x > 2 if isinstance(x, Number) else False, iftrue=f, original=False) \
+        .result().equals(table13)
+    assert TableTransform(table3) \
+        .cond_transform(cond=lambda x: x < 5 if isinstance(x, Number) else False, iftrue=f) \
+        .cond_transform(cond=lambda x: x > 2 if isinstance(x, Number) else False, iftrue=f) \
+        .result().equals(table14)
 
 
 def test_replace(table2, table3, table11, table12):
@@ -147,33 +147,32 @@ def f_df(s1, s2):
 
 
 def test_combine(table2, table4):
-    assert TableTransform(table2).combine(table4, lambda s1, s2: s1 if s1.sum() > s2.sum() else s2)\
+    assert TableTransform(table2).combine(table4, lambda s1, s2: s1 if s1.sum() > s2.sum() else s2) \
         .result().equals(table4)
-    assert TableTransform(table2).combine(table4, lambda s1, s2: s1 if s1.sum() < s2.sum() else s2)\
+    assert TableTransform(table2).combine(table4, lambda s1, s2: s1 if s1.sum() < s2.sum() else s2) \
         .result().equals(table2)
-    assert TableTransform(table2).combine(table4, lambda s1, s2: s1-s2, columns=['C', 'D'])\
+    assert TableTransform(table2).combine(table4, lambda s1, s2: s1 - s2, columns=['C', 'D']) \
         .result().equals(DataFrame(data={'A': ['a', 'a', 'y', 'z'], 'B': ['b', 'x', 'w', 'a'],
                                          'C': [-6, 0, 0, 0], 'D': [0, 0, 0, 0]}))
-    assert TableTransform(table2[['C', 'D']]).combine(table4[['C', 'D']], f_df)\
+    assert TableTransform(table2[['C', 'D']]).combine(table4[['C', 'D']], f_df) \
         .result().equals(DataFrame(data={'C': {0: 'Good', 1: 'Bad', 2: 'Bad', 3: 'Bad'},
                                          'D': {0: 'Bad', 1: 'Bad', 2: 'Bad', 3: 'Bad'}}))
 
 
 def test_normalize(table2):
-    assert TableTransform(table2).normalize(columns=['C', 'D'], axis=1, norm='max')\
+    assert TableTransform(table2).normalize(columns=['C', 'D'], axis=1, norm='max') \
         .result().equals(DataFrame({'A': ['a', 'a', 'y', 'z'],
                                     'B': ['b', 'x', 'w', 'a'],
                                     'C': [0.125, 1., 1., 0.5],
                                     'D': [1., 1., 0.6, 1.]}))
-    assert (TableTransform(table2).normalize(columns=['C', 'D'], axis=1, norm='l1')\
-        .result()[['C', 'D']].to_numpy() == normalize([[1, 8], [2, 2], [5, 3], [3, 6]], axis=1, norm='l1')).all()
-    assert (TableTransform(table2).normalize(columns=['C', 'D'], axis=1, norm='l2')\
-        .result()[['C', 'D']].to_numpy() == normalize([[1, 8], [2, 2], [5, 3], [3, 6]], axis=1, norm='l2')).all()
-    assert (TableTransform(table2).normalize(columns=['C', 'D'], axis=0, norm='l2')\
-        .result()[['C', 'D']].to_numpy() == normalize([[1, 8], [2, 2], [5, 3], [3, 6]], axis=0, norm='l2')).all()
-    assert TableTransform(table2).normalize(columns=['C', 'D'], norm='max')\
+    assert (TableTransform(table2).normalize(columns=['C', 'D'], axis=1, norm='l1') \
+            .result()[['C', 'D']].to_numpy() == normalize([[1, 8], [2, 2], [5, 3], [3, 6]], axis=1, norm='l1')).all()
+    assert (TableTransform(table2).normalize(columns=['C', 'D'], axis=1, norm='l2') \
+            .result()[['C', 'D']].to_numpy() == normalize([[1, 8], [2, 2], [5, 3], [3, 6]], axis=1, norm='l2')).all()
+    assert (TableTransform(table2).normalize(columns=['C', 'D'], axis=0, norm='l2') \
+            .result()[['C', 'D']].to_numpy() == normalize([[1, 8], [2, 2], [5, 3], [3, 6]], axis=0, norm='l2')).all()
+    assert TableTransform(table2).normalize(columns=['C', 'D'], norm='max') \
         .result().equals(DataFrame({'A': ['a', 'a', 'y', 'z'],
                                     'B': ['b', 'x', 'w', 'a'],
                                     'C': [0.125, 0.25, 0.625, 0.375],
                                     'D': [1., 0.25, 0.375, 0.75]}))
-
