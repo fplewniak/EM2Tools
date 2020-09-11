@@ -64,11 +64,17 @@ def test_table_statistics(table2, table4):
         .equals(DataFrame({'C': {'sum': 11.0, 'mean': 2.75}, 'D': {'sum': 19.0, 'mean': 4.75}}))
 
 
-def test_implode(table_org, table_expB, table_expBC, table_expBC_noidx, table_expanded, table_expanded_imp):
+def test_implode(table_org, table_expB, table_expBC, table_expBC_noidx,
+                 table_expanded, table_expanded_imp,table_collapsed_all):
     assert Table.implode(table_expB).to_string() == table_org.to_string()
     assert Table.implode(table_expBC).to_string() == table_org.to_string()
     assert Table.implode(table_expBC_noidx, index='A').to_string() == table_org.to_string()
     assert Table.implode(table_expanded, index=0).to_string() == table_expanded_imp.to_string()
+    assert Table.implode(table_collapsed_all).to_string() == table_collapsed_all.to_string()
+    assert Table.implode(DataFrame({'V': {0: ('A', 'x', 'a'), 1: ('B', 'y', 'b'),
+                                          2: ('A', 'z', 'c'), 3: ('B', 'w', 'd')}})).to_string() == \
+           DataFrame({'V': {0: ('A', 'x', 'a'), 1: ('B', 'y', 'b'),
+                            2: ('A', 'z', 'c'), 3: ('B', 'w', 'd')}}).to_string()
 
 
 def test_collapse(table_expanded, table_collapsed_all, table_collapsed_1, table_expB):

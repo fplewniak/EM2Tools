@@ -140,19 +140,20 @@ class Table:
         tmp_df = DataFrame(index=numpy.unique(exp_df.index), columns=exp_df.columns)
         # gather elements of each column in a list for each unique value in index
         for col in exp_df.columns:
-            ordered_lists = {}
+            unique_lists = {}
             for i in exp_df.index:
-                # get unique elements in column for the current index level, and their original order
-                list_unique, order = numpy.unique(list(exp_df.loc[i, col]), return_index=True, axis=0)
-                # combine elements and original index in tuples for sorting
-                unordered_tuples = [(list_unique[j], order[j]) for j in range(len(order))]
-                # sort the tuples and keep only the element in the same order as in the original DataFrame
-                ordered_lists[i] = [x[0] for x in sorted(unordered_tuples, key=cmp_to_key(lambda x, y: x[1] - y[1]))]
-            # update the current column with the ordered lists
-            tmp_df[col] = Series(ordered_lists)
+                unique_lists[i] = []
+                # if cell contains only one tuple element, then place it in a list to keep it as a single element
+                cell = [exp_df.loc[i, col]] if isinstance(exp_df.loc[i, col], tuple) else exp_df.loc[i, col]
+                # get unique elements in cell for the current index level
+                for x in cell:
+                    if x not in unique_lists[i]:
+                        unique_lists[i].append(x)
+            # update the current column with the lists of unique elements in current cell
+            tmp_df[col] = Series(unique_lists)
         # replace list with only one element by the element itself and return the resulting DataFrame with reset index
         tmp_df = TableTransform(tmp_df).cond_transform(cond=lambda x: len(x) == 1,
-                                                     iftrue=lambda x: x[0]).result()
+                                                       iftrue=lambda x: x[0]).result()
         # if a column index has been specified then reset the index to avoid duplication of data...
         if index is not None:
             return tmp_df.reset_index(drop=True)
