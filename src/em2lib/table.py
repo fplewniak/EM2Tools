@@ -150,7 +150,7 @@ class Table:
                         unique_lists[i].append(x)
             # update the current column with the lists of unique elements in current cell
             tmp_df[col] = Series(unique_lists)
-        # replace list with only one element by the element itself and return the resulting DataFrame with reset index
+        # replace list with only one element by the element itself
         tmp_df = TableTransform(tmp_df).cond_transform(cond=lambda x: len(x) == 1,
                                                        iftrue=lambda x: x[0]).result()
         # if a column index has been specified then reset the index to avoid duplication of data...
