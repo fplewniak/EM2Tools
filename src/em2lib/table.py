@@ -151,8 +151,13 @@ class Table:
             # update the current column with the ordered lists
             tmp_df[col] = Series(ordered_lists)
         # replace list with only one element by the element itself and return the resulting DataFrame with reset index
-        return TableTransform(tmp_df).cond_transform(cond=lambda x: len(x) == 1,
-                                                     iftrue=lambda x: x[0]).result().reset_index(drop=True)
+        tmp_df = TableTransform(tmp_df).cond_transform(cond=lambda x: len(x) == 1,
+                                                     iftrue=lambda x: x[0]).result()
+        # if a column index has been specified then reset the index to avoid duplication of data...
+        if index is not None:
+            return tmp_df.reset_index(drop=True)
+        # ...otherwise, keep the index
+        return tmp_df
 
     @staticmethod
     def collapse(input_df, groupby=None, columns=None, name='collapsed'):
