@@ -77,11 +77,14 @@ def test_implode(table_org, table_expB, table_expBC, table_expBC_noidx,
                             2: ('A', 'z', 'c'), 3: ('B', 'w', 'd')}}).to_string()
 
 
-def test_collapse(table_expanded, table_collapsed_all, table_collapsed_1, table_expB):
+def test_collapse(table_expanded, table_collapsed_all, table_collapsed_1, table_expB, table_expBC):
     assert Table.collapse(table_expanded, groupby=0).to_string() == table_collapsed_all.to_string()
     assert Table.collapse(table_expanded, groupby=0, columns=1).to_string() == table_collapsed_1.to_string()
     assert Table.collapse(table_expB, groupby='A', columns='B', name='B').to_string() == DataFrame(
         {'B': {'a': ['x', 'y', 'z'], 'b': ['x', 'z'], 'c': 'y'}}).to_string()
+    assert Table.collapse(table_expBC, groupby=['A','B'], name='C').to_string() == DataFrame(
+        {'C': {('a', 'x'): ['x', 'y'], ('a', 'y'): ['x', 'y'], ('a', 'z'): ['x', 'y'],
+               ('b', 'x'): 'x', ('b', 'z'): 'x', ('c', 'y'): ['y', 'z']}}).to_string()
 
 
 def gt3(x):

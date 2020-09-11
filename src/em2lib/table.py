@@ -177,9 +177,9 @@ class Table:
         # set the index if needed
         if groupby is not None:
             exp_df.set_index(groupby, drop=True, inplace=True)
-        # if no column is speficified, then use all of them except the index
+        # if no column is specified, then use all of them except the index
         if columns is None:
-            columns = list(exp_df.columns)
+            columns = exp_df.columns if len(exp_df.columns) > 1 else exp_df.columns[0]
         # prepare the DataFrame for output
         tmp_df = DataFrame(columns=[name])
         # gather all elements of specified rows in lists of tuples, a tuple, or as a single element
@@ -198,6 +198,9 @@ class Table:
             else:
                 ordered_lists[i] = exp_df.loc[i, columns]
         tmp_df[name] = Series(ordered_lists)
+        # replace list with only one element by the element itself and return the resulting DataFrame with reset index
+        tmp_df[name] = TableTransform(DataFrame(tmp_df[name])).cond_transform(cond=lambda x: len(x) == 1,
+                                                                              iftrue=lambda x: x[0]).result()
         return tmp_df
 
 
