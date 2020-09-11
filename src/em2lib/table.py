@@ -4,7 +4,6 @@ Some utilities for Table manipulation, comparison, etc. using pandas.DataFrame m
 #  CeCILL FREE SOFTWARE LICENSE AGREEMENT Version 2.1 dated 2013-06-21
 #  Frédéric PLEWNIAK, CNRS/Université de Strasbourg UMR7156 - GMGM
 #
-from functools import cmp_to_key
 from pandas import DataFrame
 from pandas import Series
 from pandas import MultiIndex
@@ -204,7 +203,7 @@ class Table:
         return tmp_df
 
 
-class TableTransform():
+class TableTransform:
     """
     Class of objects to transform a DataFrame according to different criteria. Different independent transformations
     can be chained since all transformation methods return self object.
