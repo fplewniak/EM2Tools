@@ -164,6 +164,7 @@ class Table:
         """
         Collapses a DataFrame into a single column containing lists of tuples representing all the values in the
         specified columns with the same index as defined by groupby.
+        Note: results may be inconsistent if input DataFrame contains elements that are lists or tuples.
 
         :param input_df: the input DataFrame
         :param groupby: the column(s) defining the index for collapsing values
@@ -178,25 +179,25 @@ class Table:
             exp_df.set_index(groupby, drop=True, inplace=True)
         # if no column is specified, then use all of them except the index
         if columns is None:
-            columns = exp_df.columns if len(exp_df.columns) > 1 else exp_df.columns[0]
+            columns = list(exp_df.columns) if len(exp_df.columns) > 1 else exp_df.columns[0]
         # prepare the DataFrame for output
         tmp_df = DataFrame(columns=[name])
-        # gather all elements of specified rows in lists of tuples, a tuple, or as a single element
-        ordered_lists = {}
+        # gather all elements of rows in lists of tuples, a tuple, or as a single element
+        row_lists = {}
         for i in exp_df.index:
             # there are several values in multiple columns for the same index value, get a list of tuples
             if isinstance(exp_df.loc[i, columns], DataFrame):
-                ordered_lists[i] = [tuple(row[1]) for row in exp_df.loc[i, columns].iterrows()]
+                row_lists[i] = [tuple(row[1]) for row in exp_df.loc[i, columns].iterrows()]
             # there are several values in one column (list of values) or one value in several columns (tuple of values)
             elif isinstance(exp_df.loc[i, columns], Series):
-                ordered_lists[i] = [row[1] for row in exp_df.loc[i, columns].items()]
+                row_lists[i] = [row[1] for row in exp_df.loc[i, columns].items()]
                 # there is one value in several columns, get a tuple of values
                 if isinstance(columns, list):
-                    ordered_lists[i] = tuple(ordered_lists[i])
+                    row_lists[i] = tuple(row_lists[i])
             # there is one value in one column, get a single value
             else:
-                ordered_lists[i] = exp_df.loc[i, columns]
-        tmp_df[name] = Series(ordered_lists)
+                row_lists[i] = [exp_df.loc[i, columns]] if isinstance(exp_df.loc[i, columns], list) else exp_df.loc[i, columns]
+        tmp_df[name] = Series(row_lists)
         # replace list with only one element by the element itself and return the resulting DataFrame with reset index
         tmp_df[name] = TableTransform(DataFrame(tmp_df[name])).cond_transform(cond=lambda x: len(x) == 1,
                                                                               iftrue=lambda x: x[0]).result()
