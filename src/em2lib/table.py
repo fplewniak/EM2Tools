@@ -160,7 +160,7 @@ class Table:
         return tmp_df
 
     @staticmethod
-    def collapse(input_df, groupby=None, columns=None, name='collapsed'):
+    def collapse(input_df, groupby=None, columns=None, name=None):
         """
         Collapses a DataFrame into a single column containing lists of tuples representing all the values in the
         specified columns with the same index as defined by groupby.
@@ -181,6 +181,8 @@ class Table:
         if columns is None:
             columns = list(exp_df.columns) if len(exp_df.columns) > 1 else exp_df.columns[0]
         # prepare the DataFrame for output
+        if name is None:
+            name = tuple(columns) if isinstance(columns, list) else columns
         tmp_df = DataFrame(columns=[name])
         # gather all elements of rows in lists of tuples, a tuple, or as a single element
         row_lists = {}
@@ -196,7 +198,8 @@ class Table:
                     row_lists[i] = tuple(row_lists[i])
             # there is one value in one column, get a single value
             else:
-                row_lists[i] = [exp_df.loc[i, columns]] if isinstance(exp_df.loc[i, columns], list) else exp_df.loc[i, columns]
+                row_lists[i] = [exp_df.loc[i, columns]] if isinstance(exp_df.loc[i, columns], list) \
+                    else exp_df.loc[i, columns]
         tmp_df[name] = Series(row_lists)
         # replace list with only one element by the element itself and return the resulting DataFrame with reset index
         tmp_df[name] = TableTransform(DataFrame(tmp_df[name])).cond_transform(cond=lambda x: len(x) == 1,
