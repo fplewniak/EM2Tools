@@ -206,6 +206,17 @@ class Table:
                                                                               iftrue=lambda x: x[0]).result()
         return tmp_df
 
+    @staticmethod
+    def expand(input_df, index2col='index', columns=None):
+        columns = list(input_df.columns[0]) if columns is None else columns
+        #index_name = input_df.index.name if isinstance(input_df.index.name, list) else list(input_df.index.name)
+        rows = []
+        for i in input_df.index:
+            cell = input_df.loc[i, :][0] if isinstance(input_df.loc[i, :][0], list) else [input_df.loc[i, :][0]]
+            for element in cell:
+                rows.append([x for x in list(i) + list(element)])
+        return DataFrame(rows, columns=[index2col] + columns)
+
 
 class TableTransform:
     """

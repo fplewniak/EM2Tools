@@ -87,6 +87,10 @@ def test_collapse(table_expanded, table_collapsed_all, table_collapsed_1, table_
                ('b', 'x'): 'x', ('b', 'z'): 'x', ('c', 'y'): ['y', 'z']}}).to_string()
 
 
+def test_expand(table_expanded, table_collapsed_all):
+    assert Table.expand(table_collapsed_all).to_dict() == table_expanded.to_dict()
+
+
 def gt3(x):
     if isinstance(x, Number):
         return x > 3
