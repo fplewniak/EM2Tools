@@ -216,7 +216,6 @@ class Table:
         :param columns: names of the columns, if None, will attempt to deduce them from the collapsed column name
          expected to be a tuple of the original names as produced by Table.collapse(). Note that if less column names
          are specified than the actual number of columns to expand then extra column names will be added automatically.
-         size.
         :return: the expanded table
         """
 
@@ -261,6 +260,7 @@ class TableTransform:
     def result(self):
         """
         Getter method to retrieve the DataFrame resulting from the transformations
+        
         :return: the transformed DataFrame
         """
         return self.wrkg_df

@@ -1243,6 +1243,85 @@ to the original index</p></li>
 </dl>
 </dd></dl>
 
+<dl class="py method">
+<dt id="em2lib.table.Table.statistics">
+<em class="property">static </em><code class="sig-name descname">statistics</code><span class="sig-paren">(</span><em class="sig-param">table</em>, <em class="sig-param">groupby=None</em>, <em class="sig-param">columns=None</em>, <em class="sig-param">func=&lt;function mean&gt;</em><span class="sig-paren">)</span><a class="headerlink" href="#em2lib.table.Table.statistics" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a DataFrame containing the requested statistics on the specified columns in a table, optionally grouping
+data according to one or several other columns.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>table</strong> – the table to compute the statistics</p></li>
+<li><p><strong>groupby</strong> – the column or list of columns for grouping data</p></li>
+<li><p><strong>columns</strong> – the column or list of columns to compute the statistics about</p></li>
+<li><p><strong>func</strong> – the statistical function or list thereof to be computed</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>a DataFrame with the requested statistics</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="em2lib.table.Table.implode">
+<em class="property">static </em><code class="sig-name descname">implode</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">input_df</span></em>, <em class="sig-param"><span class="n">index</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#em2lib.table.Table.implode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reverts action of DataFrame.explode method. This method can also be applied to DataFrames that are not the
+result of an explode() call but in this case, applying back the explode() method may not yield the original
+DataFrame.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_df</strong> – the input DataFrame</p></li>
+<li><p><strong>index</strong> – the index column(s)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the resulting DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="em2lib.table.Table.collapse">
+<em class="property">static </em><code class="sig-name descname">collapse</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">input_df</span></em>, <em class="sig-param"><span class="n">groupby</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">columns</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#em2lib.table.Table.collapse" title="Permalink to this definition">¶</a></dt>
+<dd><p>Collapses a DataFrame into a single column containing lists of tuples representing all the values in the
+specified columns with the same index as defined by groupby.
+Note: results may be inconsistent if input DataFrame contains elements that are lists or tuples.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_df</strong> – the input DataFrame</p></li>
+<li><p><strong>groupby</strong> – the column(s) defining the index for collapsing values</p></li>
+<li><p><strong>columns</strong> – the columns that will be collapsed</p></li>
+<li><p><strong>name</strong> – the name for the resulting column</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>a single-column collapsed DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="em2lib.table.Table.expand">
+<em class="property">static </em><code class="sig-name descname">expand</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">input_df</span></em>, <em class="sig-param"><span class="n">columns</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#em2lib.table.Table.expand" title="Permalink to this definition">¶</a></dt>
+<dd><p>Expands a collapsed table. Exact reverse of Table.collapse() method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_df</strong> – the collapsed table to expand</p></li>
+<li><p><strong>columns</strong> – names of the columns, if None, will attempt to deduce them from the collapsed column name
+expected to be a tuple of the original names as produced by Table.collapse(). Note that if less column names
+are specified than the actual number of columns to expand then extra column names will be added automatically.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the expanded table</p>
+</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="py class">
@@ -1253,8 +1332,12 @@ can be chained since all transformation methods return self object.</p>
 <dl class="py method">
 <dt id="em2lib.table.TableTransform.result">
 <code class="sig-name descname">result</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#em2lib.table.TableTransform.result" title="Permalink to this definition">¶</a></dt>
-<dd><p>Getter method to retrieve the DataFrame resulting from the transformations
-:return: the transformed DataFrame</p>
+<dd><p>Getter method to retrieve the DataFrame resulting from the transformations</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>the transformed DataFrame</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
