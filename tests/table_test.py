@@ -93,6 +93,14 @@ def test_expand(table_expanded, table_collapsed_all):
     assert Table.expand(table_collapsed_all).to_dict() == DataFrame({0: {0: 'A', 1: 'A', 2: 'B', 3: 'B'},
                                                                      1: {0: 'x', 1: 'z', 2: 'y', 3: 'w'},
                                                                      2: {0: 'a', 1: 'c', 2: 'b', 3: 'd'}}).to_dict()
+    assert Table.expand(table_collapsed_all, columns=['col', 5]).to_dict() == DataFrame({
+                                                                        0: {0: 'A', 1: 'A', 2: 'B', 3: 'B'},
+                                                                        'col': {0: 'x', 1: 'z', 2: 'y', 3: 'w'},
+                                                                        5: {0: 'a', 1: 'c', 2: 'b', 3: 'd'}}).to_dict()
+    assert Table.expand(table_collapsed_all, columns='K').to_dict() == DataFrame({
+                                                                0: {0: 'A', 1: 'A', 2: 'B', 3: 'B'},
+                                                                'K': {0: 'x', 1: 'z', 2: 'y', 3: 'w'},
+                                                                'col_0': {0: 'a', 1: 'c', 2: 'b', 3: 'd'}}).to_dict()
 
 
 def gt3(x):

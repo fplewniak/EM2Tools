@@ -219,9 +219,7 @@ class Table:
          size.
         :return: the expanded table
         """
-        # if no column names are specified then try to determine a list of names from the collapsed column name
-        if columns is None:
-            columns = list(input_df.columns)[0] if isinstance(input_df.columns[0], tuple) else list(input_df.columns)
+
         rows = []
         # get the list of elements for each value of the index
         for i in input_df.index:
@@ -232,6 +230,15 @@ class Table:
             # append each list of elements and index values to the list of rows
             for element in element_list:
                 rows.append(list(i) + list(element))
+        # if no column names are specified then try to determine a list of names from the collapsed column name
+        if columns is None:
+            columns = list(input_df.columns)[0] if isinstance(input_df.columns[0], tuple) else list(input_df.columns)
+        # if only a single name was passed then place it into a list
+        elif not isinstance(columns, list):
+            columns = [columns]
+        # if the number of specified columns is less than the the data columns then add extra columns
+        if len(rows[0]) > len(input_df.index.names + columns):
+            columns = columns + ['col_'+str(x) for x in range(len(rows[0]) - len(input_df.index.names + columns))]
         # return the DataFrame constructed from the list of rows
         return DataFrame(rows, columns=input_df.index.names + columns)
 
