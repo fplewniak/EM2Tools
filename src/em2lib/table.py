@@ -123,7 +123,7 @@ class Table:
     def implode(input_df, index=None):
         """
         Reverts action of DataFrame.explode method. This method can also be applied to DataFrames that are not the
-        result of an explode() call but in this case, applying back the explode() method will not yield the original
+        result of an explode() call but in this case, applying back the explode() method may not yield the original
         DataFrame.
 
         :param input_df: the input DataFrame
@@ -214,8 +214,8 @@ class Table:
 
         :param input_df: the collapsed table to expand
         :param columns: names of the columns, if None, will attempt to deduce them from the collapsed column name
-         expected to be a tuple of the original names as produced by Table.collapse(). Note that this is compulsory if
-         there are several columns to expand and the collapsed column name is not a tuple of names with the correct
+         expected to be a tuple of the original names as produced by Table.collapse(). Note that if less column names
+         are specified than the actual number of columns to expand then extra column names will be added automatically.
          size.
         :return: the expanded table
         """
