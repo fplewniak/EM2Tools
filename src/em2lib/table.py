@@ -231,7 +231,7 @@ class Table:
                 element_list = element_list[0]
             # append each list of elements and index values to the list of rows
             for element in element_list:
-                rows.append([x for x in list(i) + list(element)])
+                rows.append(list(i) + list(element))
         # return the DataFrame constructed from the list of rows
         return DataFrame(rows, columns=input_df.index.names + columns)
 
