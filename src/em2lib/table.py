@@ -204,6 +204,7 @@ class Table:
         # replace list with only one element by the element itself and return the resulting DataFrame with reset index
         tmp_df[name] = TableTransform(DataFrame(tmp_df[name])).cond_transform(cond=lambda x: len(x) == 1,
                                                                               iftrue=lambda x: x[0]).result()
+        tmp_df.index.rename(groupby, inplace=True)
         return tmp_df
 
     @staticmethod
