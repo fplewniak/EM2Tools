@@ -5,6 +5,7 @@ from em2lib.table import Table
 from em2lib.table import TableTransform
 from pandas import DataFrame
 from pandas import Series
+from pandas import Index
 from numbers import Number
 import numpy as np
 from sklearn.preprocessing import normalize
@@ -70,7 +71,7 @@ def test_implode(table_org, table_expB, table_expBC, table_expBC_noidx,
     assert Table.implode(table_expBC).to_string() == table_org.to_string()
     assert Table.implode(table_expBC_noidx, index='A').to_string() == table_org.to_string()
     assert Table.implode(table_expanded, index=0).to_string() == table_expanded_imp.to_string()
-    assert Table.implode(table_collapsed_all).to_string() == table_collapsed_all.to_string()
+    assert Table.implode(table_collapsed_all).to_dict() == table_collapsed_all.to_dict()
     assert Table.implode(DataFrame({'V': {0: ('A', 'x', 'a'), 1: ('B', 'y', 'b'),
                                           2: ('A', 'z', 'c'), 3: ('B', 'w', 'd')}})).to_string() == \
            DataFrame({'V': {0: ('A', 'x', 'a'), 1: ('B', 'y', 'b'),
@@ -81,14 +82,17 @@ def test_collapse(table_expanded, table_collapsed_all, table_collapsed_1, table_
     assert Table.collapse(table_expanded, groupby=0).to_dict() == table_collapsed_all.to_dict()
     assert Table.collapse(table_expanded, groupby=0, columns=1).to_string() == table_collapsed_1.to_string()
     assert Table.collapse(table_expB, groupby='A', columns='B', name='B').to_string() == DataFrame(
-        {'B': {'a': ['x', 'y', 'z'], 'b': ['x', 'z'], 'c': 'y'}}).to_string()
+        {'B': {'a': ['x', 'y', 'z'], 'b': ['x', 'z'], 'c': 'y'}}, index=Index(['a', 'b', 'c'], name='A')).to_string()
     assert Table.collapse(table_expBC, groupby=['A','B'], name='C').to_string() == DataFrame(
         {'C': {('a', 'x'): ['x', 'y'], ('a', 'y'): ['x', 'y'], ('a', 'z'): ['x', 'y'],
-               ('b', 'x'): 'x', ('b', 'z'): 'x', ('c', 'y'): ['y', 'z']}}).to_string()
+               ('b', 'x'): 'x', ('b', 'z'): 'x', ('c', 'y'): ['y', 'z']}},
+        index=Index([('a', 'x'),('a', 'y'),('a', 'z'),('b', 'x'),('b', 'z'),('c', 'y')], name=('A', 'B'))).to_string()
 
 
 def test_expand(table_expanded, table_collapsed_all):
-    assert Table.expand(table_collapsed_all).to_dict() == table_expanded.to_dict()
+    assert Table.expand(table_collapsed_all).to_dict() == DataFrame({0: {0: 'A', 1: 'A', 2: 'B', 3: 'B'},
+                                                                     1: {0: 'x', 1: 'z', 2: 'y', 3: 'w'},
+                                                                     2: {0: 'a', 1: 'c', 2: 'b', 3: 'd'}}).to_dict()
 
 
 def gt3(x):

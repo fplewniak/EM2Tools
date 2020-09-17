@@ -315,12 +315,16 @@ def table_expanded_imp():
 
 @pytest.fixture(scope="session")
 def table_collapsed_all():
-    return DataFrame({tuple([1, 2]): {'A': [('x', 'a'), ('z','c')], 'B': [('y', 'b'), ('w','d')]}})
+    t = DataFrame({tuple([1, 2]): {'A': [('x', 'a'), ('z','c')], 'B': [('y', 'b'), ('w','d')]}})
+    t.index.rename(0, inplace=True)
+    return t
 
 
 @pytest.fixture(scope="session")
 def table_collapsed_1():
-    return DataFrame({1: {'A': ['x', 'z'], 'B': ['y', 'w']}})
+    t = DataFrame({1: {'A': ['x', 'z'], 'B': ['y', 'w']}})
+    t.index.rename(0, inplace=True)
+    return t
 
 
 @pytest.fixture(scope="session")

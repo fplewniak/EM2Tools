@@ -208,15 +208,32 @@ class Table:
         return tmp_df
 
     @staticmethod
-    def expand(input_df, index2col='index', columns=None):
-        columns = list(input_df.columns[0]) if columns is None else columns
-        #index_name = input_df.index.name if isinstance(input_df.index.name, list) else list(input_df.index.name)
+    def expand(input_df, columns=None):
+        """
+        Expands a collapsed table. Exact reverse of Table.collapse() method.
+
+        :param input_df: the collapsed table to expand
+        :param columns: names of the columns, if None, will attempt to deduce them from the collapsed column name
+         expected to be a tuple of the original names as produced by Table.collapse(). Note that this is compulsory if
+         there are several columns to expand and the collapsed column name is not a tuple of names with the correct
+         size.
+        :return: the expanded table
+        """
+        # if no column names are specified then try to determine a list of names from the collapsed column name
+        if columns is None:
+            columns = list(input_df.columns)[0] if isinstance(input_df.columns[0], tuple) else list(input_df.columns)
         rows = []
+        # get the list of elements for each value of the index
         for i in input_df.index:
-            cell = input_df.loc[i, :][0] if isinstance(input_df.loc[i, :][0], list) else [input_df.loc[i, :][0]]
-            for element in cell:
+            element_list = input_df.loc[i].to_list()
+            # if the list of elements is a list of list of tuples, then keep only the list of tuples
+            if len(numpy.array(element_list).shape) > 2:
+                element_list = element_list[0]
+            # append each list of elements and index values to the list of rows
+            for element in element_list:
                 rows.append([x for x in list(i) + list(element)])
-        return DataFrame(rows, columns=[index2col] + columns)
+        # return the DataFrame constructed from the list of rows
+        return DataFrame(rows, columns=input_df.index.names + columns)
 
 
 class TableTransform:
