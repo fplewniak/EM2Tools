@@ -261,8 +261,8 @@ class TableTransform:
 
     def result(self):
         """
-        Getter method to retrieve the DataFrame resulting from the transformations
-        
+        Getter method to retrieve the DataFrame resulting from the transformation
+
         :return: the transformed DataFrame
         """
         return self.wrkg_df
