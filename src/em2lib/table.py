@@ -269,9 +269,9 @@ class TableTransform:
 
     def update(self):
         """
-        Update original DataFrame with the current working copy. This enables the application of conditions to previously
-        modified values. This action cannot be undone, so it is recommended to use it after all modifications based on
-        original data have been performed.
+        Update original DataFrame with the current working copy. This enables the application of conditions to
+        previously modified values. This action cannot be undone, so it is recommended to use it after all
+        modifications based on original data have been performed.
 
         """
         self.orgnl_df = self.wrkg_df
