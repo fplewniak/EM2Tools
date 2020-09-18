@@ -3,6 +3,16 @@ The EM2Tools API reference
 ..  automodule:: em2lib
     :members:
 
+The “utils” module
+-----------------------
+..  automodule:: em2lib.utils
+    :members:
+
+The “argparse_em2” module
+-------------------------
+..  automodule:: em2lib.argparse_em2
+    :members:
+
 The “seq_record” module
 -----------------------
 ..  automodule:: em2lib.seq_record
@@ -21,11 +31,6 @@ The “seq_feature” module
 The “seq_utils” module
 ----------------------
 ..  automodule:: em2lib.seq_utils
-    :members:
-
-The “argparse_em2” module
--------------------------
-..  automodule:: em2lib.argparse_em2
     :members:
 
 The “table” module
