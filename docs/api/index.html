@@ -89,11 +89,12 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../getting_started.html">Getting started</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">The EM2Tools API reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#module-em2lib.utils">The “utils” module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-em2lib.argparse_em2">The “argparse_em2” module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-em2lib.seq_record">The “seq_record” module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-em2lib.seq">The “seq” module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-em2lib.seq_feature">The “seq_feature” module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-em2lib.seq_utils">The “seq_utils” module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#module-em2lib.argparse_em2">The “argparse_em2” module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-em2lib.table">The “table” module</a></li>
 </ul>
 </li>
@@ -164,6 +165,123 @@
             
   <div class="section" id="module-em2lib">
 <span id="the-em2tools-api-reference"></span><h1>The EM2Tools API reference<a class="headerlink" href="#module-em2lib" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-em2lib.utils">
+<span id="the-utils-module"></span><h2>The “utils” module<a class="headerlink" href="#module-em2lib.utils" title="Permalink to this headline">¶</a></h2>
+<p>Basic utilities that can be shared between different modules of the API</p>
+<dl class="py function">
+<dt id="em2lib.utils.norm_sum_to_one">
+<code class="sig-prename descclassname">em2lib.utils.</code><code class="sig-name descname">norm_sum_to_one</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em><span class="sig-paren">)</span><a class="headerlink" href="#em2lib.utils.norm_sum_to_one" title="Permalink to this definition">¶</a></dt>
+<dd><p>Normalization of values in a 1-D array so they sum to one</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> – the 1-D array to normalize</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the normalized array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="em2lib.utils.norm_max">
+<code class="sig-prename descclassname">em2lib.utils.</code><code class="sig-name descname">norm_max</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em><span class="sig-paren">)</span><a class="headerlink" href="#em2lib.utils.norm_max" title="Permalink to this definition">¶</a></dt>
+<dd><p>Normalization of values in a 1-D array relative to the max value</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> – the 1-D array to normalize</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the normalized array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="em2lib.utils.norm_min_max">
+<code class="sig-prename descclassname">em2lib.utils.</code><code class="sig-name descname">norm_min_max</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em><span class="sig-paren">)</span><a class="headerlink" href="#em2lib.utils.norm_min_max" title="Permalink to this definition">¶</a></dt>
+<dd><p>Normalization of values in a 1-D array to make them fall between 0 (min value) and 1 (max value)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> – the 1-D array to normalize</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the normalized array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="em2lib.utils.zscore">
+<code class="sig-prename descclassname">em2lib.utils.</code><code class="sig-name descname">zscore</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em><span class="sig-paren">)</span><a class="headerlink" href="#em2lib.utils.zscore" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the Z-score of values in a 1-D array</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> – the 1-D array to normalize</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the normalized array</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-em2lib.argparse_em2">
+<span id="the-argparse-em2-module"></span><h2>The “argparse_em2” module<a class="headerlink" href="#module-em2lib.argparse_em2" title="Permalink to this headline">¶</a></h2>
+<p>Extension module to the standard argparse module. Adding custom actions and argument
+verification methods.</p>
+<dl class="py class">
+<dt id="em2lib.argparse_em2.GetList">
+<em class="property">class </em><code class="sig-prename descclassname">em2lib.argparse_em2.</code><code class="sig-name descname">GetList</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">option_strings</span></em>, <em class="sig-param"><span class="n">dest</span></em>, <em class="sig-param"><span class="n">nargs</span><span class="o">=</span><span class="default_value">'+'</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#em2lib.argparse_em2.GetList" title="Permalink to this definition">¶</a></dt>
+<dd><p>An argparse custom action to return a list from an argument containing a list of elements
+and/or file names. Files are supposed to contain one element of the list per line. There
+can be more than one file and the argument may take a combination of elements and files.
+In all cases, the returned list will contain all the specified elements without any
+checking for redundancy. If you need a non redundant set instead of a list, then use
+GetSet action instead.</p>
+<dl class="py method">
+<dt id="em2lib.argparse_em2.GetList.arg2list">
+<em class="property">static </em><code class="sig-name descname">arg2list</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">values</span></em><span class="sig-paren">)</span><a class="headerlink" href="#em2lib.argparse_em2.GetList.arg2list" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method converts the argument values containing elements and/or files containing
+elements into a list of elements.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>values</strong> – argument values, this is supposed to be a list of arguments or None        (returns an empty list)</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the list of elements or an empty list if the argument was None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="em2lib.argparse_em2.GetSet">
+<em class="property">class </em><code class="sig-prename descclassname">em2lib.argparse_em2.</code><code class="sig-name descname">GetSet</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">option_strings</span></em>, <em class="sig-param"><span class="n">dest</span></em>, <em class="sig-param"><span class="n">nargs</span><span class="o">=</span><span class="default_value">'+'</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#em2lib.argparse_em2.GetSet" title="Permalink to this definition">¶</a></dt>
+<dd><p>An argparse custom action to return a set from an argument containing a list of elements
+and/or file names. Files are supposed to contain one element of the list per line. There
+can be more than one file and the argument may take a combination of elements and files.
+In all cases, the returned set will contain all the specified elements keeping only
+one copy of each element. If you do not want to remove redundancy, then use GetList
+action instead.</p>
+<dl class="py method">
+<dt id="em2lib.argparse_em2.GetSet.arg2set">
+<em class="property">static </em><code class="sig-name descname">arg2set</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">values</span></em><span class="sig-paren">)</span><a class="headerlink" href="#em2lib.argparse_em2.GetSet.arg2set" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method converts the argument values containing elements and/or files containing
+elements into a set of elements.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>values</strong> – argument values, this is supposed to be a list of arguments or None        (returns an empty set)</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the set of elements or an empty set if the argument was None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
 <div class="section" id="module-em2lib.seq_record">
 <span id="the-seq-record-module"></span><h2>The “seq_record” module<a class="headerlink" href="#module-em2lib.seq_record" title="Permalink to this headline">¶</a></h2>
 <p>Extension module to the Biopython Bio.SeqRecord module</p>
@@ -1088,63 +1206,6 @@ length as the dataframe, repeating references as needed to get the right number.
 </dd></dl>
 
 </div>
-<div class="section" id="module-em2lib.argparse_em2">
-<span id="the-argparse-em2-module"></span><h2>The “argparse_em2” module<a class="headerlink" href="#module-em2lib.argparse_em2" title="Permalink to this headline">¶</a></h2>
-<p>Extension module to the standard argparse module. Adding custom actions and argument
-verification methods.</p>
-<dl class="py class">
-<dt id="em2lib.argparse_em2.GetList">
-<em class="property">class </em><code class="sig-prename descclassname">em2lib.argparse_em2.</code><code class="sig-name descname">GetList</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">option_strings</span></em>, <em class="sig-param"><span class="n">dest</span></em>, <em class="sig-param"><span class="n">nargs</span><span class="o">=</span><span class="default_value">'+'</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#em2lib.argparse_em2.GetList" title="Permalink to this definition">¶</a></dt>
-<dd><p>An argparse custom action to return a list from an argument containing a list of elements
-and/or file names. Files are supposed to contain one element of the list per line. There
-can be more than one file and the argument may take a combination of elements and files.
-In all cases, the returned list will contain all the specified elements without any
-checking for redundancy. If you need a non redundant set instead of a list, then use
-GetSet action instead.</p>
-<dl class="py method">
-<dt id="em2lib.argparse_em2.GetList.arg2list">
-<em class="property">static </em><code class="sig-name descname">arg2list</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">values</span></em><span class="sig-paren">)</span><a class="headerlink" href="#em2lib.argparse_em2.GetList.arg2list" title="Permalink to this definition">¶</a></dt>
-<dd><p>This method converts the argument values containing elements and/or files containing
-elements into a list of elements.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>values</strong> – argument values, this is supposed to be a list of arguments or None        (returns an empty list)</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>the list of elements or an empty list if the argument was None</p>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt id="em2lib.argparse_em2.GetSet">
-<em class="property">class </em><code class="sig-prename descclassname">em2lib.argparse_em2.</code><code class="sig-name descname">GetSet</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">option_strings</span></em>, <em class="sig-param"><span class="n">dest</span></em>, <em class="sig-param"><span class="n">nargs</span><span class="o">=</span><span class="default_value">'+'</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#em2lib.argparse_em2.GetSet" title="Permalink to this definition">¶</a></dt>
-<dd><p>An argparse custom action to return a set from an argument containing a list of elements
-and/or file names. Files are supposed to contain one element of the list per line. There
-can be more than one file and the argument may take a combination of elements and files.
-In all cases, the returned set will contain all the specified elements keeping only
-one copy of each element. If you do not want to remove redundancy, then use GetList
-action instead.</p>
-<dl class="py method">
-<dt id="em2lib.argparse_em2.GetSet.arg2set">
-<em class="property">static </em><code class="sig-name descname">arg2set</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">values</span></em><span class="sig-paren">)</span><a class="headerlink" href="#em2lib.argparse_em2.GetSet.arg2set" title="Permalink to this definition">¶</a></dt>
-<dd><p>This method converts the argument values containing elements and/or files containing
-elements into a set of elements.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>values</strong> – argument values, this is supposed to be a list of arguments or None        (returns an empty set)</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>the set of elements or an empty set if the argument was None</p>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
-</div>
 <div class="section" id="module-em2lib.table">
 <span id="the-table-module"></span><h2>The “table” module<a class="headerlink" href="#module-em2lib.table" title="Permalink to this headline">¶</a></h2>
 <p>Some utilities for Table manipulation, comparison, etc. using pandas.DataFrame module.</p>
@@ -1404,17 +1465,15 @@ dataframes column by column.</p></li>
 
 <dl class="py method">
 <dt id="em2lib.table.TableTransform.normalize">
-<code class="sig-name descname">normalize</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">columns</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">norm</span><span class="o">=</span><span class="default_value">'l1'</span></em>, <em class="sig-param"><span class="n">axis</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#em2lib.table.TableTransform.normalize" title="Permalink to this definition">¶</a></dt>
-<dd><p>Normalize values in DataFrame. This method is a wrapper for sklearn.preprocessing.normalize
-for row or column normalization. It further allows normalization over all the values in
-DataFrame.</p>
+<code class="sig-name descname">normalize</code><span class="sig-paren">(</span><em class="sig-param">columns=None</em>, <em class="sig-param">norm=&lt;function norm_sum_to_one&gt;</em>, <em class="sig-param">by=None</em><span class="sig-paren">)</span><a class="headerlink" href="#em2lib.table.TableTransform.normalize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Normalize values in DataFrame, either by row, column or over all the values.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>columns</strong> – the columns whose values should be normalized</p></li>
-<li><p><strong>norm</strong> – the normalization method ‘l1’ (sum to one), ‘l2’ (spatial sign preprocessing)
-or ‘max’</p></li>
-<li><p><strong>axis</strong> – the axis along which values are normalized. If None, then all values are used.</p></li>
+<li><p><strong>norm</strong> – the normalization function, should apply to a 1-D array, default is ‘’norm_sum_to_one’’</p></li>
+<li><p><strong>by</strong> – defines whether the normalization should be done by column or by row. If None, then all values are
+used.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
