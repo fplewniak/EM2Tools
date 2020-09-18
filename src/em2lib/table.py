@@ -4,11 +4,13 @@ Some utilities for Table manipulation, comparison, etc. using pandas.DataFrame m
 #  CeCILL FREE SOFTWARE LICENSE AGREEMENT Version 2.1 dated 2013-06-21
 #  Frédéric PLEWNIAK, CNRS/Université de Strasbourg UMR7156 - GMGM
 #
+from numbers import Number
+
 from pandas import DataFrame
 from pandas import Series
 from pandas import MultiIndex
 import numpy
-from sklearn.preprocessing import normalize
+import em2lib.utils as em2
 
 
 class Table:
@@ -340,28 +342,36 @@ class TableTransform:
             self.wrkg_df = self.wrkg_df.combine(other, func, **kwargs)
         return self
 
-    def normalize(self, columns=None, norm='l1', axis=None):
+    def normalize(self, columns=None, norm=em2.norm_sum_to_one, by=None):
         """
-        Normalize values in DataFrame. This method is a wrapper for sklearn.preprocessing.normalize
-        for row or column normalization. It further allows normalization over all the values in
-        DataFrame.
+        Normalize values in DataFrame, either by row, column or over all the values.
 
         :param columns: the columns whose values should be normalized
-        :param norm: the normalization method 'l1' (sum to one), 'l2' (spatial sign preprocessing)
-         or 'max'
-        :param axis: the axis along which values are normalized. If None, then all values are used.
+        :param norm: the normalization function, should apply to a 1-D array, default is ''norm_sum_to_one''
+        :param by: defines whether the normalization should be done by column or by row. If None, then all values are
+         used.
         :return: this TableTransform instance
         """
+        # if no column is specified then use all of them...
         if columns is None:
             columns = self.wrkg_df.columns
+        # ... but remove non-numerical columns
+        for col in columns:
+            if not all([isinstance(x, Number) for x in self.wrkg_df.loc[:,col]]):
+                columns = columns.drop(col)
+        # make a copy of the specified columns as a DataFrame for the normalization
         tmp_df = self.wrkg_df.loc[:, columns].copy()
-        if axis is not None:
-            tmp_df = DataFrame(normalize(tmp_df, norm=norm, axis=axis), columns=tmp_df.columns)
+        # if normalizing by row or by column,
+        if by is not None:
+            # translate to the appropriate axis parameter and apply the normalization on the requested axis
+            axis = 0 if by == 'col' else 1
+            tmp_df = DataFrame(tmp_df).apply(norm, axis=axis)
         else:
-            tmp_df = DataFrame(numpy.reshape(
-                normalize([list(tmp_df.to_numpy().flat)], norm=norm),
-                tmp_df.shape), columns=tmp_df.columns)
-        self.wrkg_df.loc[:, columns] = tmp_df.loc[:, columns]
+            # else, apply the normalization on all values
+            tmp_df = DataFrame(numpy.reshape(DataFrame(tmp_df.to_numpy().flatten()).apply(norm).to_numpy(),
+                                             tmp_df.shape), columns=tmp_df.columns)
+        # send the normalized values in the original DataFrame
+        self.wrkg_df.loc[:, tmp_df.columns] = tmp_df
         return self
 
     def replace(self, columns=None, **kwargs):

@@ -3,6 +3,7 @@
 #
 from em2lib.table import Table
 from em2lib.table import TableTransform
+import em2lib.utils as em2
 from pandas import DataFrame
 from pandas import Series
 from pandas import Index
@@ -66,7 +67,7 @@ def test_table_statistics(table2, table4):
 
 
 def test_implode(table_org, table_expB, table_expBC, table_expBC_noidx,
-                 table_expanded, table_expanded_imp,table_collapsed_all):
+                 table_expanded, table_expanded_imp, table_collapsed_all):
     assert Table.implode(table_expB).to_string() == table_org.to_string()
     assert Table.implode(table_expBC).to_string() == table_org.to_string()
     assert Table.implode(table_expBC_noidx, index='A').to_string() == table_org.to_string()
@@ -83,10 +84,11 @@ def test_collapse(table_expanded, table_collapsed_all, table_collapsed_1, table_
     assert Table.collapse(table_expanded, groupby=0, columns=1).to_string() == table_collapsed_1.to_string()
     assert Table.collapse(table_expB, groupby='A', columns='B', name='B').to_string() == DataFrame(
         {'B': {'a': ['x', 'y', 'z'], 'b': ['x', 'z'], 'c': 'y'}}, index=Index(['a', 'b', 'c'], name='A')).to_string()
-    assert Table.collapse(table_expBC, groupby=['A','B'], name='C').to_string() == DataFrame(
+    assert Table.collapse(table_expBC, groupby=['A', 'B'], name='C').to_string() == DataFrame(
         {'C': {('a', 'x'): ['x', 'y'], ('a', 'y'): ['x', 'y'], ('a', 'z'): ['x', 'y'],
                ('b', 'x'): 'x', ('b', 'z'): 'x', ('c', 'y'): ['y', 'z']}},
-        index=Index([('a', 'x'),('a', 'y'),('a', 'z'),('b', 'x'),('b', 'z'),('c', 'y')], name=('A', 'B'))).to_string()
+        index=Index([('a', 'x'), ('a', 'y'), ('a', 'z'), ('b', 'x'), ('b', 'z'), ('c', 'y')],
+                    name=('A', 'B'))).to_string()
 
 
 def test_expand(table_expanded, table_collapsed_all):
@@ -94,13 +96,13 @@ def test_expand(table_expanded, table_collapsed_all):
                                                                      1: {0: 'x', 1: 'z', 2: 'y', 3: 'w'},
                                                                      2: {0: 'a', 1: 'c', 2: 'b', 3: 'd'}}).to_dict()
     assert Table.expand(table_collapsed_all, columns=['col', 5]).to_dict() == DataFrame({
-                                                                        0: {0: 'A', 1: 'A', 2: 'B', 3: 'B'},
-                                                                        'col': {0: 'x', 1: 'z', 2: 'y', 3: 'w'},
-                                                                        5: {0: 'a', 1: 'c', 2: 'b', 3: 'd'}}).to_dict()
+        0: {0: 'A', 1: 'A', 2: 'B', 3: 'B'},
+        'col': {0: 'x', 1: 'z', 2: 'y', 3: 'w'},
+        5: {0: 'a', 1: 'c', 2: 'b', 3: 'd'}}).to_dict()
     assert Table.expand(table_collapsed_all, columns='K').to_dict() == DataFrame({
-                                                                0: {0: 'A', 1: 'A', 2: 'B', 3: 'B'},
-                                                                'K': {0: 'x', 1: 'z', 2: 'y', 3: 'w'},
-                                                                'col_0': {0: 'a', 1: 'c', 2: 'b', 3: 'd'}}).to_dict()
+        0: {0: 'A', 1: 'A', 2: 'B', 3: 'B'},
+        'K': {0: 'x', 1: 'z', 2: 'y', 3: 'w'},
+        'col_0': {0: 'a', 1: 'c', 2: 'b', 3: 'd'}}).to_dict()
 
 
 def gt3(x):
@@ -199,19 +201,27 @@ def test_combine(table2, table4):
 
 
 def test_normalize(table2):
-    assert TableTransform(table2).normalize(columns=['C', 'D'], axis=1, norm='max') \
+    assert TableTransform(table2).normalize(columns=['C', 'D'], by='row', norm=em2.norm_max) \
         .result().equals(DataFrame({'A': ['a', 'a', 'y', 'z'],
                                     'B': ['b', 'x', 'w', 'a'],
                                     'C': [0.125, 1., 1., 0.5],
                                     'D': [1., 1., 0.6, 1.]}))
-    assert (TableTransform(table2).normalize(columns=['C', 'D'], axis=1, norm='l1') \
+    assert TableTransform(table2).normalize(columns=['C', 'D'], by='col', norm=em2.norm_max) \
+        .result().equals(DataFrame({'A': ['a', 'a', 'y', 'z'],
+                                    'B': ['b', 'x', 'w', 'a'],
+                                    'C': [0.2, 0.4, 1., 0.6],
+                                    'D': [1., 0.25, 0.375, 0.75]}))
+    assert TableTransform(table2).normalize(columns='C', by='col', norm=em2.norm_max) \
+        .result().equals(DataFrame({'A': ['a', 'a', 'y', 'z'],
+                                    'B': ['b', 'x', 'w', 'a'],
+                                    'C': [0.2, 0.4, 1., 0.6],
+                                    'D': [8, 2, 3, 6]}))
+    assert (TableTransform(table2).normalize(columns=['C', 'D'], by='row', norm=em2.norm_sum_to_one) \
             .result()[['C', 'D']].to_numpy() == normalize([[1, 8], [2, 2], [5, 3], [3, 6]], axis=1, norm='l1')).all()
-    assert (TableTransform(table2).normalize(columns=['C', 'D'], axis=1, norm='l2') \
-            .result()[['C', 'D']].to_numpy() == normalize([[1, 8], [2, 2], [5, 3], [3, 6]], axis=1, norm='l2')).all()
-    assert (TableTransform(table2).normalize(columns=['C', 'D'], axis=0, norm='l2') \
-            .result()[['C', 'D']].to_numpy() == normalize([[1, 8], [2, 2], [5, 3], [3, 6]], axis=0, norm='l2')).all()
-    assert TableTransform(table2).normalize(columns=['C', 'D'], norm='max') \
+    assert TableTransform(table2).normalize(columns=['C', 'D'], norm=em2.norm_max) \
         .result().equals(DataFrame({'A': ['a', 'a', 'y', 'z'],
                                     'B': ['b', 'x', 'w', 'a'],
                                     'C': [0.125, 0.25, 0.625, 0.375],
                                     'D': [1., 0.25, 0.375, 0.75]}))
+    assert TableTransform(table2).normalize(columns=['C', 'D'], by='row', norm=em2.norm_sum_to_one)\
+        .result().equals(TableTransform(table2).normalize(by='row', norm=em2.norm_sum_to_one).result())
