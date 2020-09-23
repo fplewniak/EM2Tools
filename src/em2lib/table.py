@@ -147,14 +147,13 @@ class Table:
                 # if cell contains only one tuple element, then place it in a list to keep it as a single element
                 cell = [exp_df.loc[i, col]] if isinstance(exp_df.loc[i, col], tuple) else exp_df.loc[i, col]
                 # get unique elements in cell for the current index level
-                for x in cell:
-                    if x not in unique_lists[i]:
-                        unique_lists[i].append(x)
+                for cell_element in cell:
+                    if cell_element not in unique_lists[i]:
+                        unique_lists[i].append(cell_element)
             # update the current column with the lists of unique elements in current cell
             tmp_df[col] = Series(unique_lists)
         # replace list with only one element by the element itself
-        tmp_df = TableTransform(tmp_df).cond_transform(cond=lambda x: len(x) == 1,
-                                                       iftrue=lambda x: x[0]).result()
+        tmp_df = TableTransform(tmp_df).cond_transform(cond=lambda x: len(x) == 1, iftrue=lambda x: x[0]).result()
         # if a column index has been specified then reset the index to avoid duplication of data...
         if index is not None:
             return tmp_df.reset_index(drop=True)
@@ -237,7 +236,7 @@ class Table:
         # if only a single name was passed then place it into a list
         elif not isinstance(columns, list):
             columns = [columns]
-        # if the number of specified columns is less than the the data columns then add extra columns
+        # if there are less specified columns than data columns then add extra columns
         if len(rows[0]) > len(input_df.index.names + columns):
             columns = columns + ['col_'+str(x) for x in range(len(rows[0]) - len(input_df.index.names + columns))]
         # return the DataFrame constructed from the list of rows
@@ -357,7 +356,7 @@ class TableTransform:
             columns = self.wrkg_df.columns
         # ... but remove non-numerical columns
         for col in columns:
-            if not all([isinstance(x, Number) for x in self.wrkg_df.loc[:,col]]):
+            if not all([isinstance(x, Number) for x in self.wrkg_df.loc[:, col]]):
                 columns = columns.drop(col)
         # make a copy of the specified columns as a DataFrame for the normalization
         tmp_df = self.wrkg_df.loc[:, columns].copy()
