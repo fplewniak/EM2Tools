@@ -105,6 +105,28 @@ def test_expand(table_expanded, table_collapsed_all):
         'col_0': {0: 'a', 1: 'c', 2: 'b', 3: 'd'}}).to_dict()
 
 
+def test_table_from_edges(df_edges):
+    assert Table.table_from_edges(df_edges, no_link=0).equals(DataFrame({'a': {'a': 0, 'c': 3, 'b': 0, 'd': 0, 'e': 0},
+                                                                         'c': {'a': 0, 'c': 0, 'b': 0, 'd': 0, 'e': 0},
+                                                                         'b': {'a': 0, 'c': 0, 'b': 0, 'd': 0, 'e': 0},
+                                                                         'd': {'a': 1, 'c': 0, 'b': 6, 'd': 0, 'e': 0},
+                                                                         'e': {'a': 3, 'c': 0, 'b': 0, 'd': 0, 'e': 0}}
+                                                                        ))
+    assert Table.table_from_edges(df_edges, no_link=0, graph=False).equals(DataFrame({'d': {'a': 1, 'c': 0, 'b': 6},
+                                                                                      'e': {'a': 3, 'c': 0, 'b': 0},
+                                                                                      'a': {'a': 0, 'c': 3, 'b': 0}}))
+    assert Table.table_from_edges(df_edges, no_link=0, directed=False).equals(DataFrame(
+        {'a': {'a': 0, 'c': 3, 'b': 0, 'd': 1, 'e': 3}, 'c': {'a': 3, 'c': 0, 'b': 0, 'd': 0, 'e': 0},
+         'b': {'a': 0, 'c': 0, 'b': 0, 'd': 6, 'e': 0}, 'd': {'a': 1, 'c': 0, 'b': 6, 'd': 0, 'e': 0},
+         'e': {'a': 3, 'c': 0, 'b': 0, 'd': 0, 'e': 0}}))
+    assert Table.table_from_edges(df_edges, no_link=0, link=1, directed=False).equals(DataFrame(
+        {'a': {'a': 0, 'c': 1, 'b': 0, 'd': 1, 'e': 1}, 'c': {'a': 1, 'c': 0, 'b': 0, 'd': 0, 'e': 0},
+         'b': {'a': 0, 'c': 0, 'b': 0, 'd': 1, 'e': 0}, 'd': {'a': 1, 'c': 0, 'b': 1, 'd': 0, 'e': 0},
+         'e': {'a': 1, 'c': 0, 'b': 0, 'd': 0, 'e': 0}}))
+    assert Table.table_from_edges(df_edges, no_link=0, link=1, directed=False).\
+        equals(Table.table_from_edges(df_edges[[0,1]], no_link=0, link=1, directed=False))
+
+
 def gt3(x):
     if isinstance(x, Number):
         return x > 3

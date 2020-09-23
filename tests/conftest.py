@@ -328,6 +328,11 @@ def table_collapsed_1():
 
 
 @pytest.fixture(scope="session")
+def df_edges():
+    return DataFrame([['a', 'd', 1], ['a', 'e', 3],  ['c', 'a', 3], ['b', 'd', 6]])
+
+
+@pytest.fixture(scope="session")
 def table_2_3_common_rows():
     return DataFrame(data={'A': ['a', 'y'], 'B': ['b', 'w'], 'C': [1, 5], 'D': [8, 3],
                            'F': [6, 8]})

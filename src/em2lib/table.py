@@ -238,9 +238,59 @@ class Table:
             columns = [columns]
         # if there are less specified columns than data columns then add extra columns
         if len(rows[0]) > len(input_df.index.names + columns):
-            columns = columns + ['col_'+str(x) for x in range(len(rows[0]) - len(input_df.index.names + columns))]
+            columns = columns + ['col_' + str(x) for x in range(len(rows[0]) - len(input_df.index.names + columns))]
         # return the DataFrame constructed from the list of rows
         return DataFrame(rows, columns=input_df.index.names + columns)
+
+    @staticmethod
+    def table_from_edges(df_edges: DataFrame, graph=True, directed=True, link=None, no_link=None):
+        """
+        Turns a DataFrame representing edges in two or three columns into a table representing edges between nodes in
+         rows and columns. The first two columns of the input DataFrame represent the linked nodes. The optional third
+         column contains a value (edge weight, label, etc.).
+         A call to table_from_edges(df_edges, no_link=0, link=1, graph=False) is basically equivalent to a call to
+         pandas.crosstab(df_edges[0], df_edges[1]).
+        A call to table_from_edges(df_edges, graph=False) is basically equivalent to a call to df_edges.pivot(0,1,2).
+
+        :param df_edges: the edge DataFrame,
+        :param graph: if True, the edge list represents a graph and the resulting table will be a square: all nodes
+         in the first two columns of the edge DataFrame are placed in both the index and the columns of the graph table.
+         If False, the edge list represents a relation between two sets. The first column of the edge DataFrame will
+         define rows (first set) and the second column will define the columns (second set).
+        :param directed: specifies if the graph is directed or not. If True, the resulting table will be symmetrical.
+         This parameter has no effect if graph is False
+        :param link: the value to associate the specified edges with. This value will replace the original value in
+         df_edges DataFrame or specify one for two-column edge DataFrames. This value is needed for two-column edge
+         definition.
+        :param no_link: the value to associate the unspecified edges with. NaN will be used if this parameter is not
+         specified.
+        :return: a table DataFrame
+        """
+        if graph:
+            # create a square table with all nodes in df_edges
+            nodes = (df_edges[0].append(df_edges[1])).unique()
+            df_table = DataFrame(index=nodes, columns=nodes)
+        else:
+            # create an asymmetrical table with row nodes and column nodes in df_edges
+            df_table = DataFrame(index=df_edges[0].unique(), columns=df_edges[1].unique())
+        # populate the table
+        for edge in df_edges.iterrows():
+            if link is not None:
+                # set the specified edge with the value specified in link parameter
+                df_table.loc[edge[1].loc[0], edge[1].loc[1]] = link
+                if graph is True and directed is False:
+                    # in the case of a directed graph, set also the symmetrical edge
+                    df_table.loc[edge[1].loc[1], edge[1].loc[0]] = link
+            else:
+                # set the specified edge with the value specified in the third column of df_edges
+                df_table.loc[edge[1].loc[0], edge[1].loc[1]] = edge[1].loc[2]
+                if graph is True and directed is False:
+                    # in the case of a directed graph, set also the symmetrical edge
+                    df_table.loc[edge[1].loc[1], edge[1].loc[0]] = edge[1].loc[2]
+        if no_link is not None:
+            # replace NaN (unspecified edges) with the value specified in no_link parameter
+            df_table.fillna(no_link, inplace=True)
+        return df_table
 
 
 class TableTransform:
