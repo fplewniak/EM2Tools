@@ -333,6 +333,13 @@ def df_edges():
 
 
 @pytest.fixture(scope="session")
+def df_table():
+    return DataFrame({'a': {'a': 0, 'c': 3, 'b': 0, 'd': 1, 'e': 3}, 'c': {'a': 3, 'c': 0, 'b': 0, 'd': 0, 'e': 0},
+                      'b': {'a': 0, 'c': 0, 'b': 0, 'd': 6, 'e': 0}, 'd': {'a': 1, 'c': 0, 'b': 6, 'd': 0, 'e': 0},
+                      'e': {'a': 3, 'c': 0, 'b': 0, 'd': 0, 'e': 0}})
+
+
+@pytest.fixture(scope="session")
 def table_2_3_common_rows():
     return DataFrame(data={'A': ['a', 'y'], 'B': ['b', 'w'], 'C': [1, 5], 'D': [8, 3],
                            'F': [6, 8]})

@@ -127,6 +127,17 @@ def test_table_from_edges(df_edges):
         equals(Table.table_from_edges(df_edges[[0,1]], no_link=0, link=1, directed=False))
 
 
+def test_edges_from_table(df_table):
+    assert Table.edges_from_table(df_table, no_link=0).to_dict() == DataFrame([['c', 'a', 3], ['d', 'a', 1],
+                                                                               ['e', 'a', 3], ['a', 'c', 3],
+                                                                               ['d', 'b', 6], ['a', 'd', 1],
+                                                                               ['b', 'd', 6], ['a', 'e', 3]]).to_dict()
+    assert Table.edges_from_table(df_table, no_link=0, directed=False).to_dict() == DataFrame([['c', 'a', 3],
+                                                                                               ['d', 'a', 1],
+                                                                                               ['e', 'a', 3],
+                                                                                               ['d', 'b', 6]]).to_dict()
+
+
 def gt3(x):
     if isinstance(x, Number):
         return x > 3

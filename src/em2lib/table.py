@@ -292,6 +292,31 @@ class Table:
             df_table.fillna(no_link, inplace=True)
         return df_table
 
+    @staticmethod
+    def edges_from_table(df_table: DataFrame, no_link=None, directed=True):
+        """
+        Converts a table into a DataFrame with list of edges. This method is the reverse of table_from_edges().
+
+        :param df_table: the table to be converted
+        :param no_link: the value indicating that there is no link between nodes
+        :param directed: specifies whether the graph denoted by df_table is directed or not.
+        :return: the edge DataFrame
+        """
+        # unstack initial table and remove rows which do not represent an edge (na or as specified by no_link parameter)
+        unstacked = df_table.unstack().dropna()
+        unstacked = unstacked[unstacked != no_link]
+        # prepare the edge DataFrame
+        df_edges = DataFrame(columns=[0, 1, 2])
+        # prepare a list to hold the observed (row, col) combinations as tuples
+        edge_list = []
+        # for each row in the unstacked DataFrame
+        for col, row in unstacked.index:
+            # add a new row if necessary (graph is directed or, if not, the current edge has not been created already)
+            if directed is True or (directed is False and (col, row) not in edge_list):
+                df_edges = df_edges.append(DataFrame([[row, col, unstacked[col, row]]]), ignore_index=True)
+                edge_list.append((row, col))
+        return df_edges
+
 
 class TableTransform:
     """
