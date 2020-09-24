@@ -3,7 +3,7 @@ from em2lib.seq_record import SeqRecordEM2
 from em2lib.seq_feature import SeqFeatureEM2
 from Bio.SeqFeature import FeatureLocation
 
-from em2lib.table import DataFrame
+from pandas import DataFrame
 
 from numpy import nan
 from numpy import sqrt

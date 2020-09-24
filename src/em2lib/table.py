@@ -13,309 +13,305 @@ import numpy
 import em2lib.utils as em2
 
 
-class Table:
+def get_common_keys(first, other, keys_first=None, keys_other=None):
     """
-    A class adding some utilities for easier DataFrame manipulation, comparison, etc.
+    Return the index keys in common between first DataFrame and other DataFrame
+
+    :param first: the first DataFrame object to compare
+    :param other: the other DataFrame object to compare
+    :param keys_first: a list of references to the columns defining indices in first DataFrame. None refers
+     to the original index
+    :param keys_other: a list of references to the columns defining indices in other DataFrame. None refers
+     to the original index
+    :return: DataFrame, the keys that are common between the two DataFrames.
     """
+    ego = first if keys_first is None else first.set_index(keys_first)
+    alter = other if keys_other is None else other.set_index(keys_other)
+    return DataFrame(data=[x for x in ego.index if x in alter.index], columns=ego.index.names)
 
-    @staticmethod
-    def get_common_keys(first, other, keys_first=None, keys_other=None):
-        """
-        Return the index keys in common between first DataFrame and other DataFrame
 
-        :param first: the first DataFrame object to compare
-        :param other: the other DataFrame object to compare
-        :param keys_first: a list of references to the columns defining indices in first DataFrame. None refers
-         to the original index
-        :param keys_other: a list of references to the columns defining indices in other DataFrame. None refers
-         to the original index
-        :return: DataFrame, the keys that are common between the two DataFrames.
-        """
-        ego = first if keys_first is None else first.set_index(keys_first)
-        alter = other if keys_other is None else other.set_index(keys_other)
-        return DataFrame(data=[x for x in ego.index if x in alter.index], columns=ego.index.names)
+def get_common_rows(first, other, keys_first=None, keys_other=None, lsuffix="", rsuffix="", drop=True):
+    """
+    Return rows with the same key values. Key columns from the other DataFrame object are droppped by default
+    but can be kept if drop is set to False.
 
-    @staticmethod
-    def get_common_rows(first, other, keys_first=None, keys_other=None, lsuffix="", rsuffix="", drop=True):
-        """
-        Return rows with the same key values. Key columns from the other DataFrame object are droppped by default
-        but can be kept if drop is set to False.
+    :param first: the first DataFrame object to compare
+    :param other: the other DataFrame object to compare
+    :param keys_first: a list of references to the columns defining keys in first DataFrame. None refers
+     to the original index
+    :param keys_other: a list of references to the columns defining keys in other DataFrame. None refers
+     to the original index
+    :param lsuffix: str,
+     Suffix to add to first column names in case of redundancy.
+    :param rsuffix: str,
+     Suffix to add to right column names in case of redundancy.
+    :param drop: True by default. Drop the other key columns in the resulting DataFrame.
+    :return: DataFrame with the same keys as first DataFrame, containing the rows that have the same key values
+     between the two DataFrames.
+    """
+    ego = first.copy() if keys_first is None else first.set_index(keys_first)
+    alter = other.copy() if keys_other is None else other.set_index(keys_other, drop=drop)
+    alter.index.names = ego.index.names
+    return ego.join(alter, how='inner', lsuffix=lsuffix, rsuffix=rsuffix).reset_index()
 
-        :param first: the first DataFrame object to compare
-        :param other: the other DataFrame object to compare
-        :param keys_first: a list of references to the columns defining keys in first DataFrame. None refers
-         to the original index
-        :param keys_other: a list of references to the columns defining keys in other DataFrame. None refers
-         to the original index
-        :param lsuffix: str,
-         Suffix to add to first column names in case of redundancy.
-        :param rsuffix: str,
-         Suffix to add to right column names in case of redundancy.
-        :param drop: True by default. Drop the other key columns in the resulting DataFrame.
-        :return: DataFrame with the same keys as first DataFrame, containing the rows that have the same key values
-         between the two DataFrames.
-        """
-        ego = first.copy() if keys_first is None else first.set_index(keys_first)
-        alter = other.copy() if keys_other is None else other.set_index(keys_other, drop=drop)
-        alter.index.names = ego.index.names
-        return ego.join(alter, how='inner', lsuffix=lsuffix, rsuffix=rsuffix).reset_index()
 
-    @staticmethod
-    def get_keys_not_in(first, other, keys_first=None, keys_other=None):
-        """
-        Return the keys in first DataFrame which are not in other DataFrame
+def get_keys_not_in(first, other, keys_first=None, keys_other=None):
+    """
+    Return the keys in first DataFrame which are not in other DataFrame
 
-        :param first: the first DataFrame object to compare
-        :param other: the other DataFrame object to compare
-        :param keys_first: a list of references to the columns defining keys in first DataFrame. None refers
-         to the original index
-        :param keys_other: a list of references to the columns defining keys in other DataFrame. None refers
-         to the original index
-        :return: DataFrame, the keys that are in first DataFrame but not in the other one.
-        """
-        ego = first.copy() if keys_first is None else first.set_index(keys_first, drop=False)
-        alter = other.copy() if keys_other is None else other.set_index(keys_other, drop=False)
-        return DataFrame(data=[x for x in ego.index if x not in alter.index], columns=ego.index.names)
+    :param first: the first DataFrame object to compare
+    :param other: the other DataFrame object to compare
+    :param keys_first: a list of references to the columns defining keys in first DataFrame. None refers
+     to the original index
+    :param keys_other: a list of references to the columns defining keys in other DataFrame. None refers
+     to the original index
+    :return: DataFrame, the keys that are in first DataFrame but not in the other one.
+    """
+    ego = first.copy() if keys_first is None else first.set_index(keys_first, drop=False)
+    alter = other.copy() if keys_other is None else other.set_index(keys_other, drop=False)
+    return DataFrame(data=[x for x in ego.index if x not in alter.index], columns=ego.index.names)
 
-    @staticmethod
-    def get_rows_not_in(first, other, keys_first=None, keys_other=None):
-        """
-        Return a DataFrame with rows with keys that are in first but not in other.
 
-        :param first: the first DataFrame object to compare
-        :param other: the other DataFrame object to compare
-        :param keys_first: a list of references to the columns defining keys in first DataFrame. None refers
-         to the original index
-        :param keys_other: a list of references to the columns defining keys in other DataFrame. None refers
-         to the original index
-        :return: DataFrame, the rows whose keys are in first DataFrame but not in the other one.
-        """
-        ego = first.copy() if keys_first is None else first.set_index(keys_first)
-        alter = other.copy() if keys_other is None else other.set_index(keys_other)
-        return DataFrame(data=ego.loc[[x for x in ego.index if x not in alter.index]]).reset_index()
+def get_rows_not_in(first, other, keys_first=None, keys_other=None):
+    """
+    Return a DataFrame with rows with keys that are in first but not in other.
 
-    @staticmethod
-    def statistics(table, groupby=None, columns=None, func=numpy.mean):
-        """
-        Returns a DataFrame containing the requested statistics on the specified columns in a table, optionally grouping
-        data according to one or several other columns.
+    :param first: the first DataFrame object to compare
+    :param other: the other DataFrame object to compare
+    :param keys_first: a list of references to the columns defining keys in first DataFrame. None refers
+     to the original index
+    :param keys_other: a list of references to the columns defining keys in other DataFrame. None refers
+     to the original index
+    :return: DataFrame, the rows whose keys are in first DataFrame but not in the other one.
+    """
+    ego = first.copy() if keys_first is None else first.set_index(keys_first)
+    alter = other.copy() if keys_other is None else other.set_index(keys_other)
+    return DataFrame(data=ego.loc[[x for x in ego.index if x not in alter.index]]).reset_index()
 
-        :param table: the table to compute the statistics
-        :param groupby: the column or list of columns for grouping data
-        :param columns: the column or list of columns to compute the statistics about
-        :param func: the statistical function or list thereof to be computed
-        :return: a DataFrame with the requested statistics
-        """
-        if not isinstance(func, list):
-            func = [func]
-        if columns is None:
-            columns = list(table.columns)
-        if not isinstance(columns, list):
-            columns = [columns]
-        if groupby is None:
-            return table[columns].agg(func)
-        stat_index = MultiIndex.from_product([[f.__name__ for f in func], columns])
-        stat_df = DataFrame(columns=stat_index)
-        for each_func in func:
-            stat_df[[x for x in stat_index if x[0] == each_func.__name__]] = \
-                table.groupby(groupby)[columns].apply(func=each_func)
-        return stat_df
 
-    @staticmethod
-    def implode(input_df, index=None):
-        """
-        Reverts action of DataFrame.explode method. This method can also be applied to DataFrames that are not the
-        result of an explode() call but in this case, applying back the explode() method may not yield the original
-        DataFrame.
+def statistics(table, groupby=None, columns=None, func=numpy.mean):
+    """
+    Returns a DataFrame containing the requested statistics on the specified columns in a table, optionally grouping
+    data according to one or several other columns.
 
-        :param input_df: the input DataFrame
-        :param index: the index column(s)
-        :return: the resulting DataFrame
-        """
-        # copy input DataFrame to avoid any modification of the original object
-        exp_df = input_df.copy()
-        # set the index if needed
-        if index is not None:
-            exp_df.set_index(index, drop=False, inplace=True)
-        # prepare the DataFrame for output
-        tmp_df = DataFrame(index=numpy.unique(exp_df.index), columns=exp_df.columns)
-        # gather elements of each column in a list for each unique value in index
-        for col in exp_df.columns:
-            unique_lists = {}
-            for i in exp_df.index:
-                unique_lists[i] = []
-                # if cell contains only one tuple element, then place it in a list to keep it as a single element
-                cell = [exp_df.loc[i, col]] if isinstance(exp_df.loc[i, col], tuple) else exp_df.loc[i, col]
-                # get unique elements in cell for the current index level
-                for cell_element in cell:
-                    if cell_element not in unique_lists[i]:
-                        unique_lists[i].append(cell_element)
-            # update the current column with the lists of unique elements in current cell
-            tmp_df[col] = Series(unique_lists)
-        # replace list with only one element by the element itself
-        tmp_df = TableTransform(tmp_df).cond_transform(cond=lambda x: len(x) == 1, iftrue=lambda x: x[0]).result()
-        # if a column index has been specified then reset the index to avoid duplication of data...
-        if index is not None:
-            return tmp_df.reset_index(drop=True)
-        # ...otherwise, keep the index
-        return tmp_df
+    :param table: the table to compute the statistics
+    :param groupby: the column or list of columns for grouping data
+    :param columns: the column or list of columns to compute the statistics about
+    :param func: the statistical function or list thereof to be computed
+    :return: a DataFrame with the requested statistics
+    """
+    if not isinstance(func, list):
+        func = [func]
+    if columns is None:
+        columns = list(table.columns)
+    if not isinstance(columns, list):
+        columns = [columns]
+    if groupby is None:
+        return table[columns].agg(func)
+    stat_index = MultiIndex.from_product([[f.__name__ for f in func], columns])
+    stat_df = DataFrame(columns=stat_index)
+    for each_func in func:
+        stat_df[[x for x in stat_index if x[0] == each_func.__name__]] = \
+            table.groupby(groupby)[columns].apply(func=each_func)
+    return stat_df
 
-    @staticmethod
-    def collapse(input_df, groupby=None, columns=None, name=None):
-        """
-        Collapses a DataFrame into a single column containing lists of tuples representing all the values in the
-        specified columns with the same index as defined by groupby.
-        Note: results may be inconsistent if input DataFrame contains elements that are lists or tuples.
 
-        :param input_df: the input DataFrame
-        :param groupby: the column(s) defining the index for collapsing values
-        :param columns: the columns that will be collapsed
-        :param name: the name for the resulting column
-        :return: a single-column collapsed DataFrame
-        """
-        # copy input DataFrame to avoid any modification of the original object
-        exp_df = input_df.copy()
-        # set the index if needed
-        if groupby is not None:
-            exp_df.set_index(groupby, drop=True, inplace=True)
-        # if no column is specified, then use all of them except the index
-        if columns is None:
-            columns = list(exp_df.columns) if len(exp_df.columns) > 1 else exp_df.columns[0]
-        # prepare the DataFrame for output
-        if name is None:
-            name = tuple(columns) if isinstance(columns, list) else columns
-        tmp_df = DataFrame(columns=[name])
-        # gather all elements of rows in lists of tuples, a tuple, or as a single element
-        row_lists = {}
+def implode(input_df, index=None):
+    """
+    Reverts action of DataFrame.explode method. This method can also be applied to DataFrames that are not the
+    result of an explode() call but in this case, applying back the explode() method may not yield the original
+    DataFrame.
+
+    :param input_df: the input DataFrame
+    :param index: the index column(s)
+    :return: the resulting DataFrame
+    """
+    # copy input DataFrame to avoid any modification of the original object
+    exp_df = input_df.copy()
+    # set the index if needed
+    if index is not None:
+        exp_df.set_index(index, drop=False, inplace=True)
+    # prepare the DataFrame for output
+    tmp_df = DataFrame(index=numpy.unique(exp_df.index), columns=exp_df.columns)
+    # gather elements of each column in a list for each unique value in index
+    for col in exp_df.columns:
+        unique_lists = {}
         for i in exp_df.index:
-            # there are several values in multiple columns for the same index value, get a list of tuples
-            if isinstance(exp_df.loc[i, columns], DataFrame):
-                row_lists[i] = [tuple(row[1]) for row in exp_df.loc[i, columns].iterrows()]
-            # there are several values in one column (list of values) or one value in several columns (tuple of values)
-            elif isinstance(exp_df.loc[i, columns], Series):
-                row_lists[i] = [row[1] for row in exp_df.loc[i, columns].items()]
-                # there is one value in several columns, get a tuple of values
-                if isinstance(columns, list):
-                    row_lists[i] = tuple(row_lists[i])
-            # there is one value in one column, get a single value
-            else:
-                row_lists[i] = [exp_df.loc[i, columns]] if isinstance(exp_df.loc[i, columns], list) \
-                    else exp_df.loc[i, columns]
-        tmp_df[name] = Series(row_lists)
-        # replace list with only one element by the element itself and return the resulting DataFrame with reset index
-        tmp_df[name] = TableTransform(DataFrame(tmp_df[name])).cond_transform(cond=lambda x: len(x) == 1,
-                                                                              iftrue=lambda x: x[0]).result()
-        tmp_df.index.rename(groupby, inplace=True)
-        return tmp_df
+            unique_lists[i] = []
+            # if cell contains only one tuple element, then place it in a list to keep it as a single element
+            cell = [exp_df.loc[i, col]] if isinstance(exp_df.loc[i, col], tuple) else exp_df.loc[i, col]
+            # get unique elements in cell for the current index level
+            for cell_element in cell:
+                if cell_element not in unique_lists[i]:
+                    unique_lists[i].append(cell_element)
+        # update the current column with the lists of unique elements in current cell
+        tmp_df[col] = Series(unique_lists)
+    # replace list with only one element by the element itself
+    tmp_df = TableTransform(tmp_df).cond_transform(cond=lambda x: len(x) == 1, iftrue=lambda x: x[0]).result()
+    # if a column index has been specified then reset the index to avoid duplication of data...
+    if index is not None:
+        return tmp_df.reset_index(drop=True)
+    # ...otherwise, keep the index
+    return tmp_df
 
-    @staticmethod
-    def expand(input_df, columns=None):
-        """
-        Expands a collapsed table. Exact reverse of Table.collapse() method.
 
-        :param input_df: the collapsed table to expand
-        :param columns: names of the columns, if None, will attempt to deduce them from the collapsed column name
-         expected to be a tuple of the original names as produced by Table.collapse(). Note that if less column names
-         are specified than the actual number of columns to expand then extra column names will be added automatically.
-        :return: the expanded table
-        """
+def collapse(input_df, groupby=None, columns=None, name=None):
+    """
+    Collapses a DataFrame into a single column containing lists of tuples representing all the values in the
+    specified columns with the same index as defined by groupby.
+    Note: results may be inconsistent if input DataFrame contains elements that are lists or tuples.
 
-        rows = []
-        # get the list of elements for each value of the index
-        for i in input_df.index:
-            element_list = input_df.loc[i].to_list()
-            # if the list of elements is a list of list of tuples, then keep only the list of tuples
-            if len(numpy.array(element_list).shape) > 2:
-                element_list = element_list[0]
-            # append each list of elements and index values to the list of rows
-            for element in element_list:
-                rows.append(list(i) + list(element))
-        # if no column names are specified then try to determine a list of names from the collapsed column name
-        if columns is None:
-            columns = list(input_df.columns)[0] if isinstance(input_df.columns[0], tuple) else list(input_df.columns)
-        # if only a single name was passed then place it into a list
-        elif not isinstance(columns, list):
-            columns = [columns]
-        # if there are less specified columns than data columns then add extra columns
-        if len(rows[0]) > len(input_df.index.names + columns):
-            columns = columns + ['col_' + str(x) for x in range(len(rows[0]) - len(input_df.index.names + columns))]
-        # return the DataFrame constructed from the list of rows
-        return DataFrame(rows, columns=input_df.index.names + columns)
-
-    @staticmethod
-    def table_from_edges(df_edges: DataFrame, graph=True, directed=True, link=None, no_link=None):
-        """
-        Turns a DataFrame representing edges in two or three columns into a table representing edges between nodes in
-         rows and columns. The first two columns of the input DataFrame represent the linked nodes. The optional third
-         column contains a value (edge weight, label, etc.).
-         A call to table_from_edges(df_edges, no_link=0, link=1, graph=False) is basically equivalent to a call to
-         pandas.crosstab(df_edges[0], df_edges[1]).
-        A call to table_from_edges(df_edges, graph=False) is basically equivalent to a call to df_edges.pivot(0,1,2).
-
-        :param df_edges: the edge DataFrame,
-        :param graph: if True, the edge list represents a graph and the resulting table will be a square: all nodes
-         in the first two columns of the edge DataFrame are placed in both the index and the columns of the graph table.
-         If False, the edge list represents a relation between two sets. The first column of the edge DataFrame will
-         define rows (first set) and the second column will define the columns (second set).
-        :param directed: specifies if the graph is directed or not. If True, the resulting table will be symmetrical.
-         This parameter has no effect if graph is False
-        :param link: the value to associate the specified edges with. This value will replace the original value in
-         df_edges DataFrame or specify one for two-column edge DataFrames. This value is needed for two-column edge
-         definition.
-        :param no_link: the value to associate the unspecified edges with. NaN will be used if this parameter is not
-         specified.
-        :return: a table DataFrame
-        """
-        if graph:
-            # create a square table with all nodes in df_edges
-            nodes = (df_edges[0].append(df_edges[1])).unique()
-            df_table = DataFrame(index=nodes, columns=nodes)
+    :param input_df: the input DataFrame
+    :param groupby: the column(s) defining the index for collapsing values
+    :param columns: the columns that will be collapsed
+    :param name: the name for the resulting column
+    :return: a single-column collapsed DataFrame
+    """
+    # copy input DataFrame to avoid any modification of the original object
+    exp_df = input_df.copy()
+    # set the index if needed
+    if groupby is not None:
+        exp_df.set_index(groupby, drop=True, inplace=True)
+    # if no column is specified, then use all of them except the index
+    if columns is None:
+        columns = list(exp_df.columns) if len(exp_df.columns) > 1 else exp_df.columns[0]
+    # prepare the DataFrame for output
+    if name is None:
+        name = tuple(columns) if isinstance(columns, list) else columns
+    tmp_df = DataFrame(columns=[name])
+    # gather all elements of rows in lists of tuples, a tuple, or as a single element
+    row_lists = {}
+    for i in exp_df.index:
+        # there are several values in multiple columns for the same index value, get a list of tuples
+        if isinstance(exp_df.loc[i, columns], DataFrame):
+            row_lists[i] = [tuple(row[1]) for row in exp_df.loc[i, columns].iterrows()]
+        # there are several values in one column (list of values) or one value in several columns (tuple of values)
+        elif isinstance(exp_df.loc[i, columns], Series):
+            row_lists[i] = [row[1] for row in exp_df.loc[i, columns].items()]
+            # there is one value in several columns, get a tuple of values
+            if isinstance(columns, list):
+                row_lists[i] = tuple(row_lists[i])
+        # there is one value in one column, get a single value
         else:
-            # create an asymmetrical table with row nodes and column nodes in df_edges
-            df_table = DataFrame(index=df_edges[0].unique(), columns=df_edges[1].unique())
-        # populate the table
-        for edge in df_edges.iterrows():
-            if link is not None:
-                # set the specified edge with the value specified in link parameter
-                df_table.loc[edge[1].loc[0], edge[1].loc[1]] = link
-                if graph is True and directed is False:
-                    # in the case of a directed graph, set also the symmetrical edge
-                    df_table.loc[edge[1].loc[1], edge[1].loc[0]] = link
-            else:
-                # set the specified edge with the value specified in the third column of df_edges
-                df_table.loc[edge[1].loc[0], edge[1].loc[1]] = edge[1].loc[2]
-                if graph is True and directed is False:
-                    # in the case of a directed graph, set also the symmetrical edge
-                    df_table.loc[edge[1].loc[1], edge[1].loc[0]] = edge[1].loc[2]
-        if no_link is not None:
-            # replace NaN (unspecified edges) with the value specified in no_link parameter
-            df_table.fillna(no_link, inplace=True)
-        return df_table
+            row_lists[i] = [exp_df.loc[i, columns]] if isinstance(exp_df.loc[i, columns], list) \
+                else exp_df.loc[i, columns]
+    tmp_df[name] = Series(row_lists)
+    # replace list with only one element by the element itself and return the resulting DataFrame with reset index
+    tmp_df[name] = TableTransform(DataFrame(tmp_df[name])).cond_transform(cond=lambda x: len(x) == 1,
+                                                                          iftrue=lambda x: x[0]).result()
+    tmp_df.index.rename(groupby, inplace=True)
+    return tmp_df
 
-    @staticmethod
-    def edges_from_table(df_table: DataFrame, no_link=None, directed=True):
-        """
-        Converts a table into a DataFrame with list of edges. This method is the reverse of table_from_edges().
 
-        :param df_table: the table to be converted
-        :param no_link: the value indicating that there is no link between nodes
-        :param directed: specifies whether the graph denoted by df_table is directed or not.
-        :return: the edge DataFrame
-        """
-        # unstack initial table and remove rows which do not represent an edge (na or as specified by no_link parameter)
-        unstacked = df_table.unstack().dropna()
-        unstacked = unstacked[unstacked != no_link]
-        # prepare the edge DataFrame
-        df_edges = DataFrame(columns=[0, 1, 2])
-        # prepare a list to hold the observed (row, col) combinations as tuples
-        edge_list = []
-        # for each row in the unstacked DataFrame
-        for col, row in unstacked.index:
-            # add a new row if necessary (graph is directed or, if not, the current edge has not been created already)
-            if directed is True or (directed is False and (col, row) not in edge_list):
-                df_edges = df_edges.append(DataFrame([[row, col, unstacked[col, row]]]), ignore_index=True)
-                edge_list.append((row, col))
-        return df_edges
+def expand(input_df, columns=None):
+    """
+    Expands a collapsed table. Exact reverse of collapse() function.
+
+    :param input_df: the collapsed table to expand
+    :param columns: names of the columns, if None, will attempt to deduce them from the collapsed column name
+     expected to be a tuple of the original names as produced by collapse(). Note that if less column names
+     are specified than the actual number of columns to expand then extra column names will be added automatically.
+    :return: the expanded table
+    """
+
+    rows = []
+    # get the list of elements for each value of the index
+    for i in input_df.index:
+        element_list = input_df.loc[i].to_list()
+        # if the list of elements is a list of list of tuples, then keep only the list of tuples
+        if len(numpy.array(element_list).shape) > 2:
+            element_list = element_list[0]
+        # append each list of elements and index values to the list of rows
+        for element in element_list:
+            rows.append(list(i) + list(element))
+    # if no column names are specified then try to determine a list of names from the collapsed column name
+    if columns is None:
+        columns = list(input_df.columns)[0] if isinstance(input_df.columns[0], tuple) else list(input_df.columns)
+    # if only a single name was passed then place it into a list
+    elif not isinstance(columns, list):
+        columns = [columns]
+    # if there are less specified columns than data columns then add extra columns
+    if len(rows[0]) > len(input_df.index.names + columns):
+        columns = columns + ['col_' + str(x) for x in range(len(rows[0]) - len(input_df.index.names + columns))]
+    # return the DataFrame constructed from the list of rows
+    return DataFrame(rows, columns=input_df.index.names + columns)
+
+
+def table_from_edges(df_edges: DataFrame, graph=True, directed=True, link=None, no_link=None):
+    """
+    Turns a DataFrame representing edges in two or three columns into a table representing edges between nodes in
+    rows and columns. The first two columns of the input DataFrame represent the linked nodes. The optional third
+    column contains a value (edge weight, label, etc.).
+
+    A call to table_from_edges(df_edges, no_link=0, link=1, graph=False) is basically equivalent to a call to
+    pandas.crosstab(df_edges[0], df_edges[1]).
+
+    A call to table_from_edges(df_edges, graph=False) is basically equivalent to a call to df_edges.pivot(0,1,2).
+
+    :param df_edges: the edge DataFrame,
+    :param graph: if True, the edge list represents a graph and the resulting table will be a square: all nodes
+     in the first two columns of the edge DataFrame are placed in both the index and the columns of the graph table.
+     If False, the edge list represents a relation between two sets. The first column of the edge DataFrame will
+     define rows (first set) and the second column will define the columns (second set).
+    :param directed: specifies if the graph is directed or not. If True, the resulting table will be symmetrical.
+     This parameter has no effect if graph is False
+    :param link: the value to associate the specified edges with. This value will replace the original value in
+     df_edges DataFrame or specify one for two-column edge DataFrames. This value is needed for two-column edge
+     definition.
+    :param no_link: the value to associate the unspecified edges with. NaN will be used if this parameter is not
+     specified.
+    :return: a table DataFrame
+    """
+    if graph:
+        # create a square table with all nodes in df_edges
+        nodes = (df_edges[0].append(df_edges[1])).unique()
+        df_table = DataFrame(index=nodes, columns=nodes)
+    else:
+        # create an asymmetrical table with row nodes and column nodes in df_edges
+        df_table = DataFrame(index=df_edges[0].unique(), columns=df_edges[1].unique())
+    # populate the table
+    for edge in df_edges.iterrows():
+        if link is not None:
+            # set the specified edge with the value specified in link parameter
+            df_table.loc[edge[1].loc[0], edge[1].loc[1]] = link
+            if graph is True and directed is False:
+                # in the case of a directed graph, set also the symmetrical edge
+                df_table.loc[edge[1].loc[1], edge[1].loc[0]] = link
+        else:
+            # set the specified edge with the value specified in the third column of df_edges
+            df_table.loc[edge[1].loc[0], edge[1].loc[1]] = edge[1].loc[2]
+            if graph is True and directed is False:
+                # in the case of a directed graph, set also the symmetrical edge
+                df_table.loc[edge[1].loc[1], edge[1].loc[0]] = edge[1].loc[2]
+    if no_link is not None:
+        # replace NaN (unspecified edges) with the value specified in no_link parameter
+        df_table.fillna(no_link, inplace=True)
+    return df_table
+
+
+def edges_from_table(df_table: DataFrame, no_link=None, directed=True):
+    """
+    Converts a table into a DataFrame with list of edges. This method is the reverse of table_from_edges().
+
+    :param df_table: the table to be converted
+    :param no_link: the value indicating that there is no link between nodes
+    :param directed: specifies whether the graph denoted by df_table is directed or not.
+    :return: the edge DataFrame
+    """
+    # unstack initial table and remove rows which do not represent an edge (na or as specified by no_link parameter)
+    unstacked = df_table.unstack().dropna()
+    unstacked = unstacked[unstacked != no_link]
+    # prepare the edge DataFrame
+    df_edges = DataFrame(columns=[0, 1, 2])
+    # prepare a list to hold the observed (row, col) combinations as tuples
+    edge_list = []
+    # for each row in the unstacked DataFrame
+    for col, row in unstacked.index:
+        # add a new row if necessary (graph is directed or, if not, the current edge has not been created already)
+        if directed is True or (directed is False and (col, row) not in edge_list):
+            df_edges = df_edges.append(DataFrame([[row, col, unstacked[col, row]]]), ignore_index=True)
+            edge_list.append((row, col))
+    return df_edges
 
 
 class TableTransform:
