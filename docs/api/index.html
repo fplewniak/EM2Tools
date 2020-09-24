@@ -1209,13 +1209,9 @@ length as the dataframe, repeating references as needed to get the right number.
 <div class="section" id="module-em2lib.table">
 <span id="the-table-module"></span><h2>The “table” module<a class="headerlink" href="#module-em2lib.table" title="Permalink to this headline">¶</a></h2>
 <p>Some utilities for Table manipulation, comparison, etc. using pandas.DataFrame module.</p>
-<dl class="py class">
-<dt id="em2lib.table.Table">
-<em class="property">class </em><code class="sig-prename descclassname">em2lib.table.</code><code class="sig-name descname">Table</code><a class="headerlink" href="#em2lib.table.Table" title="Permalink to this definition">¶</a></dt>
-<dd><p>A class adding some utilities for easier DataFrame manipulation, comparison, etc.</p>
-<dl class="py method">
-<dt id="em2lib.table.Table.get_common_keys">
-<em class="property">static </em><code class="sig-name descname">get_common_keys</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">first</span></em>, <em class="sig-param"><span class="n">other</span></em>, <em class="sig-param"><span class="n">keys_first</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">keys_other</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#em2lib.table.Table.get_common_keys" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt id="em2lib.table.get_common_keys">
+<code class="sig-prename descclassname">em2lib.table.</code><code class="sig-name descname">get_common_keys</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">first</span></em>, <em class="sig-param"><span class="n">other</span></em>, <em class="sig-param"><span class="n">keys_first</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">keys_other</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#em2lib.table.get_common_keys" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the index keys in common between first DataFrame and other DataFrame</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1234,9 +1230,9 @@ to the original index</p></li>
 </dl>
 </dd></dl>
 
-<dl class="py method">
-<dt id="em2lib.table.Table.get_common_rows">
-<em class="property">static </em><code class="sig-name descname">get_common_rows</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">first</span></em>, <em class="sig-param"><span class="n">other</span></em>, <em class="sig-param"><span class="n">keys_first</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">keys_other</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">lsuffix</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">rsuffix</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">drop</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#em2lib.table.Table.get_common_rows" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt id="em2lib.table.get_common_rows">
+<code class="sig-prename descclassname">em2lib.table.</code><code class="sig-name descname">get_common_rows</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">first</span></em>, <em class="sig-param"><span class="n">other</span></em>, <em class="sig-param"><span class="n">keys_first</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">keys_other</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">lsuffix</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">rsuffix</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">drop</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#em2lib.table.get_common_rows" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return rows with the same key values. Key columns from the other DataFrame object are droppped by default
 but can be kept if drop is set to False.</p>
 <dl class="field-list simple">
@@ -1262,9 +1258,9 @@ between the two DataFrames.</p>
 </dl>
 </dd></dl>
 
-<dl class="py method">
-<dt id="em2lib.table.Table.get_keys_not_in">
-<em class="property">static </em><code class="sig-name descname">get_keys_not_in</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">first</span></em>, <em class="sig-param"><span class="n">other</span></em>, <em class="sig-param"><span class="n">keys_first</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">keys_other</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#em2lib.table.Table.get_keys_not_in" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt id="em2lib.table.get_keys_not_in">
+<code class="sig-prename descclassname">em2lib.table.</code><code class="sig-name descname">get_keys_not_in</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">first</span></em>, <em class="sig-param"><span class="n">other</span></em>, <em class="sig-param"><span class="n">keys_first</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">keys_other</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#em2lib.table.get_keys_not_in" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the keys in first DataFrame which are not in other DataFrame</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1283,9 +1279,9 @@ to the original index</p></li>
 </dl>
 </dd></dl>
 
-<dl class="py method">
-<dt id="em2lib.table.Table.get_rows_not_in">
-<em class="property">static </em><code class="sig-name descname">get_rows_not_in</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">first</span></em>, <em class="sig-param"><span class="n">other</span></em>, <em class="sig-param"><span class="n">keys_first</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">keys_other</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#em2lib.table.Table.get_rows_not_in" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt id="em2lib.table.get_rows_not_in">
+<code class="sig-prename descclassname">em2lib.table.</code><code class="sig-name descname">get_rows_not_in</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">first</span></em>, <em class="sig-param"><span class="n">other</span></em>, <em class="sig-param"><span class="n">keys_first</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">keys_other</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#em2lib.table.get_rows_not_in" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a DataFrame with rows with keys that are in first but not in other.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1304,9 +1300,9 @@ to the original index</p></li>
 </dl>
 </dd></dl>
 
-<dl class="py method">
-<dt id="em2lib.table.Table.statistics">
-<em class="property">static </em><code class="sig-name descname">statistics</code><span class="sig-paren">(</span><em class="sig-param">table</em>, <em class="sig-param">groupby=None</em>, <em class="sig-param">columns=None</em>, <em class="sig-param">func=&lt;function mean&gt;</em><span class="sig-paren">)</span><a class="headerlink" href="#em2lib.table.Table.statistics" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt id="em2lib.table.statistics">
+<code class="sig-prename descclassname">em2lib.table.</code><code class="sig-name descname">statistics</code><span class="sig-paren">(</span><em class="sig-param">table</em>, <em class="sig-param">groupby=None</em>, <em class="sig-param">columns=None</em>, <em class="sig-param">func=&lt;function mean&gt;</em><span class="sig-paren">)</span><a class="headerlink" href="#em2lib.table.statistics" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a DataFrame containing the requested statistics on the specified columns in a table, optionally grouping
 data according to one or several other columns.</p>
 <dl class="field-list simple">
@@ -1324,9 +1320,9 @@ data according to one or several other columns.</p>
 </dl>
 </dd></dl>
 
-<dl class="py method">
-<dt id="em2lib.table.Table.implode">
-<em class="property">static </em><code class="sig-name descname">implode</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">input_df</span></em>, <em class="sig-param"><span class="n">index</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#em2lib.table.Table.implode" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt id="em2lib.table.implode">
+<code class="sig-prename descclassname">em2lib.table.</code><code class="sig-name descname">implode</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">input_df</span></em>, <em class="sig-param"><span class="n">index</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#em2lib.table.implode" title="Permalink to this definition">¶</a></dt>
 <dd><p>Reverts action of DataFrame.explode method. This method can also be applied to DataFrames that are not the
 result of an explode() call but in this case, applying back the explode() method may not yield the original
 DataFrame.</p>
@@ -1343,9 +1339,9 @@ DataFrame.</p>
 </dl>
 </dd></dl>
 
-<dl class="py method">
-<dt id="em2lib.table.Table.collapse">
-<em class="property">static </em><code class="sig-name descname">collapse</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">input_df</span></em>, <em class="sig-param"><span class="n">groupby</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">columns</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#em2lib.table.Table.collapse" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt id="em2lib.table.collapse">
+<code class="sig-prename descclassname">em2lib.table.</code><code class="sig-name descname">collapse</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">input_df</span></em>, <em class="sig-param"><span class="n">groupby</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">columns</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#em2lib.table.collapse" title="Permalink to this definition">¶</a></dt>
 <dd><p>Collapses a DataFrame into a single column containing lists of tuples representing all the values in the
 specified columns with the same index as defined by groupby.
 Note: results may be inconsistent if input DataFrame contains elements that are lists or tuples.</p>
@@ -1364,16 +1360,16 @@ Note: results may be inconsistent if input DataFrame contains elements that are 
 </dl>
 </dd></dl>
 
-<dl class="py method">
-<dt id="em2lib.table.Table.expand">
-<em class="property">static </em><code class="sig-name descname">expand</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">input_df</span></em>, <em class="sig-param"><span class="n">columns</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#em2lib.table.Table.expand" title="Permalink to this definition">¶</a></dt>
-<dd><p>Expands a collapsed table. Exact reverse of Table.collapse() method.</p>
+<dl class="py function">
+<dt id="em2lib.table.expand">
+<code class="sig-prename descclassname">em2lib.table.</code><code class="sig-name descname">expand</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">input_df</span></em>, <em class="sig-param"><span class="n">columns</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#em2lib.table.expand" title="Permalink to this definition">¶</a></dt>
+<dd><p>Expands a collapsed table. Exact reverse of collapse() function.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>input_df</strong> – the collapsed table to expand</p></li>
 <li><p><strong>columns</strong> – names of the columns, if None, will attempt to deduce them from the collapsed column name
-expected to be a tuple of the original names as produced by Table.collapse(). Note that if less column names
+expected to be a tuple of the original names as produced by collapse(). Note that if less column names
 are specified than the actual number of columns to expand then extra column names will be added automatically.</p></li>
 </ul>
 </dd>
@@ -1383,6 +1379,54 @@ are specified than the actual number of columns to expand then extra column name
 </dl>
 </dd></dl>
 
+<dl class="py function">
+<dt id="em2lib.table.table_from_edges">
+<code class="sig-prename descclassname">em2lib.table.</code><code class="sig-name descname">table_from_edges</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">df_edges</span><span class="p">:</span> <span class="n">pandas.core.frame.DataFrame</span></em>, <em class="sig-param"><span class="n">graph</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">directed</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">link</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">no_link</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#em2lib.table.table_from_edges" title="Permalink to this definition">¶</a></dt>
+<dd><p>Turns a DataFrame representing edges in two or three columns into a table representing edges between nodes in
+rows and columns. The first two columns of the input DataFrame represent the linked nodes. The optional third
+column contains a value (edge weight, label, etc.).</p>
+<p>A call to table_from_edges(df_edges, no_link=0, link=1, graph=False) is basically equivalent to a call to
+pandas.crosstab(df_edges[0], df_edges[1]).</p>
+<p>A call to table_from_edges(df_edges, graph=False) is basically equivalent to a call to df_edges.pivot(0,1,2).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df_edges</strong> – the edge DataFrame,</p></li>
+<li><p><strong>graph</strong> – if True, the edge list represents a graph and the resulting table will be a square: all nodes
+in the first two columns of the edge DataFrame are placed in both the index and the columns of the graph table.
+If False, the edge list represents a relation between two sets. The first column of the edge DataFrame will
+define rows (first set) and the second column will define the columns (second set).</p></li>
+<li><p><strong>directed</strong> – specifies if the graph is directed or not. If True, the resulting table will be symmetrical.
+This parameter has no effect if graph is False</p></li>
+<li><p><strong>link</strong> – the value to associate the specified edges with. This value will replace the original value in
+df_edges DataFrame or specify one for two-column edge DataFrames. This value is needed for two-column edge
+definition.</p></li>
+<li><p><strong>no_link</strong> – the value to associate the unspecified edges with. NaN will be used if this parameter is not
+specified.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>a table DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="em2lib.table.edges_from_table">
+<code class="sig-prename descclassname">em2lib.table.</code><code class="sig-name descname">edges_from_table</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">df_table</span><span class="p">:</span> <span class="n">pandas.core.frame.DataFrame</span></em>, <em class="sig-param"><span class="n">no_link</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">directed</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#em2lib.table.edges_from_table" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts a table into a DataFrame with list of edges. This method is the reverse of table_from_edges().</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df_table</strong> – the table to be converted</p></li>
+<li><p><strong>no_link</strong> – the value indicating that there is no link between nodes</p></li>
+<li><p><strong>directed</strong> – specifies whether the graph denoted by df_table is directed or not.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the edge DataFrame</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py class">
@@ -1393,7 +1437,7 @@ can be chained since all transformation methods return self object.</p>
 <dl class="py method">
 <dt id="em2lib.table.TableTransform.result">
 <code class="sig-name descname">result</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#em2lib.table.TableTransform.result" title="Permalink to this definition">¶</a></dt>
-<dd><p>Getter method to retrieve the DataFrame resulting from the transformations</p>
+<dd><p>Getter method to retrieve the DataFrame resulting from the transformation</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>the transformed DataFrame</p>
@@ -1404,9 +1448,9 @@ can be chained since all transformation methods return self object.</p>
 <dl class="py method">
 <dt id="em2lib.table.TableTransform.update">
 <code class="sig-name descname">update</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#em2lib.table.TableTransform.update" title="Permalink to this definition">¶</a></dt>
-<dd><p>Update orginal DataFrame with the current working copy. This enables the application of conditions to previously
-modified values. This action cannot be undone, so it is recommended to use it after all modifications based on
-original data have been performed.</p>
+<dd><p>Update original DataFrame with the current working copy. This enables the application of conditions to
+previously modified values. This action cannot be undone, so it is recommended to use it after all
+modifications based on original data have been performed.</p>
 </dd></dl>
 
 <dl class="py method">
