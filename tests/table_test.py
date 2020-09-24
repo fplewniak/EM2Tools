@@ -64,6 +64,8 @@ def test_table_statistics(table2, table4):
                            ('mean', 'D'): {('a', 'b'): 8.0, ('a', 'x'): 2.0, ('y', 'w'): 3.0, ('z', 'a'): 6.0}}))
     assert Table.statistics(table2, columns=['C', 'D'], func=[sum, np.mean]) \
         .equals(DataFrame({'C': {'sum': 11.0, 'mean': 2.75}, 'D': {'sum': 19.0, 'mean': 4.75}}))
+    assert Table.statistics(table2[['C', 'D']], func=[sum, np.mean]) \
+        .equals(DataFrame({'C': {'sum': 11.0, 'mean': 2.75}, 'D': {'sum': 19.0, 'mean': 4.75}}))
 
 
 def test_implode(table_org, table_expB, table_expBC, table_expBC_noidx,

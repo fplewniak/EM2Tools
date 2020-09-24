@@ -109,7 +109,7 @@ class Table:
         if not isinstance(func, list):
             func = [func]
         if columns is None:
-            columns = table.columns
+            columns = list(table.columns)
         if not isinstance(columns, list):
             columns = [columns]
         if groupby is None:
