@@ -118,8 +118,8 @@ def statistics(table, groupby=None, columns=None, func=numpy.mean):
 
 def implode(input_df, index=None):
     """
-    Reverts action of DataFrame.explode method. This method can also be applied to DataFrames that are not the
-    result of an explode() call but in this case, applying back the explode() method may not yield the original
+    Reverts action of DataFrame.explode method. This function can also be applied to DataFrames that are not the
+    result of an explode() call but in this case, applying back the explode() method may not return the original
     DataFrame.
 
     :param input_df: the input DataFrame
@@ -291,7 +291,7 @@ def table_from_edges(df_edges: DataFrame, graph=True, directed=True, link=None, 
 
 def edges_from_table(df_table: DataFrame, no_link=None, directed=True):
     """
-    Converts a table into a DataFrame with list of edges. This method is the reverse of table_from_edges().
+    Converts a table into a DataFrame with list of edges. This function is the reverse of table_from_edges().
 
     :param df_table: the table to be converted
     :param no_link: the value indicating that there is no link between nodes
