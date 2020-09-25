@@ -5,7 +5,7 @@ with open('README.rst', 'r') as fh:
 
 setup(
     name='EM2Tools',
-    version='0.2.0',
+    version='0.3.0',
     packages=find_packages('src'),
     package_dir={'': 'src'},
     url='https://github.com/fplewniak/EM2Tools',
