@@ -7,6 +7,8 @@ Some utilities for NGS data manipulation built on pysam and deeptools.
 import multiprocessing
 import pysam
 import numpy
+import gffpandas.gffpandas as gffpd
+from pandas import DataFrame
 
 
 def mean_quality(ref, start, end, bam):
@@ -170,3 +172,70 @@ class MappingProfile:
             elif max(profiles[ref]) == max_value:
                 ref_max.append(ref)
         return max_value, ref_max
+
+
+class MappingStatistics:
+    """
+    A class to compute a variety of read mapping statistics from a bam file and optionally from annotations in a GFF
+    file.
+    """
+    def __init__(self, bamfile, gff=None, threads=multiprocessing.cpu_count()):
+        self.bam = pysam.AlignmentFile(bamfile, threads=threads)
+        self.mapping_profile = MappingProfile(bamfile=bamfile, threads=threads)
+        self.gff = gffpd.read_gff3(gff) if gff is not None else None
+
+    def get_statistics(self, profile=mean_quality, references=None, start=0, end=None, ftype=None):
+        """
+        Return mapping statistics according to the profile function computed on the specified reference sequences,
+        positions and type of features. If no GFF file has been passed to the current instance, then complete sequences
+        are used. If a GFF file has been defined, then the positions apply relative to feature locations. This may be
+        useful to get statistics for instance about the first 10 bases of every feature, etc.
+
+        :param profile: the function responsible for computing profile values, should take a reference name, start and
+         end positions, and the bam file handler, must return a profile
+        :param references: a reference name or a list thereof
+        :param start: start position for each reference sequence or feature. If a GFF file is passed, then this value
+         is relative to the start of each feature.
+        :param end: end position for each reference or feature, if None, this is equivalent to the end of the reference
+         sequence or feature. If a GFF file is passed, then this value is relative to the start of each feature.
+        :param ftype: the type of features to compute the statistics of.
+        :return:
+        """
+        # ensure type is None or a list (required by filter_feature_of_type(type))
+        if ftype is not None and not isinstance(ftype, list):
+            ftype = [ftype]
+        # ensure references is None or a list
+        if references is not None and not isinstance(references, list):
+            references = [references]
+        if self.gff is not None:
+            # if no GFF file was registered, then take references sequences
+            gff_df = self.gff.attributes_to_columns() if ftype is None \
+                else self.gff.filter_feature_of_type(ftype).attributes_to_columns()
+            if references is not None:
+                gff_df = gff_df.loc[gff_df['seq_id'].isin(references)]
+        else:
+            # else, if a GFF file was registered, then take features as specified by ftype
+            gff_df = DataFrame([{'seq_id': ref, 'start': 1, 'end': self.bam.get_reference_length(ref),'locus_tag': ref}
+                                for ref in self.bam.references if references is None or ref in references])
+        # prepare the DataFrame to hold the statistics
+        stat_df = DataFrame(columns=['feature', 'ref_id', 'start', 'end', 'from', 'to', 'mean', 'median', 'min', 'max'])
+        # for each row in DataFrame containing annotations
+        for index, row in gff_df.iterrows():
+            # shift positions relatively to the feature location
+            begin = row['start'] + start - 1
+            stop = row['end'] if end is None else min(row['end'], row['start'] + end - 1)
+            # compute the requested values along the reference sequence or feature or region thereof
+            prof = self.mapping_profile.get_profiles(profile=profile, references=row['seq_id'], start=begin, end=stop)
+            # just to make sure there is a locus_tag to include in the DataFrame
+            if 'locus_tag' not in row:
+                row['locus_tag'] = row['seq_id']
+            # fill the DataFrame with the values for the current feature, start and end are the feature's coordinates
+            # while from and to are the coordinates of the region used to compute the statistics
+            stat_df = stat_df.append(DataFrame([{'feature': row['locus_tag'], 'ref_id': row['seq_id'],
+                                                 'start': row['start'], 'end': row['end'],
+                                                 'from': begin + 1, 'to': stop + 1,
+                                                 'mean': numpy.mean(prof[row['seq_id']]),
+                                                 'median': numpy.median(prof[row['seq_id']]),
+                                                 'min': numpy.min(prof[row['seq_id']]),
+                                                 'max': numpy.max(prof[row['seq_id']])}]), ignore_index=True)
+        return stat_df
