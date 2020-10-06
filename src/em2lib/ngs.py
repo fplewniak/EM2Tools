@@ -5,10 +5,12 @@ Some utilities for NGS data manipulation built on pysam and deeptools.
 #  Frédéric PLEWNIAK, CNRS/Université de Strasbourg UMR7156 - GMGM
 #
 import multiprocessing
-import pysam
+from pysam import AlignmentFile
 import numpy
 import gffpandas.gffpandas as gffpd
 from pandas import DataFrame
+from em2lib.table import get_max
+from em2lib.table import select_rows
 
 
 def mean_quality(ref, start, end, bam):
@@ -106,7 +108,7 @@ class MappingProfile:
     """
 
     def __init__(self, bamfile, threads=multiprocessing.cpu_count()):
-        self.bam = pysam.AlignmentFile(bamfile, threads=threads)
+        self.bam = AlignmentFile(bamfile, threads=threads)
 
     def get_profiles(self, profile=mean_quality, references=None, start=0, end=None):
         """
@@ -179,8 +181,9 @@ class MappingStatistics:
     A class to compute a variety of read mapping statistics from a bam file and optionally from annotations in a GFF
     file.
     """
+
     def __init__(self, bamfile, gff=None, threads=multiprocessing.cpu_count()):
-        self.bam = pysam.AlignmentFile(bamfile, threads=threads)
+        self.bam = AlignmentFile(bamfile, threads=threads)
         self.mapping_profile = MappingProfile(bamfile=bamfile, threads=threads)
         self.gff = gffpd.read_gff3(gff) if gff is not None else None
 
@@ -224,7 +227,7 @@ class MappingStatistics:
         for index, row in gff_df.iterrows():
             # shift positions relatively to the feature location
             begin = row['start'] + start - 1
-            stop = row['end'] if end is None else min(row['end'], row['start'] + end - 1)
+            stop = row['end'] - 1 if end is None else min(row['end'], row['start'] + end - 1)
             # compute the requested values along the reference sequence or feature or region thereof
             prof = self.mapping_profile.get_profiles(profile=profile, references=row['seq_id'], start=begin, end=stop)
             # just to make sure there is a locus_tag to include in the DataFrame
@@ -240,3 +243,29 @@ class MappingStatistics:
                                                  'min': numpy.min(prof[row['seq_id']]),
                                                  'max': numpy.max(prof[row['seq_id']])}]), ignore_index=True)
         return stat_df
+
+    def select_refs(self, profile=number_of_reads, references=None, start=0, end=None, ftype=None, query=get_max,
+                    **kwargs):
+        """
+        Returns sequences (references or features) whose statistics correspond to a given criterion. This method is
+        actually a shortcut, using successively the get_statistics() method above and the table.select_rows() function.
+        If several row selections on the same dataset are required, it would be more efficient to store the statistics
+        in a DataFrame and then select the rows as many times as necessary in order to avoid recomputing the statistics
+        every time.
+
+        :param profile: the function responsible for computing profile values, should take a reference name, start and
+         end positions, and the bam file handler, must return a profile
+        :param references: a reference name or a list thereof
+        :param start: start position for each reference sequence or feature. If a GFF file is passed, then this value
+         is relative to the start of each feature.
+        :param end: end position for each reference or feature, if None, this is equivalent to the end of the reference
+         sequence or feature. If a GFF file is passed, then this value is relative to the start of each feature.
+        :param ftype: the type of features to compute the statistics of.
+        :param query: the selection function (returning a boolean value for each row according to the implemented test)
+         or a string representing a pandas.DataFrame query on columns such as 'max - min <= 10' to select rows where
+         difference between max and min is lesser or equal than 10
+        :param **kwargs: suplementary key arguments passed to the function specified in query if not a string.
+        :return: a tuple containing the maximum value and a list of all references reaching that value
+        """
+        stat_df = self.get_statistics(profile=profile, references=references, start=start, end=end, ftype=ftype)
+        return select_rows(stat_df, query=query, **kwargs)

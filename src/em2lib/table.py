@@ -89,6 +89,48 @@ def get_rows_not_in(first, other, keys_first=None, keys_other=None):
     return DataFrame(data=ego.loc[[x for x in ego.index if x not in alter.index]]).reset_index()
 
 
+def get_max(table, **kwargs):
+    """
+    Helper function to be used with select_rows(), returning true if the value in the specified column is equal to the
+    maximum value in the column
+
+    :param table: the table
+    :param kwargs: column specification
+    :return: A boolean Series where True indicates rows where the specified column is equal to the max value
+    """
+    column = kwargs['column']
+    return table[column] == table[column].max()
+
+
+def get_min(table, **kwargs):
+    """
+    Helper function to be used with select_rows(), returning true if the value in the specified column is equal to the
+    minimum value in the column
+
+    :param table: the table
+    :param kwargs: column specification
+    :return:A boolean Series where True indicates rows where the specified column is equal to the min value
+    """
+    column = kwargs['column']
+    return table[column] == table[column].min()
+
+
+def select_rows(table, query=get_max, **kwargs):
+    """
+    Selection of rows according to a function specified by the query parameter or a pandas.DataFrame query string
+
+    :param table: the table to select rows from
+    :param query: the selection function (returning a boolean value for each row according to the implemented test)
+     or a string representing a pandas.DataFrame query on columns such as 'a - b <= 10' to select rows where
+     difference between a and b is lesser or equal than 10
+    :param kwargs: extra keyword arguments passed to the query function
+    :return: a DataFrame with the selection of rows
+    """
+    if isinstance(query, str):
+        return table.query(query)
+    return table[query(table, **kwargs)]
+
+
 def statistics(table, groupby=None, columns=None, func=numpy.mean):
     """
     Returns a DataFrame containing the requested statistics on the specified columns in a table, optionally grouping

@@ -42,6 +42,11 @@ def test_table_rows_not_in(table2, table3, table_row_in_2_not_in_3, table_row_in
     assert table.get_rows_not_in(table3, table2, keys_first=['E', 'G'],
                                  keys_other=['A', 'B']).to_dict() == table_row_in_3_not_in_2.to_dict()
 
+def test_select_rows(table2):
+    assert table.select_rows(table2, query=table.get_max, column='C')\
+               .to_dict() == {'A': {2: 'y'}, 'B': {2: 'w'}, 'C': {2: 5}, 'D': {2: 3}}
+    assert table.select_rows(table2, query='D + C == 9')\
+               .to_dict() == {'A': {0: 'a', 3: 'z'}, 'B': {0: 'b', 3: 'a'}, 'C': {0: 1, 3: 3}, 'D': {0: 8, 3: 6}}
 
 def test_table_statistics(table2, table4):
     assert table.statistics(table2, groupby='A', columns=['C', 'D'], func=[sum, np.mean]) \
