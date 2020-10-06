@@ -208,14 +208,15 @@ class MappingStatistics:
         if references is not None and not isinstance(references, list):
             references = [references]
         if self.gff is not None:
-            # if no GFF file was registered, then take references sequences
+            # if a GFF file was registered, then take references sequences
             gff_df = self.gff.attributes_to_columns() if ftype is None \
                 else self.gff.filter_feature_of_type(ftype).attributes_to_columns()
             if references is not None:
                 gff_df = gff_df.loc[gff_df['seq_id'].isin(references)]
+            gff_df = gff_df.astype({'start': int, 'end': int})
         else:
-            # else, if a GFF file was registered, then take features as specified by ftype
-            gff_df = DataFrame([{'seq_id': ref, 'start': 1, 'end': self.bam.get_reference_length(ref),'locus_tag': ref}
+            # else, if no GFF file was registered, then take features as specified by ftype
+            gff_df = DataFrame([{'seq_id': ref, 'start': 1, 'end': self.bam.get_reference_length(ref), 'locus_tag': ref}
                                 for ref in self.bam.references if references is None or ref in references])
         # prepare the DataFrame to hold the statistics
         stat_df = DataFrame(columns=['feature', 'ref_id', 'start', 'end', 'from', 'to', 'mean', 'median', 'min', 'max'])
