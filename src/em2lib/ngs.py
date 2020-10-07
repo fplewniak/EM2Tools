@@ -110,40 +110,22 @@ class MappingProfile:
     def __init__(self, bamfile, threads=multiprocessing.cpu_count()):
         self.bam = AlignmentFile(bamfile, threads=threads)
 
-    def get_profiles(self, profile=mean_quality, references=None, start=0, end=None):
+    def get_profiles(self, profile=mean_quality, references=None, start=0, end=None, gff=None, ftype=None):
         """
         Method to get the profiles for all the requested references as a dictionary with reference names as keys and
         profiles as values.
 
         :param profile: the function responsible for computing profile values, should take a reference name, start and
          end positions, and the bam file handler, must return a profile
-        :param references: a reference name or a list thereof
-        :param start: start position for each reference sequence
-        :param end: end position for each reference, if None, the whole reference sequence is used
-        :return: the requested profile
-        """
-        if references is None:
-            references = list(self.bam.references)
-        if not isinstance(references, list):
-            references = [references]
-        profiles = {}
-        for ref in references:
-            ref_length = self.bam.get_reference_length(ref) - 1
-            if start > ref_length:
-                profiles[ref] = []
-            else:
-                stop = ref_length if end is None else min(end, ref_length)
-                profiles[ref] = profile(ref, start, stop, self.bam)
-        return profiles
-
-    def get_annotation_profiles(self, profile=mean_quality, references=None, start=0, end=None, gff=None, ftype=None):
-        """
-
-        :param profile:
-        :param references:
-        :param gff:
-        :param ftype:
-        :return:
+        :param references: a reference name or a list thereof for reference sequences to compute profiles of
+        :param start: start position for each reference sequence (0-based). If a GFF file is passed, then this value
+         is relative to the start of each feature.
+        :param end: end position for each reference, if None, the whole reference sequence is used (0-based). If a GFF
+         file is passed, then this value is relative to the start of each feature.
+        :param gff: GFF file name defining features found in reference sequences
+        :param ftype: the type of features to compute the statistics of. May be a list for multiple types
+        :return: a dictionary of dictionaries containing the profile for each selected feature or reference sequence
+         and the associated information (feature location, region which the profile was computed over, strand, etc.)
         """
         # ensure type is None or a list (required by filter_feature_of_type(type))
         if ftype is not None and not isinstance(ftype, list):
@@ -151,34 +133,36 @@ class MappingProfile:
         # ensure references is None or a list
         if references is not None and not isinstance(references, list):
             references = [references]
-        gff = gffpd.read_gff3(gff) if gff is not None else None
-        gff.df.dropna(axis=0, how='any', subset=['start', 'end'], inplace=True)
         if gff is not None:
-            # if a GFF file was registered, then take features as specified by ftype
+            # if a GFF file was registered,
+            gff = gffpd.read_gff3(gff)
+            # remove lines which are not features (Fasta sequence, etc.)
+            gff.df.dropna(axis=0, how='any', subset=['start', 'end'], inplace=True)
+            # then keep only features of type specified by ftype if ftype is not None
             gff_df = gff.attributes_to_columns() if ftype is None \
                 else gff.filter_feature_of_type(ftype).attributes_to_columns()
             if references is not None:
+                # keep only features that are in references
                 gff_df = gff_df.loc[gff_df['seq_id'].isin(references)]
+            # make sure start and end are integers
             gff_df = gff_df.astype({'start': int, 'end': int})
         else:
             # else, if no GFF file was registered, then take references sequences
-            gff_df = DataFrame([{'seq_id': ref, 'start': 1, 'end': self.bam.get_reference_length(ref), 'locus_tag': ref}
+            gff_df = DataFrame([{'seq_id': ref, 'start': 1, 'end': self.bam.get_reference_length(ref), 'strand': '0',
+                                 'locus_tag': ref}
                                 for ref in self.bam.references if references is None or ref in references])
         profiles = {}
         # for each row in DataFrame containing annotations
         for index, row in gff_df.iterrows():
             # shift positions relatively to the feature location
             begin = row['start'] + start - 1
-            stop = row['end'] - 1 if end is None else min(row['end'], row['start'] + end - 1)
+            stop = row['end'] - 1 if end is None else min(row['end'] - 1, row['start'] + end - 1)
             # just to make sure there is a locus_tag to include as a key
-            if row['locus_tag'] is None:
-                row['locus_tag'] = row['seq_id'] + ':' + str(begin) + ':' + str(stop)
-            # compute the requested values along the reference sequence or feature or region thereof
-            profiles[row['locus_tag']] = {'ref_id': row['seq_id'], 'start': row['start'], 'end': row['end'],
-                                          'from': begin + 1, 'to': stop + 1,
-                                          'profile':
-                                              self.get_profiles(profile=profile, references=row['seq_id'], start=begin,
-                                                                end=stop)[row['seq_id']]}
+            tag = row['seq_id'] + ':' + str(begin) + ':' + str(stop) if row['locus_tag'] is None else row['locus_tag']
+            # compute the requested profile along the reference sequence or feature or region thereof
+            profiles[tag] = {'seq_id': row['seq_id'], 'start': row['start'], 'end': row['end'], 'strand': row['strand'],
+                             'from': begin + 1, 'to': stop + 1}
+            profiles[tag]['profile'] = profile(row['seq_id'], begin, stop, self.bam) if begin <= stop else []
         return profiles
 
     def select_refs(self, profile=number_of_reads, references=None, start=0, end=None, gff=None, ftype=None,
@@ -226,7 +210,7 @@ class MappingStatistics:
     def __init__(self, bamfile, gff=None, threads=multiprocessing.cpu_count()):
         self.bam = AlignmentFile(bamfile, threads=threads)
         self.mapping_profile = MappingProfile(bamfile=bamfile, threads=threads)
-        self.gff = gffpd.read_gff3(gff) if gff is not None else None
+        self.gff = gff
 
     def get_statistics(self, profile=mean_quality, references=None, start=0, end=None, ftype=None):
         """
@@ -245,44 +229,20 @@ class MappingStatistics:
         :param ftype: the type of features to compute the statistics of.
         :return:
         """
-        # ensure type is None or a list (required by filter_feature_of_type(type))
-        if ftype is not None and not isinstance(ftype, list):
-            ftype = [ftype]
-        # ensure references is None or a list
-        if references is not None and not isinstance(references, list):
-            references = [references]
-        if self.gff is not None:
-            # if a GFF file was registered, then take references sequences
-            gff_df = self.gff.attributes_to_columns() if ftype is None \
-                else self.gff.filter_feature_of_type(ftype).attributes_to_columns()
-            if references is not None:
-                gff_df = gff_df.loc[gff_df['seq_id'].isin(references)]
-            gff_df = gff_df.astype({'start': int, 'end': int})
-        else:
-            # else, if no GFF file was registered, then take features as specified by ftype
-            gff_df = DataFrame([{'seq_id': ref, 'start': 1, 'end': self.bam.get_reference_length(ref), 'locus_tag': ref}
-                                for ref in self.bam.references if references is None or ref in references])
         # prepare the DataFrame to hold the statistics
-        stat_df = DataFrame(columns=['feature', 'ref_id', 'start', 'end', 'from', 'to', 'mean', 'median', 'min', 'max'])
-        # for each row in DataFrame containing annotations
-        for index, row in gff_df.iterrows():
-            # shift positions relatively to the feature location
-            begin = row['start'] + start - 1
-            stop = row['end'] - 1 if end is None else min(row['end'], row['start'] + end - 1)
-            # compute the requested values along the reference sequence or feature or region thereof
-            prof = self.mapping_profile.get_profiles(profile=profile, references=row['seq_id'], start=begin, end=stop)
-            # just to make sure there is a locus_tag to include in the DataFrame
-            if 'locus_tag' not in row:
-                row['locus_tag'] = row['seq_id']
-            # fill the DataFrame with the values for the current feature, start and end are the feature's coordinates
-            # while from and to are the coordinates of the region used to compute the statistics
-            stat_df = stat_df.append(DataFrame([{'feature': row['locus_tag'], 'ref_id': row['seq_id'],
-                                                 'start': row['start'], 'end': row['end'],
-                                                 'from': begin + 1, 'to': stop + 1,
-                                                 'mean': numpy.mean(prof[row['seq_id']]),
-                                                 'median': numpy.median(prof[row['seq_id']]),
-                                                 'min': numpy.min(prof[row['seq_id']]),
-                                                 'max': numpy.max(prof[row['seq_id']])}]), ignore_index=True)
+        stat_df = DataFrame(columns=['feature', 'ref_id', 'start', 'end', 'strand',
+                                     'from', 'to', 'mean', 'median', 'min', 'max'])
+        profiles = self.mapping_profile.get_profiles(profile=profile, references=references, start=start, end=end,
+                                                     gff=self.gff, ftype=ftype)
+        for feature in profiles:
+            prof = profiles[feature]
+            stat_df = stat_df.append(DataFrame([{'feature': feature, 'ref_id': prof['seq_id'],
+                                                 'start': prof['start'], 'end': prof['end'], 'strand': prof['strand'],
+                                                 'from': prof['from'], 'to': prof['to'],
+                                                 'mean': numpy.mean(prof['profile']),
+                                                 'median': numpy.median(prof['profile']),
+                                                 'min': numpy.min(prof['profile']),
+                                                 'max': numpy.max(prof['profile'])}]), ignore_index=True)
         return stat_df
 
     def select_refs(self, profile=number_of_reads, references=None, start=0, end=None, ftype=None, query=get_max,
