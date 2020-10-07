@@ -136,6 +136,69 @@ class MappingProfile:
                 profiles[ref] = profile(ref, start, stop, self.bam)
         return profiles
 
+    def get_annotation_profiles(self, profile=mean_quality, references=None, start=0, end=None, gff=None, ftype=None):
+        """
+
+        :param profile:
+        :param references:
+        :param gff:
+        :param ftype:
+        :return:
+        """
+        # ensure type is None or a list (required by filter_feature_of_type(type))
+        if ftype is not None and not isinstance(ftype, list):
+            ftype = [ftype]
+        # ensure references is None or a list
+        if references is not None and not isinstance(references, list):
+            references = [references]
+        gff = gffpd.read_gff3(gff) if gff is not None else None
+        gff.df.dropna(axis=0, how='any', subset=['start', 'end'], inplace=True)
+        if gff is not None:
+            # if a GFF file was registered, then take features as specified by ftype
+            gff_df = gff.attributes_to_columns() if ftype is None \
+                else gff.filter_feature_of_type(ftype).attributes_to_columns()
+            if references is not None:
+                gff_df = gff_df.loc[gff_df['seq_id'].isin(references)]
+            gff_df = gff_df.astype({'start': int, 'end': int})
+        else:
+            # else, if no GFF file was registered, then take references sequences
+            gff_df = DataFrame([{'seq_id': ref, 'start': 1, 'end': self.bam.get_reference_length(ref), 'locus_tag': ref}
+                                for ref in self.bam.references if references is None or ref in references])
+        profiles = {}
+        # for each row in DataFrame containing annotations
+        for index, row in gff_df.iterrows():
+            # shift positions relatively to the feature location
+            begin = row['start'] + start - 1
+            stop = row['end'] - 1 if end is None else min(row['end'], row['start'] + end - 1)
+            # just to make sure there is a locus_tag to include as a key
+            if row['locus_tag'] is None:
+                row['locus_tag'] = row['seq_id'] + ':' + str(begin) + ':' + str(stop)
+            # compute the requested values along the reference sequence or feature or region thereof
+            profiles[row['locus_tag']] = {'ref_id': row['seq_id'], 'start': row['start'], 'end': row['end'],
+                                          'from': begin + 1, 'to': stop + 1,
+                                          'profile':
+                                              self.get_profiles(profile=profile, references=row['seq_id'], start=begin,
+                                                                end=stop)[row['seq_id']]}
+        return profiles
+
+    def select_refs(self, profile=number_of_reads, references=None, start=0, end=None, gff=None, ftype=None,
+                    query=get_max, **kwargs):
+        """
+
+        :param profile:
+        :param references:
+        :param start:
+        :param end:
+        :param gff:
+        :param ftype:
+        :param query:
+        :param kwargs:
+        :return:
+        """
+        selected_refs = {}
+
+        return selected_refs
+
     def get_values(self, profile=mapping_qualities, references=None, start=0, end=None):
         """
         Method to get all values of some mapping statistics in all references and regions pooled into one single array.
@@ -152,28 +215,6 @@ class MappingProfile:
         for ref in profiles:
             mapping_values += profiles[ref]
         return mapping_values
-
-    def get_references_with_max(self, profile=number_of_reads, references=None, start=0, end=None):
-        """
-        Returns the references whose profile contains the maximum value across profiles of all references
-
-        :param profile: the function responsible for computing profile values, should take a reference name, start and
-         end positions, and the bam file handler, must return a profile
-        :param references: a reference name or a list thereof
-        :param start: start position for each reference sequence
-        :param end: end position for each reference, if None, the whole reference sequence is used
-        :return: a tuple containing the maximum value and a list of all references reaching that value
-        """
-        profiles = self.get_profiles(profile=profile, references=references, start=start, end=end)
-        max_value = 0
-        ref_max = []
-        for ref in profiles:
-            if max(profiles[ref]) > max_value:
-                max_value = max(profiles[ref])
-                ref_max = [ref]
-            elif max(profiles[ref]) == max_value:
-                ref_max.append(ref)
-        return max_value, ref_max
 
 
 class MappingStatistics:
