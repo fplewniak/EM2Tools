@@ -165,24 +165,6 @@ class MappingProfile:
             profiles[tag]['profile'] = profile(row['seq_id'], begin, stop, self.bam) if begin <= stop else []
         return profiles
 
-    def select_refs(self, profile=number_of_reads, references=None, start=0, end=None, gff=None, ftype=None,
-                    query=get_max, **kwargs):
-        """
-
-        :param profile:
-        :param references:
-        :param start:
-        :param end:
-        :param gff:
-        :param ftype:
-        :param query:
-        :param kwargs:
-        :return:
-        """
-        selected_refs = {}
-
-        return selected_refs
-
     def get_values(self, profile=mapping_qualities, references=None, start=0, end=None):
         """
         Method to get all values of some mapping statistics in all references and regions pooled into one single array.
