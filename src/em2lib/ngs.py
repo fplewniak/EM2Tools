@@ -231,6 +231,7 @@ class MappingStatistics:
             stat_df = stat_df.append(DataFrame([{'feature': feature, 'ref_id': prof['seq_id'],
                                                  'start': prof['start'], 'end': prof['end'], 'strand': prof['strand'],
                                                  'from': prof['from'], 'to': prof['to'],
+                                                 'total': numpy.sum(prof['profile']),
                                                  'mean': numpy.mean(prof['profile']),
                                                  'median': numpy.median(prof['profile']),
                                                  'min': numpy.min(prof['profile']),
