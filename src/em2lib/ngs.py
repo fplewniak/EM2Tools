@@ -13,7 +13,7 @@ from em2lib.table import get_max
 from em2lib.table import select_rows
 
 
-def mean_quality(ref, start, end, bam):
+def mean_quality(ref, start, end, bam, **kwargs):
     """
     Computes the mean mapping quality at each position in the region of reference ref specified by start and end.
 
@@ -21,16 +21,18 @@ def mean_quality(ref, start, end, bam):
     :param start: 0-based start of region to compute the profile of
     :param end: 0-based end of region to compute the profile of (this position is included in the profile)
     :param bam: pysam AlignmentFile handler
+    :param **kwargs: supplementary keyword parameters that will be passed to the pileup() method, allowing to filter
+     reads by flag, quality, etc.
     :return: a list of mean mapping quality values along the region in the reference sequence
     """
     p = [0] * (end - start + 1)
-    for col in bam.pileup(ref, start, end):
+    for col in bam.pileup(ref, start, end, **kwargs):
         if start <= col.reference_pos <= end:
             p[col.reference_pos - start] = numpy.mean(col.get_mapping_qualities())
     return p
 
 
-def sum_quality(ref, start, end, bam):
+def sum_quality(ref, start, end, bam, **kwargs):
     """
     Computes the sum of mapping quality values at each position in the region of reference ref specified by start
     and end.
@@ -39,16 +41,18 @@ def sum_quality(ref, start, end, bam):
     :param start: 0-based start of region to compute the profile of
     :param end: 0-based end of region to compute the profile of (this position is included in the profile)
     :param bam: pysam AlignmentFile handler
+    :param **kwargs: supplementary keyword parameters that will be passed to the pileup() method, allowing to filter
+     reads by flag, quality, etc.
     :return: a list of sums of mapping quality values along the region in the reference sequence
     """
     p = [0] * (end - start + 1)
-    for col in bam.pileup(ref, start, end):
+    for col in bam.pileup(ref, start, end, **kwargs):
         if start <= col.reference_pos <= end:
             p[col.reference_pos - start] = numpy.sum(col.get_mapping_qualities())
     return p
 
 
-def number_of_reads(ref, start, end, bam):
+def number_of_reads(ref, start, end, bam, **kwargs):
     """
     Counts the number of mapping reads at every position in the region of reference ref specified by start.
 
@@ -56,16 +60,18 @@ def number_of_reads(ref, start, end, bam):
     :param start: 0-based start of region to compute the profile of
     :param end: 0-based end of region to compute the profile of (this position is included in the profile)
     :param bam: pysam AlignmentFile handler
+    :param **kwargs: supplementary keyword parameters that will be passed to the pileup() method, allowing to filter
+     reads by flag, quality, etc.
     :return: a list of number of reads mapping at every position along the region of the reference sequence
     """
     p = [0] * (end - start + 1)
-    for col in bam.pileup(ref, start, end):
+    for col in bam.pileup(ref, start, end, **kwargs):
         if start <= col.reference_pos <= end:
             p[col.reference_pos - start] = col.nsegments
     return p
 
 
-def position(ref, start, end, bam):
+def position(ref, start, end, bam, **kwargs):
     """
     Returns the reference positions of every position in the specified ref region with at least on mapping read. This
     function may be useful only for testing purposes or display.
@@ -74,16 +80,18 @@ def position(ref, start, end, bam):
     :param start: 0-based start of region to compute the profile of
     :param end: 0-based end of region to compute the profile of (this position is included in the profile)
     :param bam: pysam AlignmentFile handler
+    :param **kwargs: supplementary keyword parameters that will be passed to the pileup() method, allowing to filter
+     reads by flag, quality, etc.
     :return: a list of positions in the reference sequence where there is at least a mapping read
     """
     p = [0] * (end - start + 1)
-    for col in bam.pileup(ref, start, end):
+    for col in bam.pileup(ref, start, end, **kwargs):
         if start <= col.reference_pos <= end:
             p[col.reference_pos - start] = col.reference_pos
     return p
 
 
-def mapping_qualities(ref, start, end, bam):
+def mapping_qualities(ref, start, end, bam, **kwargs):
     """
     Returns all the mapping quality values in the specified reference region
 
@@ -91,10 +99,12 @@ def mapping_qualities(ref, start, end, bam):
     :param start: 0-based start of region to compute the profile of
     :param end: 0-based end of region to compute the profile of (this position is included in the profile)
     :param bam: pysam AlignmentFile handler
+    :param **kwargs: supplementary keyword parameters that will be passed to the pileup() method, allowing to filter
+     reads by flag, quality, etc.
     :return: a list of all the mapping quality values
     """
     qval = []
-    for col in bam.pileup(ref, start, end):
+    for col in bam.pileup(ref, start, end, **kwargs):
         if start <= col.reference_pos <= end:
             qval += col.get_mapping_qualities()
     return qval
@@ -110,7 +120,7 @@ class MappingProfile:
     def __init__(self, bamfile, threads=multiprocessing.cpu_count()):
         self.bam = AlignmentFile(bamfile, threads=threads)
 
-    def get_profiles(self, profile=mean_quality, references=None, start=0, end=None, gff=None, ftype=None):
+    def get_profiles(self, profile=mean_quality, references=None, start=0, end=None, gff=None, ftype=None, **kwargs):
         """
         Method to get the profiles for all the requested references as a dictionary with reference names as keys and
         profiles as values.
@@ -162,7 +172,7 @@ class MappingProfile:
             # compute the requested profile along the reference sequence or feature or region thereof
             profiles[tag] = {'seq_id': row['seq_id'], 'start': row['start'], 'end': row['end'], 'strand': row['strand'],
                              'from': begin + 1, 'to': stop + 1}
-            profiles[tag]['profile'] = profile(row['seq_id'], begin, stop, self.bam) if begin <= stop else []
+            profiles[tag]['profile'] = profile(row['seq_id'], begin, stop, self.bam, **kwargs) if begin <= stop else []
         return profiles
 
     def get_values(self, profile=mapping_qualities, references=None, start=0, end=None):
@@ -194,7 +204,7 @@ class MappingStatistics:
         self.mapping_profile = MappingProfile(bamfile=bamfile, threads=threads)
         self.gff = gff
 
-    def get_statistics(self, profile=mean_quality, references=None, start=0, end=None, ftype=None):
+    def get_statistics(self, profile=mean_quality, references=None, start=0, end=None, ftype=None, **kwargs):
         """
         Return mapping statistics according to the profile function computed on the specified reference sequences,
         positions and type of features. If no GFF file has been passed to the current instance, then complete sequences
@@ -215,7 +225,7 @@ class MappingStatistics:
         stat_df = DataFrame(columns=['feature', 'ref_id', 'start', 'end', 'strand',
                                      'from', 'to', 'mean', 'median', 'min', 'max'])
         profiles = self.mapping_profile.get_profiles(profile=profile, references=references, start=start, end=end,
-                                                     gff=self.gff, ftype=ftype)
+                                                     gff=self.gff, ftype=ftype, **kwargs)
         for feature in profiles:
             prof = profiles[feature]
             stat_df = stat_df.append(DataFrame([{'feature': feature, 'ref_id': prof['seq_id'],
