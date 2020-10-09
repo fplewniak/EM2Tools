@@ -1,5 +1,5 @@
 """
-Some utilities for NGS data manipulation built on pysam and deeptools.
+Some utilities for NGS data manipulation built on pysam
 """
 #  CeCILL FREE SOFTWARE LICENSE AGREEMENT Version 2.1 dated 2013-06-21
 #  Frédéric PLEWNIAK, CNRS/Université de Strasbourg UMR7156 - GMGM
