@@ -5,6 +5,8 @@ Some utilities for NGS data manipulation built on pysam and deeptools.
 #  Frédéric PLEWNIAK, CNRS/Université de Strasbourg UMR7156 - GMGM
 #
 import multiprocessing
+import warnings
+
 from pysam import AlignmentFile
 import numpy
 import gffpandas.gffpandas as gffpd
@@ -258,8 +260,11 @@ class MappingStatistics:
         :param query: the selection function (returning a boolean value for each row according to the implemented test)
          or a string representing a pandas.DataFrame query on columns such as 'max - min <= 10' to select rows where
          difference between max and min is lesser or equal than 10
-        :param **kwargs: suplementary key arguments passed to the function specified in query if not a string.
+        :param **kwargs: supplementary key arguments passed to the function specified in query if not a string.
         :return: a tuple containing the maximum value and a list of all references reaching that value
         """
+        warnings.warn('The select_refs method is deprecated and will be removed. '
+                      'Create a statistics DataFrame first then use table.select_rows() method on that DataFrame.',
+                      DeprecationWarning, stacklevel=2)
         stat_df = self.get_statistics(profile=profile, references=references, start=start, end=end, ftype=ftype)
         return select_rows(stat_df, query=query, **kwargs)
