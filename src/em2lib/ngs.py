@@ -13,6 +13,7 @@ import gffpandas.gffpandas as gffpd
 from pandas import DataFrame
 from em2lib.table import get_max
 from em2lib.table import select_rows
+from em2lib.gff import select_features
 
 
 def mean_quality(ref, start, end, bam, **kwargs):
@@ -139,27 +140,14 @@ class MappingProfile:
         :return: a dictionary of dictionaries containing the profile for each selected feature or reference sequence
          and the associated information (feature location, region which the profile was computed over, strand, etc.)
         """
-        # ensure type is None or a list (required by filter_feature_of_type(type))
-        if ftype is not None and not isinstance(ftype, list):
-            ftype = [ftype]
-        # ensure references is None or a list
-        if references is not None and not isinstance(references, list):
-            references = [references]
         if gff is not None:
-            # if a GFF file was registered,
-            gff = gffpd.read_gff3(gff)
-            # remove lines which are not features (Fasta sequence, etc.)
-            gff.df.dropna(axis=0, how='any', subset=['start', 'end'], inplace=True)
-            # then keep only features of type specified by ftype if ftype is not None
-            gff_df = gff.attributes_to_columns() if ftype is None \
-                else gff.filter_feature_of_type(ftype).attributes_to_columns()
-            if references is not None:
-                # keep only features that are in references
-                gff_df = gff_df.loc[gff_df['seq_id'].isin(references)]
-            # make sure start and end are integers
-            gff_df = gff_df.astype({'start': int, 'end': int})
+            # if a GFF file was registered, select features according to references and type
+            gff_df = select_features(gff, references=references, ftype=ftype)
         else:
             # else, if no GFF file was registered, then take references sequences
+            # ensure references is None or a list
+            if references is not None and not isinstance(references, list):
+                references = [references]
             gff_df = DataFrame([{'seq_id': ref, 'start': 1, 'end': self.bam.get_reference_length(ref), 'strand': '0',
                                  'locus_tag': ref}
                                 for ref in self.bam.references if references is None or ref in references])
