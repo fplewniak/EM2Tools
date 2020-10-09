@@ -33,6 +33,16 @@ The “seq_utils” module
 ..  automodule:: em2lib.seq_utils
     :members:
 
+The “gff” module
+----------------------
+..  automodule:: em2lib.gff
+    :members:
+
+The “ngs” module
+----------------------
+..  automodule:: em2lib.ngs
+    :members:
+
 The “table” module
 -------------------------
 ..  automodule:: em2lib.table
