@@ -8,6 +8,14 @@ import gffpandas.gffpandas as gffpd
 
 
 def select_features(gff, references=None, ftype=None):
+    """
+    Feature selection from a GFF file according to reference sequence and/or type
+
+    :param gff: the GFF file name
+    :param references: a reference name or a list thereof
+    :param ftype: the type of features to select
+    :return: a DataFrame containing the selected features
+    """
     if ftype is not None and not isinstance(ftype, list):
         ftype = [ftype]
     # ensure references is None or a list
